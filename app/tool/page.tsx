@@ -1,0 +1,189 @@
+"use client";
+
+import { useState } from "react";
+
+const CASE_TYPES = [
+  "暴言・威圧",
+  "過剰な電話・要求",
+  "金品・サービス要求",
+  "家族からのクレーム",
+  "行政・苦情申し立て",
+  "法的措置の示唆",
+];
+
+const REQUESTER_TYPES = ["利用者本人", "家族・親族", "その他"];
+const SEVERITY_LEVELS = [
+  { value: "軽度", label: "🟢 軽度（一般的な苦情・要望）" },
+  { value: "中度", label: "🟡 中度（度を超えた要求・繰り返し）" },
+  { value: "重度", label: "🔴 重度（暴言・脅迫・不当要求）" },
+];
+
+const FREE_LIMIT = 3;
+
+function parseResult(text: string) {
+  const sections = text.split(/^---$/m).map((s) => s.trim()).filter(Boolean);
+  return sections;
+}
+
+export default function KaigoTool() {
+  const [caseType, setCaseType] = useState(CASE_TYPES[0]);
+  const [requesterType, setRequesterType] = useState(REQUESTER_TYPES[0]);
+  const [severity, setSeverity] = useState("中度");
+  const [situation, setSituation] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<string[]>([]);
+  const [error, setError] = useState("");
+  const [count, setCount] = useState(0);
+  const [hitLimit, setHitLimit] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!situation.trim()) { setError("状況を入力してください"); return; }
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ caseType, requesterType, severity, situation }),
+      });
+      const data = await res.json();
+      if (data.error === "LIMIT_REACHED") { setHitLimit(true); return; }
+      if (!res.ok || data.error) { setError(data.error || "エラーが発生しました"); return; }
+      setResult(parseResult(data.result));
+      setCount(data.count ?? count + 1);
+    } catch {
+      setError("通信エラーが発生しました。再試行してください。");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (hitLimit) {
+    return (
+      <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+        <div className="max-w-md w-full bg-white rounded-2xl p-8 shadow-sm text-center border border-gray-200">
+          <div className="text-5xl mb-4">🔒</div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">無料体験（{FREE_LIMIT}回）終了</h2>
+          <p className="text-gray-500 text-sm mb-6">
+            プレミアムプランで介護カスハラ対応文を無制限に生成できます。
+          </p>
+          <a
+            href="/"
+            className="block w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors mb-3"
+          >
+            プランを見る →
+          </a>
+          <a href="/" className="text-sm text-gray-400 hover:underline">トップへ戻る</a>
+        </div>
+      </main>
+    );
+  }
+
+  return (
+    <main className="min-h-screen bg-gray-50 py-10 px-4">
+      <div className="max-w-2xl mx-auto">
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">介護カスハラ対応文ジェネレーター</h1>
+          <p className="text-sm text-gray-500">
+            状況を入力して「生成する」を押すだけ。
+            無料残り<strong className="text-teal-600">{Math.max(0, FREE_LIMIT - count)}回</strong>
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">カスハラの種別</label>
+            <div className="flex flex-wrap gap-2">
+              {CASE_TYPES.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setCaseType(t)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                    caseType === t
+                      ? "bg-teal-600 text-white border-teal-600"
+                      : "bg-white text-gray-600 border-gray-200 hover:border-teal-400"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">要求者</label>
+              <select
+                value={requesterType}
+                onChange={(e) => setRequesterType(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              >
+                {REQUESTER_TYPES.map((r) => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">深刻度</label>
+              <select
+                value={severity}
+                onChange={(e) => setSeverity(e.target.value)}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              >
+                {SEVERITY_LEVELS.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">状況の詳細</label>
+            <textarea
+              value={situation}
+              onChange={(e) => setSituation(e.target.value)}
+              placeholder="例：利用者の家族が毎日10回以上電話をかけてきて、「すぐにスタッフを増やせ」「他の事業所に替える」と脅してくる。スタッフが精神的に疲弊している。"
+              rows={5}
+              maxLength={1500}
+              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
+            />
+            <p className="text-xs text-gray-400 text-right mt-1">{situation.length}/1500文字</p>
+          </div>
+
+          {error && (
+            <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleGenerate}
+            disabled={loading || !situation.trim()}
+            className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {loading ? "生成中..." : "対応文を生成する"}
+          </button>
+        </div>
+
+        {result.length > 0 && (
+          <div className="space-y-4">
+            {result.map((section, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{section}</div>
+                <button
+                  onClick={() => { navigator.clipboard.writeText(section); }}
+                  className="mt-3 text-xs text-teal-600 hover:underline"
+                >
+                  コピーする
+                </button>
+              </div>
+            ))}
+            <p className="text-xs text-center text-gray-400 mt-4">
+              ※ 本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。
+            </p>
+          </div>
+        )}
+      </div>
+    </main>
+  );
+}
