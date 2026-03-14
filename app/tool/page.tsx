@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import PayjpModal from "@/components/PayjpModal";
 
 const CASE_TYPES = [
   "暴言・威圧",
@@ -19,6 +20,7 @@ const SEVERITY_LEVELS = [
 ];
 
 const FREE_LIMIT = 3;
+const STORAGE_KEY = "kaigo_use_count";
 
 function parseResult(text: string) {
   const sections = text.split(/^---$/m).map((s) => s.trim()).filter(Boolean);
@@ -35,6 +37,13 @@ export default function KaigoTool() {
   const [error, setError] = useState("");
   const [count, setCount] = useState(0);
   const [hitLimit, setHitLimit] = useState(false);
+  const [showPayjp, setShowPayjp] = useState(false);
+
+  useEffect(() => {
+    const saved = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
+    setCount(saved);
+    if (saved >= FREE_LIMIT) setHitLimit(true);
+  }, []);
 
   const handleGenerate = async () => {
     if (!situation.trim()) { setError("状況を入力してください"); return; }
@@ -50,7 +59,10 @@ export default function KaigoTool() {
       if (data.error === "LIMIT_REACHED") { setHitLimit(true); return; }
       if (!res.ok || data.error) { setError(data.error || "エラーが発生しました"); return; }
       setResult(parseResult(data.result));
-      setCount(data.count ?? count + 1);
+      const newCount = data.count ?? count + 1;
+      setCount(newCount);
+      localStorage.setItem(STORAGE_KEY, String(newCount));
+      if (newCount >= FREE_LIMIT) setHitLimit(true);
     } catch {
       setError("通信エラーが発生しました。再試行してください。");
     } finally {
@@ -65,16 +77,25 @@ export default function KaigoTool() {
           <div className="text-5xl mb-4">🔒</div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">無料体験（{FREE_LIMIT}回）終了</h2>
           <p className="text-gray-500 text-sm mb-6">
-            プレミアムプランで介護カスハラ対応文を無制限に生成できます。
+            事業所プランで介護カスハラ対応文を無制限に生成できます。
           </p>
-          <a
-            href="/"
+          <button
+            onClick={() => setShowPayjp(true)}
             className="block w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors mb-3"
           >
-            プランを見る →
-          </a>
+            事業所プランで無制限利用する ¥9,800/月
+          </button>
           <a href="/" className="text-sm text-gray-400 hover:underline">トップへ戻る</a>
         </div>
+        {showPayjp && (
+          <PayjpModal
+            publicKey={process.env.NEXT_PUBLIC_PAYJP_PUBLIC_KEY!}
+            planLabel="事業所プラン ¥9,800/月"
+            plan="business"
+            onSuccess={() => setShowPayjp(false)}
+            onClose={() => setShowPayjp(false)}
+          />
+        )}
       </main>
     );
   }
