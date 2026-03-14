@@ -26,8 +26,8 @@ const CARE_CASES = [
   },
   {
     icon: "👨‍👩‍👧",
-    name: "家族からのクレーム",
-    examples: ["「訴える」「マスコミに言う」", "SNSへの拡散脅迫", "繰り返す同一クレーム"],
+    name: "家族からの過剰要求",
+    examples: ["「訴える」などの法的脅迫", "業務妨害に至る繰り返しの要求", "同一要求の際限ない繰り返し"],
     pain: "記録の蓄積と段階的対応が有効。",
   },
   {
@@ -78,6 +78,9 @@ export default function KaigoLP() {
         </div>
       </nav>
 
+      <div className="bg-gray-100 text-gray-600 text-center text-xs py-1.5 px-4">
+        ⚠️ 本サービスはAIによる参考情報の提供です。法的対応・訴訟については弁護士・社会保険労務士にご相談ください。
+      </div>
       <div className="bg-teal-700 text-white text-center text-sm font-semibold py-2.5 px-4">
         🚨 介護運営基準改正・カスハラ体制整備が義務化見込み（2026年度）
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
@@ -88,12 +91,12 @@ export default function KaigoLP() {
           介護事業所・デイサービス・ヘルパー事業所 向け
         </div>
         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-          利用者・家族からのカスハラ。<br />
+          度を超えた言動・要求から、<br />
           <span className="text-teal-600">スタッフを守る対応文が15秒で作れます。</span>
         </h1>
         <p className="text-lg text-gray-500 mb-4 max-w-2xl mx-auto">
-          暴言・過剰要求・脅迫・深夜電話——介護現場特有のカスハラに特化したAIが、
-          厚労省ガイドライン準拠の対応文・断り文・証拠記録テンプレートを即生成します。
+          暴言・過剰要求・脅迫・深夜電話——介護現場特有の困難なケースに特化したAIが、
+          厚労省ガイドラインを参考にした対応文・断り文・証拠記録テンプレートを即生成します。
         </p>
         <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm">
           <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm">
@@ -122,6 +125,9 @@ export default function KaigoLP() {
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-center mb-3">介護現場のカスハラは「特殊」です</h2>
           <p className="text-center text-gray-500 text-sm mb-10">一般企業向けのクレーム対応では対処できない、介護特有の問題があります</p>
+          <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-8 text-sm text-teal-800">
+            ✅ <strong>正当なご意見・改善要望はカスハラではありません。</strong>本ツールは、利用者・ご家族の権利を守りながら、業務妨害・脅迫・暴言など「度を超えた行為」から事業所とスタッフを守るためのものです。
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {CARE_CASES.map((c) => (
               <div key={c.name} className="border border-gray-200 rounded-xl p-5 bg-white">
