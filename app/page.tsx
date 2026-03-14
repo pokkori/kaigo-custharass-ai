@@ -112,13 +112,21 @@ export default function KaigoLP() {
             <span className="text-gray-600">2026年度義務化に先行対応</span>
           </div>
         </div>
-        <button
-          onClick={() => setShowPayjp(true)}
-          className="inline-block bg-teal-600 text-white font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-700 shadow-lg shadow-teal-100 mb-3 transition-colors"
+        <Link
+          href="/tool"
+          className="inline-block bg-teal-600 text-white font-bold text-xl px-10 py-5 rounded-xl hover:bg-teal-700 shadow-lg shadow-teal-100 mb-4 transition-colors"
         >
-          介護事業所プランで始める ¥9,800/月 →
-        </button>
-        <p className="text-sm text-gray-500">登録不要・クレジットカード払い・いつでも解約可能</p>
+          無料でカスハラ対応文を3回試す →
+        </Link>
+        <div className="flex flex-col items-center gap-1">
+          <p className="text-sm text-gray-400">登録不要・クレジットカード不要</p>
+          <button
+            onClick={() => setShowPayjp(true)}
+            className="text-sm text-teal-600 underline hover:text-teal-800 transition-colors"
+          >
+            事業所プラン（¥9,800/月）でフル利用する →
+          </button>
+        </div>
       </section>
 
       <section className="bg-gray-50 py-16">
@@ -231,12 +239,20 @@ export default function KaigoLP() {
       <section className="bg-teal-700 py-16 text-center px-6 text-white">
         <h2 className="text-2xl font-bold mb-3">介護スタッフを、カスハラから守りましょう</h2>
         <p className="text-teal-200 text-sm mb-8">15秒で対応文生成。毅然とした対応で事業所と従業員を守る。</p>
-        <button
-          onClick={() => setShowPayjp(true)}
-          className="inline-block bg-white text-teal-700 font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-50 shadow-lg transition-colors"
+        <Link
+          href="/tool"
+          className="inline-block bg-white text-teal-700 font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-50 shadow-lg transition-colors mb-3"
         >
-          介護事業所プランで始める ¥9,800/月 →
-        </button>
+          無料で3回試す（登録不要）→
+        </Link>
+        <div>
+          <button
+            onClick={() => setShowPayjp(true)}
+            className="text-teal-200 text-sm underline hover:text-white transition-colors"
+          >
+            事業所プラン（¥9,800/月）でフル利用する →
+          </button>
+        </div>
       </section>
 
       <footer className="border-t py-6 text-center text-xs text-gray-400">
