@@ -86,35 +86,35 @@ export default function KaigoLP() {
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
       </div>
 
-      <section className="max-w-4xl mx-auto px-6 py-20 text-center">
-        <div className="inline-block bg-teal-50 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">
+      <section className="max-w-4xl mx-auto px-4 py-10 md:py-20 text-center overflow-x-hidden">
+        <div className="inline-block bg-teal-50 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
           介護事業所・デイサービス・ヘルパー事業所 向け
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
           度を超えた言動・要求から、<br />
           <span className="text-teal-600">スタッフを守る対応文が15秒で作れます。</span>
         </h1>
-        <p className="text-lg text-gray-500 mb-4 max-w-2xl mx-auto">
+        <p className="text-base md:text-lg text-gray-500 mb-4 max-w-2xl mx-auto">
           暴言・過剰要求・脅迫・深夜電話——介護現場特有の困難なケースに特化したAIが、
           厚労省ガイドラインを参考にした対応文・断り文・証拠記録テンプレートを即生成します。
         </p>
-        <div className="flex flex-wrap justify-center gap-4 mb-8 text-sm">
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm">
+        <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm">
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
             <span className="text-teal-600 font-bold">介護特化</span>
-            <span className="text-gray-600">介護・福祉用語・法令準拠</span>
+            <span className="text-gray-600 text-xs">介護・福祉用語・法令準拠</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm">
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
             <span className="text-teal-600 font-bold">証拠記録</span>
-            <span className="text-gray-600">カスハラ記録テンプレート生成</span>
+            <span className="text-gray-600 text-xs">カスハラ記録テンプレート生成</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm">
+          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
             <span className="text-teal-600 font-bold">運営基準対応</span>
-            <span className="text-gray-600">2026年度義務化に先行対応</span>
+            <span className="text-gray-600 text-xs">2026年度義務化に先行対応</span>
           </div>
         </div>
         <Link
           href="/tool"
-          className="inline-block bg-teal-600 text-white font-bold text-xl px-10 py-5 rounded-xl hover:bg-teal-700 shadow-lg shadow-teal-100 mb-4 transition-colors"
+          className="inline-block bg-teal-600 text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-xl hover:bg-teal-700 shadow-lg shadow-teal-100 mb-4 transition-colors w-full sm:w-auto"
         >
           無料でカスハラ対応文を3回試す →
         </Link>
@@ -236,12 +236,12 @@ export default function KaigoLP() {
         </div>
       </section>
 
-      <section className="bg-teal-700 py-16 text-center px-6 text-white">
-        <h2 className="text-2xl font-bold mb-3">介護スタッフを、カスハラから守りましょう</h2>
+      <section className="bg-teal-700 py-16 text-center px-4 text-white overflow-x-hidden">
+        <h2 className="text-xl md:text-2xl font-bold mb-3">介護スタッフを、カスハラから守りましょう</h2>
         <p className="text-teal-200 text-sm mb-8">15秒で対応文生成。毅然とした対応で事業所と従業員を守る。</p>
         <Link
           href="/tool"
-          className="inline-block bg-white text-teal-700 font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-50 shadow-lg transition-colors mb-3"
+          className="inline-block bg-white text-teal-700 font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-50 shadow-lg transition-colors mb-3 w-full sm:w-auto"
         >
           無料で3回試す（登録不要）→
         </Link>
