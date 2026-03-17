@@ -3,6 +3,46 @@
 import { useState, useEffect, useRef } from "react";
 import PayjpModal from "@/components/PayjpModal";
 
+function renderMarkdown(text: string): string {
+  const lines = text.split("\n");
+  const result: string[] = [];
+  let inList = false;
+
+  for (const line of lines) {
+    if (/^## (.+)$/.test(line)) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push(line.replace(/^## (.+)$/, '<h3 class="font-bold text-base mt-4 mb-2 text-teal-700 border-b border-teal-200 pb-1">$1</h3>'));
+    } else if (/^# (.+)$/.test(line)) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push(line.replace(/^# (.+)$/, '<h2 class="font-bold text-lg mt-4 mb-2 text-teal-800">$1</h2>'));
+    } else if (/^### (.+)$/.test(line)) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push(line.replace(/^### (.+)$/, '<h4 class="font-semibold text-sm mt-3 mb-1 text-teal-600">$1</h4>'));
+    } else if (/^- (.+)$/.test(line)) {
+      if (!inList) { result.push('<ul class="space-y-1 mb-2">'); inList = true; }
+      const inner = line.replace(/^- /, "").replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>');
+      result.push(`<li class="ml-4 list-disc text-gray-700 text-sm">${inner}</li>`);
+    } else if (/^\d+\.\s/.test(line)) {
+      if (!inList) { result.push('<ul class="space-y-1 mb-2">'); inList = true; }
+      const inner = line.replace(/^\d+\.\s/, "").replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>');
+      result.push(`<li class="ml-4 list-decimal text-gray-700 text-sm">${inner}</li>`);
+    } else if (/^【.+】$/.test(line) || /^■/.test(line) || /^◆/.test(line)) {
+      if (inList) { result.push("</ul>"); inList = false; }
+      const inner = line.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>');
+      result.push(`<p class="font-semibold text-teal-700 text-sm mt-2 mb-1">${inner}</p>`);
+    } else if (line.trim() === "") {
+      if (inList) { result.push("</ul>"); inList = false; }
+      result.push('<div class="mt-2"></div>');
+    } else {
+      if (inList) { result.push("</ul>"); inList = false; }
+      const inner = line.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>');
+      result.push(`<p class="text-gray-700 text-sm leading-relaxed">${inner}</p>`);
+    }
+  }
+  if (inList) result.push("</ul>");
+  return result.join("\n");
+}
+
 const CASE_TYPES = [
   "暴言・威圧",
   "過剰な電話・要求",
@@ -305,9 +345,10 @@ export default function KaigoTool() {
                     <div className="flex justify-end mb-3">
                       <CopyBtn text={tabs[activeTab]} label="📋 コピーする" className="text-teal-600 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-50" />
                     </div>
-                    <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap leading-relaxed min-h-[180px]">
-                      {tabs[activeTab] || "（生成中...）"}
-                    </div>
+                    <div
+                      className="prose prose-sm max-w-none min-h-[180px]"
+                      dangerouslySetInnerHTML={{ __html: tabs[activeTab] ? renderMarkdown(tabs[activeTab]) : "<p class='text-gray-400 text-sm'>（生成中...）</p>" }}
+                    />
                   </div>
                 </div>
 
