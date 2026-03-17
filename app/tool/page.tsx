@@ -200,17 +200,46 @@ export default function KaigoTool() {
 
         {result.length > 0 && (
           <div className="space-y-4">
+            {/* Xシェアボタン（結果上部） */}
+            <div className="flex justify-end">
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  "介護カスハラAIに対応文を作成してもらった！カスハラで悩んでいる介護スタッフの方へ。 #介護カスハラ対策 #カスハラ #介護現場"
+                )}&url=${encodeURIComponent("https://kaigo-custharass-ai.vercel.app")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors"
+              >
+                𝕏 シェアする
+              </a>
+            </div>
             {result.map((section, i) => (
               <div key={i} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
                 <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{section}</div>
-                <button
-                  onClick={() => { navigator.clipboard.writeText(section); }}
-                  className="mt-3 text-xs text-teal-600 hover:underline"
-                >
-                  コピーする
-                </button>
+                <div className="flex items-center gap-3 mt-3">
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(section); }}
+                    className="text-xs text-teal-600 hover:underline"
+                  >
+                    📋 コピーする
+                  </button>
+                </div>
               </div>
             ))}
+            {/* Xシェアボタン（結果下部・CTA） */}
+            <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 text-center">
+              <p className="text-sm font-bold text-teal-800 mb-2">同じ悩みを持つ介護スタッフに届けましょう</p>
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                  "介護現場のカスハラ対応文が15秒で作れるAIを使ってみた。暴言・脅迫・過剰要求に悩んでいる介護スタッフさんに教えてあげたい。 #介護カスハラ対策 #介護 #カスハラ対策"
+                )}&url=${encodeURIComponent("https://kaigo-custharass-ai.vercel.app")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors"
+              >
+                𝕏 でシェアして仲間に教える
+              </a>
+            </div>
             <p className="text-xs text-center text-gray-400 mt-4">
               ※ 本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。
             </p>

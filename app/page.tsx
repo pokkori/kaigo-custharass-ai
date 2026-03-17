@@ -192,6 +192,27 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* 利用者の声 */}
+      <section className="py-16">
+        <div className="max-w-4xl mx-auto px-6">
+          <h2 className="text-2xl font-bold text-center mb-10">介護スタッフの声</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              { role: "訪問介護事業所・管理者・40代", text: "ご家族から毎日10回以上電話がかかってきて、スタッフが精神的に限界でした。対応文を使ってからは、連絡のルールを明確に設定でき、電話の回数が激減しました。" },
+              { role: "デイサービス施設長・50代", text: "「訴える」「監査を呼ぶ」と脅してくる家族への対応に悩んでいました。法的根拠のある毅然とした文書が作れるので、スタッフも自信を持って対応できています。" },
+              { role: "ヘルパー事業所・サービス提供責任者・30代", text: "インシデント記録の書き方がわからず、行政報告のたびに困っていました。このツールで記録テンプレートが即生成されるので、事業所全体の記録品質が上がりました。" },
+            ].map((v, i) => (
+              <div key={i} className="bg-white rounded-xl p-5 border border-gray-200">
+                <div className="flex text-yellow-400 text-sm mb-3">{"★★★★★"}</div>
+                <p className="text-sm text-gray-700 mb-3 leading-relaxed">{v.text}</p>
+                <p className="text-xs text-gray-400">{v.role}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-4">※個人の感想です。効果には個人差があります。</p>
+        </div>
+      </section>
+
       <section className="bg-gray-50 py-16">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-center mb-3">料金プラン</h2>
