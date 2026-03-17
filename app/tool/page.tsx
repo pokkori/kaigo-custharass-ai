@@ -49,17 +49,29 @@ export default function KaigoTool() {
     if (!situation.trim()) { setError("状況を入力してください"); return; }
     setLoading(true);
     setError("");
+    setResult([]);
     try {
       const res = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ caseType, requesterType, severity, situation }),
       });
-      const data = await res.json();
-      if (data.error === "LIMIT_REACHED") { setHitLimit(true); return; }
-      if (!res.ok || data.error) { setError(data.error || "エラーが発生しました"); return; }
-      setResult(parseResult(data.result));
-      const newCount = data.count ?? count + 1;
+      if (!res.ok) {
+        const data = await res.json();
+        if (data.error === "LIMIT_REACHED") { setHitLimit(true); return; }
+        setError(data.error || "エラーが発生しました");
+        return;
+      }
+      const newCount = parseInt(res.headers.get("X-New-Count") || String(count + 1), 10);
+      const reader = res.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullText += decoder.decode(value, { stream: true });
+      }
+      setResult(parseResult(fullText));
       setCount(newCount);
       localStorage.setItem(STORAGE_KEY, String(newCount));
       if (newCount >= FREE_LIMIT) setHitLimit(true);

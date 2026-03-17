@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { isActiveSubscription } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
   const safSituation = situation.replace(/[<>]/g, "");
 
   const prompt = `あなたは介護事業所の管理者向けに、カスタマーハラスメント（カスハラ）対応文を作成する専門AIです。
-厚生労働省ガイドラインおよび2026年度介護運営基準改正（カスハラ対策体制整備の義務化）に準拠した、
+厚生労働省ガイドラインおよび2026年10月介護運営基準改正（カスハラ対策体制整備の義務化）に準拠した、
 法的・実務的に適切な対応文を生成してください。
 
 【カスハラ種別】${caseType || "不明"}
@@ -86,17 +87,39 @@ ${safSituation}
 
 各対応文は実際にそのまま使用できる品質で作成し、事業所側の権利保護と利用者・家族への配慮のバランスを保ってください。`;
 
+  const newCount = cookieCount + 1;
+  const headers: Record<string, string> = {
+    "Content-Type": "text/plain; charset=utf-8",
+    "Transfer-Encoding": "chunked",
+    "X-New-Count": String(newCount),
+    "Set-Cookie": `${COOKIE_KEY}=${newCount}; Max-Age=${60 * 60 * 24 * 30}; Path=/; SameSite=Lax; HttpOnly; Secure`,
+  };
+
   try {
-    const message = await getClient().messages.create({
-      model: "claude-haiku-4-5-20251001",
+    const stream = getClient().messages.stream({
+      model: "claude-sonnet-4-6",
       max_tokens: 2500,
       messages: [{ role: "user", content: prompt }],
     });
-    const text = message.content[0].type === "text" ? message.content[0].text : "";
-    const newCount = cookieCount + 1;
-    const res = NextResponse.json({ result: text, count: newCount });
-    res.cookies.set(COOKIE_KEY, String(newCount), { maxAge: 60 * 60 * 24 * 30, sameSite: "lax", httpOnly: true, secure: true });
-    return res;
+
+    const readableStream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of stream) {
+            if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
+              controller.enqueue(new TextEncoder().encode(chunk.delta.text));
+            }
+          }
+        } catch (err) {
+          console.error(err);
+          controller.error(err);
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(readableStream, { headers });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "AI生成中にエラーが発生しました。しばらく待ってから再試行してください。" }, { status: 500 });
