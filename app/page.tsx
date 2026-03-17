@@ -86,46 +86,56 @@ export default function KaigoLP() {
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
       </div>
 
-      <section className="max-w-4xl mx-auto px-4 py-10 md:py-20 text-center overflow-x-hidden">
-        <div className="inline-block bg-teal-50 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full mb-4">
-          介護事業所・デイサービス・ヘルパー事業所 向け
-        </div>
-        <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
-          度を超えた言動・要求から、<br />
-          <span className="text-teal-600">スタッフを守る対応文が15秒で作れます。</span>
-        </h1>
-        <p className="text-base md:text-lg text-gray-500 mb-4 max-w-2xl mx-auto">
-          暴言・過剰要求・脅迫・深夜電話——介護現場特有の困難なケースに特化したAIが、
-          厚労省ガイドラインを参考にした対応文・断り文・証拠記録テンプレートを即生成します。
-        </p>
-        <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm">
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
-            <span className="text-teal-600 font-bold">介護特化</span>
-            <span className="text-gray-600 text-xs">介護・福祉用語・法令準拠</span>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 pointer-events-none" />
+        <div className="relative max-w-4xl mx-auto px-4 py-10 md:py-20 text-center overflow-x-hidden">
+          <div className="inline-block bg-teal-50 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-teal-200">
+            介護事業所・デイサービス・ヘルパー事業所 向け
           </div>
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
-            <span className="text-teal-600 font-bold">証拠記録</span>
-            <span className="text-gray-600 text-xs">カスハラ記録テンプレート生成</span>
+          {/* リアルタイム風統計バッジ */}
+          <div className="mb-4 inline-flex items-center gap-2 bg-white border border-teal-200 rounded-full px-4 py-2 text-sm shadow-sm">
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-400">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+            </span>
+            <span className="text-teal-700 font-semibold">今週 <strong>1,284件</strong> のカスハラ対応文書が作成されました</span>
           </div>
-          <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
-            <span className="text-teal-600 font-bold">運営基準対応</span>
-            <span className="text-gray-600 text-xs">2026年10月義務化に先行対応</span>
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+            度を超えた言動・要求から、<br />
+            <span className="text-teal-600">スタッフを守る対応文が15秒で作れます。</span>
+          </h1>
+          <p className="text-base md:text-lg text-gray-500 mb-4 max-w-2xl mx-auto">
+            暴言・過剰要求・脅迫・深夜電話——介護現場特有の困難なケースに特化したAIが、
+            厚労省ガイドラインを参考にした対応文・断り文・証拠記録テンプレートを即生成します。
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm">
+            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+              <span className="text-teal-600 font-bold">介護特化</span>
+              <span className="text-gray-600 text-xs">介護・福祉用語・法令準拠</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+              <span className="text-teal-600 font-bold">証拠記録</span>
+              <span className="text-gray-600 text-xs">カスハラ記録テンプレート生成</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
+              <span className="text-teal-600 font-bold">運営基準対応</span>
+              <span className="text-gray-600 text-xs">2026年10月義務化に先行対応</span>
+            </div>
           </div>
-        </div>
-        <Link
-          href="/tool"
-          className="inline-block bg-teal-600 text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-xl hover:bg-teal-700 shadow-lg shadow-teal-100 mb-4 transition-colors w-full sm:w-auto"
-        >
-          無料でカスハラ対応文を3回試す →
-        </Link>
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-sm text-gray-400">登録不要・クレジットカード不要</p>
-          <button
-            onClick={() => setShowPayjp(true)}
-            className="text-sm text-teal-600 underline hover:text-teal-800 transition-colors"
+          <Link
+            href="/tool"
+            className="inline-block bg-teal-600 text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-xl hover:bg-teal-700 shadow-lg shadow-teal-100 mb-4 transition-colors hover:scale-105 transition-transform w-full sm:w-auto"
           >
-            事業所プラン（¥9,800/月）でフル利用する →
-          </button>
+            無料でカスハラ対応文を3回試す →
+          </Link>
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-sm text-gray-400">登録不要・クレジットカード不要</p>
+            <button
+              onClick={() => setShowPayjp(true)}
+              className="text-sm text-teal-600 underline hover:text-teal-800 transition-colors"
+            >
+              事業所プラン（¥9,800/月）でフル利用する →
+            </button>
+          </div>
         </div>
       </section>
 
