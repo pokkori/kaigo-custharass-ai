@@ -316,8 +316,8 @@ export default function KaigoTool() {
                   <p className="text-sm font-bold text-teal-800 mb-3">同じ悩みを持つ介護スタッフに届けましょう</p>
                   <a
                     href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                      `介護カスハラ重度${currentSeverity.score}/10 — AIがカスハラ対応文書を即生成！介護スタッフの方へ。 #介護カスハラ対策 #カスハラ #介護現場`
-                    )}&url=${encodeURIComponent("https://kaigo-custharass-ai.vercel.app")}`}
+                      `「カスハラ深刻度${currentSeverity.score}/10... 対応文書が30秒で完成した😮 介護現場の理不尽に困ってる方へ → https://kaigo-custharass-ai.vercel.app #介護カスハラ対策 #カスハラ #介護現場`
+                    )}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg hover:scale-105 transition-transform"
