@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import PayjpModal from "@/components/PayjpModal";
+import { track } from '@vercel/analytics';
 
 function renderMarkdown(text: string): string {
   const lines = text.split("\n");
@@ -127,6 +128,7 @@ export default function KaigoTool() {
 
   const handleGenerate = async () => {
     if (!situation.trim()) { setError("状況を入力してください"); return; }
+    track('ai_generated', { service: '介護カスハラAI' });
     setLoading(true);
     setError("");
     setTabs(null);
@@ -157,7 +159,7 @@ export default function KaigoTool() {
       setActiveTab("💬 口頭スクリプト");
       setCount(newCount);
       localStorage.setItem(STORAGE_KEY, String(newCount));
-      if (newCount >= FREE_LIMIT) setHitLimit(true);
+      if (newCount >= FREE_LIMIT) { track('paywall_shown', { service: '介護カスハラAI' }); setHitLimit(true); }
 
       // 達成感バナー表示
       setCompletionVisible(true);
@@ -180,7 +182,7 @@ export default function KaigoTool() {
             事業所プランで介護カスハラ対応文を無制限に生成できます。
           </p>
           <button
-            onClick={() => setShowPayjp(true)}
+            onClick={() => { track('upgrade_click', { service: '介護カスハラAI', plan: 'business' }); setShowPayjp(true); }}
             className="block w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors mb-3"
           >
             事業所プランで無制限利用する ¥9,800/月
