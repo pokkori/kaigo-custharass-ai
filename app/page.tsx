@@ -49,7 +49,7 @@ export default function KaigoLP() {
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
 
   useEffect(() => {
-    const target = new Date("2026-04-01");
+    const target = new Date("2026-10-01");
     const diff = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     setDaysLeft(Math.max(0, diff));
   }, []);
@@ -82,7 +82,7 @@ export default function KaigoLP() {
         ⚠️ 本サービスはAIによる参考情報の提供です。法的対応・訴訟については弁護士・社会保険労務士にご相談ください。
       </div>
       <div className="bg-teal-700 text-white text-center text-sm font-semibold py-2.5 px-4">
-        🚨 介護運営基準改正・カスハラ体制整備が義務化見込み（2026年度）
+        🚨 介護運営基準改正・カスハラ体制整備が義務化（2026年10月1日施行）
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
       </div>
 
@@ -109,7 +109,7 @@ export default function KaigoLP() {
           </div>
           <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-full px-3 py-1.5 shadow-sm">
             <span className="text-teal-600 font-bold">運営基準対応</span>
-            <span className="text-gray-600 text-xs">2026年度義務化に先行対応</span>
+            <span className="text-gray-600 text-xs">2026年10月義務化に先行対応</span>
           </div>
         </div>
         <Link
