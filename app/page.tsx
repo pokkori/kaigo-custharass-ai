@@ -139,6 +139,38 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* ペルソナ共感セクション */}
+      <section className="py-14 bg-white">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-2xl font-bold text-center mb-2 text-gray-900">こんな状況で困っていませんか？</h2>
+          <p className="text-center text-gray-400 text-sm mb-8">介護現場の管理者・施設長・サービス提供責任者からよく聞く声です</p>
+          <div className="space-y-3">
+            {[
+              "「毎日10回以上電話してくる家族への対応で、スタッフが限界です」",
+              "「『訴える』『監査を呼ぶ』と脅してくる利用者家族への書面をどう書けばいいかわからない」",
+              "「暴言・怒鳴りに対して毅然と断りたいが、文書化の仕方がわからない」",
+              "「インシデント記録を行政報告に使えるレベルで書ける自信がない」",
+              "「カスハラを受けたスタッフが精神的に追い詰められているが、会社として動けていない」",
+            ].map((v, i) => (
+              <div key={i} className="flex items-start gap-3 bg-red-50 border border-red-100 rounded-xl px-5 py-4">
+                <span className="text-red-400 font-bold text-lg mt-0.5 shrink-0">✗</span>
+                <p className="text-sm text-gray-700 leading-relaxed">{v}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8 bg-teal-50 border border-teal-200 rounded-xl p-6 text-center">
+            <p className="text-teal-800 font-bold text-base mb-2">介護カスハラAIが、これら全てを解決します</p>
+            <p className="text-sm text-teal-700">状況を入力するだけで、厚労省ガイドライン準拠の対応文・記録テンプレートが15秒で生成されます。</p>
+            <Link
+              href="/tool"
+              className="inline-block mt-4 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+            >
+              無料で試してみる（3回・登録不要）→
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-gray-50 py-16">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-center mb-3">介護現場のカスハラは「特殊」です</h2>
@@ -268,21 +300,29 @@ export default function KaigoLP() {
       </section>
 
       <section className="bg-teal-700 py-16 text-center px-4 text-white overflow-x-hidden">
-        <h2 className="text-xl md:text-2xl font-bold mb-3">介護スタッフを、カスハラから守りましょう</h2>
-        <p className="text-teal-200 text-sm mb-8">15秒で対応文生成。毅然とした対応で事業所と従業員を守る。</p>
-        <Link
-          href="/tool"
-          className="inline-block bg-white text-teal-700 font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-50 shadow-lg transition-colors mb-3 w-full sm:w-auto"
-        >
-          無料で3回試す（登録不要）→
-        </Link>
-        <div>
-          <button
-            onClick={() => setShowPayjp(true)}
-            className="text-teal-200 text-sm underline hover:text-white transition-colors"
+        <div className="max-w-2xl mx-auto">
+          <p className="text-teal-200 text-sm font-semibold mb-2">2026年10月 義務化まで残りわずか</p>
+          <h2 className="text-xl md:text-2xl font-bold mb-3">スタッフを守る対応文が、今日から使えます</h2>
+          <p className="text-teal-200 text-sm mb-6">「また暴言を受けた」「また家族から電話がきた」——その度に一人で対応しなくていい。<br className="hidden md:block" />AIが毅然とした対応文と証拠記録テンプレートを即生成します。</p>
+          <Link
+            href="/tool"
+            className="inline-block bg-white text-teal-700 font-bold text-lg px-8 py-4 rounded-xl hover:bg-teal-50 shadow-lg transition-colors mb-3 w-full sm:w-auto"
           >
-            事業所プラン（¥9,800/月）でフル利用する →
-          </button>
+            無料で3回試す（登録不要）→
+          </Link>
+          <div className="mt-2">
+            <button
+              onClick={() => setShowPayjp(true)}
+              className="text-teal-100 text-sm underline hover:text-white transition-colors"
+            >
+              今すぐ事業所プラン（¥9,800/月）で無制限利用する →
+            </button>
+          </div>
+          <div className="flex justify-center gap-6 mt-6 text-teal-200 text-xs">
+            <span>✓ 登録不要</span>
+            <span>✓ 介護保険法準拠</span>
+            <span>✓ いつでも解約可</span>
+          </div>
         </div>
       </section>
 
