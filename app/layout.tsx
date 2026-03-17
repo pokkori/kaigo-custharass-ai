@@ -21,6 +21,7 @@ export const metadata: Metadata = {
     siteName: "介護カスハラAI",
     locale: "ja_JP",
     type: "website",
+    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "介護カスハラAI" }],
   },
   twitter: {
     card: "summary_large_image",
