@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import PayjpModal from "@/components/PayjpModal";
+import KomojuButton from "@/components/KomojuButton";
 import { track } from '@vercel/analytics';
 
 function renderMarkdown(text: string): string {
@@ -181,12 +182,11 @@ export default function KaigoTool() {
           <p className="text-gray-500 text-sm mb-6">
             事業所プランで介護カスハラ対応文を無制限に生成できます。
           </p>
-          <button
-            onClick={() => { track('upgrade_click', { service: '介護カスハラAI', plan: 'business' }); setShowPayjp(true); }}
-            className="block w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors mb-3"
-          >
-            事業所プランで無制限利用する ¥9,800/月
-          </button>
+          <KomojuButton
+            planId="business"
+            planLabel="事業所プラン ¥9,800/月"
+            className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mb-3"
+          />
           {/* 安心保証バッジ */}
           <div className="flex items-center justify-center gap-4 mt-3">
             <div className="flex items-center gap-1 text-xs text-slate-400">
