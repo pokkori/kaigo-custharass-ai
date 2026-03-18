@@ -417,6 +417,20 @@ export default function KaigoTool() {
                   </a>
                   <p className="text-xs text-slate-400 text-center mt-2">※ 広告・PR掲載</p>
                 </div>
+                {/* ストレスケアアフィリエイト（A8.net SOELU） */}
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                  <p className="text-sm font-black text-green-900 mb-1">🧘 介護職員のストレス発散・体のケアに</p>
+                  <p className="text-xs text-green-700 mb-3">毎日の緊張をほぐすオンラインヨガ。自宅で好きな時間に受講でき、介護職のメンタルリセットにおすすめです。</p>
+                  <a href="https://px.a8.net/svt/ejp?a8mat=4AZIOF+8OKLDE+4EPM+63OY9" target="_blank" rel="noopener noreferrer sponsored"
+                    className="flex items-center justify-between bg-white border border-green-300 rounded-xl px-3 py-2.5 hover:bg-green-50 transition-colors">
+                    <div>
+                      <div className="text-sm font-bold text-slate-800">SOELU（ソエル）オンラインヨガ</div>
+                      <div className="text-xs text-slate-500">月額¥3,000〜 • 自宅で完結 • 初回30日無料</div>
+                    </div>
+                    <span className="text-green-600 font-bold text-xs bg-green-100 px-2 py-1 rounded-full shrink-0">無料で試す →</span>
+                  </a>
+                  <p className="text-xs text-slate-400 text-center mt-2">※ 広告・PR掲載</p>
+                </div>
                 <p className="text-xs text-center text-gray-400">
                   ※ 本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。
                 </p>
