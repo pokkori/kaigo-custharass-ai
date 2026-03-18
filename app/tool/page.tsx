@@ -402,6 +402,21 @@ export default function KaigoTool() {
                     ))}
                   </ol>
                 </div>
+                {/* 専門家相談アフィリエイト（A8.net申請後URLを差し替え） */}
+                <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+                  <p className="text-sm font-black text-teal-900 mb-1">⚖️ 深刻なケースは弁護士に相談</p>
+                  <p className="text-xs text-teal-700 mb-3">カスハラ・不当要求が悪化している場合は弁護士が最短解決策。施設顧問弁護士の費用目安も確認できます。</p>
+                  {/* TODO: Replace href with A8.net affiliate URL after approval */}
+                  <a href="https://www.bengo4.com/c_1011/" target="_blank" rel="noopener noreferrer sponsored"
+                    className="flex items-center justify-between bg-white border border-teal-300 rounded-xl px-3 py-2.5 hover:bg-teal-50 transition-colors">
+                    <div>
+                      <div className="text-sm font-bold text-slate-800">弁護士ドットコム</div>
+                      <div className="text-xs text-slate-500">初回無料 • 介護施設向け顧問契約も対応</div>
+                    </div>
+                    <span className="text-teal-600 font-bold text-xs bg-teal-100 px-2 py-1 rounded-full shrink-0">無料相談 →</span>
+                  </a>
+                  <p className="text-xs text-slate-400 text-center mt-2">※ 広告・PR掲載</p>
+                </div>
                 <p className="text-xs text-center text-gray-400">
                   ※ 本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。
                 </p>
