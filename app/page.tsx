@@ -326,6 +326,25 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      <section className="py-12 bg-gray-50">
+        <div className="max-w-2xl mx-auto px-4">
+          <h2 className="text-xl font-bold text-center text-gray-800 mb-6">よくある質問</h2>
+          <div className="space-y-4">
+            {[
+              { q: "どんなカスハラ事例に対応していますか？", a: "怒鳴り・暴言・長時間拘束・土下座要求・SNS投稿脅迫・身体的暴力の前段階まで、介護現場で実際に起きる事例に広く対応しています。" },
+              { q: "出力結果はそのまま使えますか？", a: "対応スクリプト・記録テンプレートはそのままご活用いただけます。ただし法的手続き（警察通報・成年後見申立等）は必ず専門家にご相談ください。" },
+              { q: "カスハラと正当な苦情の違いは？", a: "AIがカスハラ度（高/中/低）を判定します。利用者・家族の正当な権利行使と、過剰要求・威圧行為を区別して対応策を提案します。" },
+              { q: "料金はいくらですか？", a: "月額¥4,900（プレミアム）で全機能が使えます。組織・施設での複数アカウントご利用はX @levona_designまでお問い合わせください。" },
+            ].map((faq, i) => (
+              <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
+                <p className="font-semibold text-teal-800 mb-2 text-sm">Q. {faq.q}</p>
+                <p className="text-sm text-gray-600">A. {faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <footer className="border-t py-6 text-center text-xs text-gray-400">
         <div className="space-x-4 mb-2">
           <Link href="/legal" className="hover:underline">特定商取引法に基づく表記</Link>
