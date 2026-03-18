@@ -386,6 +386,22 @@ export default function KaigoTool() {
                     𝕏 でシェアして仲間に教える
                   </a>
                 </div>
+                {/* 次のアクション3選 */}
+                <div className="bg-white border border-teal-200 rounded-xl p-4">
+                  <p className="text-sm font-bold text-teal-800 mb-3">📋 次にやるべきこと3選</p>
+                  <ol className="space-y-2">
+                    {[
+                      { icon: "📝", text: "上司・管理者に今回のケースを口頭で報告する" },
+                      { icon: "🗂️", text: "インシデント記録シートに日時・状況・対応を記録する" },
+                      { icon: "📞", text: "深刻なケースは施設の顧問弁護士・警察に相談する" },
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
+                        <span className="text-lg leading-none">{item.icon}</span>
+                        <span>{i + 1}. {item.text}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
                 <p className="text-xs text-center text-gray-400">
                   ※ 本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。
                 </p>
