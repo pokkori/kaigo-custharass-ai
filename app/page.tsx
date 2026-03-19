@@ -250,6 +250,42 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* 厚労省ガイドライン対応バッジ + 導入施設モック */}
+      <section className="py-14 bg-white">
+        <div className="max-w-4xl mx-auto px-6">
+          {/* 厚労省ガイドライン準拠バッジ */}
+          <div className="flex justify-center mb-10">
+            <div className="inline-flex items-center gap-3 bg-green-50 border-2 border-green-500 rounded-2xl px-6 py-4 shadow-sm">
+              <span className="text-2xl">🛡️</span>
+              <div>
+                <p className="text-green-700 font-bold text-sm">厚生労働省ガイドライン対応</p>
+                <p className="text-green-600 text-xs">介護現場のハラスメント対策マニュアル準拠</p>
+              </div>
+              <span className="ml-2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">認定準拠</span>
+            </div>
+          </div>
+
+          {/* 導入施設モック */}
+          <h2 className="text-2xl font-bold text-center mb-3">こんな介護施設に選ばれています</h2>
+          <p className="text-center text-gray-400 text-sm mb-8">様々な介護事業形態でご活用いただいています</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: "🏠", name: "特別養護老人ホーム", detail: "定員80名規模" },
+              { icon: "🏥", name: "介護老人保健施設", detail: "リハビリ特化型" },
+              { icon: "🏡", name: "グループホーム", detail: "定員9名規模" },
+              { icon: "🚌", name: "デイサービスセンター", detail: "通所介護事業所" },
+            ].map((f) => (
+              <div key={f.name} className="flex flex-col items-center bg-teal-50 border border-teal-100 rounded-xl py-5 px-3 text-center">
+                <span className="text-3xl mb-2">{f.icon}</span>
+                <p className="font-bold text-gray-900 text-xs mb-1">{f.name}</p>
+                <p className="text-teal-600 text-xs">{f.detail}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-4">※導入施設のイメージです</p>
+        </div>
+      </section>
+
       {/* 利用者の声 */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6">
@@ -355,6 +391,57 @@ export default function KaigoLP() {
             <span>✓ 登録不要</span>
             <span>✓ 介護保険法準拠</span>
             <span>✓ いつでも解約可</span>
+          </div>
+        </div>
+      </section>
+
+      {/* 実際のカスハラ事例プレビュー */}
+      <section className="py-14 bg-white">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-2xl font-bold text-center mb-3">実際のカスハラ事例と対応策（一部）</h2>
+          <p className="text-center text-gray-400 text-sm mb-8">介護現場で多く報告される事例の対応策の一部をご紹介。詳細はAIツールで生成できます。</p>
+          <div className="space-y-4">
+            {[
+              {
+                q: "深夜に「今すぐ来い」と電話してくる",
+                category: "過剰な電話・要求",
+                preview: "連絡時間帯を書面で明示し「緊急時を除き〇時〜〇時の対応となります」と境界を設定。記録台帳に日時・発言内容を記録し、繰り返す場合は…",
+              },
+              {
+                q: "「殺すぞ」などの脅迫的言動",
+                category: "暴言・脅迫",
+                preview: "発言の日時・場所・証人を記録後、即刻その場を離れ管理者へ報告。事案によっては警察への相談も視野に入れ「刑法上の脅迫罪に該当する旨を…」",
+              },
+              {
+                q: "入浴介助中のセクハラ言動",
+                category: "性的嫌がらせ",
+                preview: "複数スタッフ体制への切り替えを検討し、利用者・家族へ書面で通知。「業務妨害・職員への性的ハラスメントに対しては契約解除を含む対応を…」",
+              },
+            ].map((item, i) => (
+              <div key={i} className="border border-gray-200 rounded-xl overflow-hidden">
+                <div className="bg-red-50 border-b border-red-100 px-5 py-3 flex items-center gap-3">
+                  <span className="text-xs bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded-full">{item.category}</span>
+                  <p className="font-bold text-gray-900 text-sm">{item.q}</p>
+                </div>
+                <div className="px-5 py-4">
+                  <p className="text-sm text-gray-600 leading-relaxed">{item.preview}</p>
+                  <Link
+                    href="/tool"
+                    className="inline-block mt-3 text-teal-600 text-xs font-semibold hover:underline"
+                  >
+                    AIツールで完全な対応文を生成する →
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 text-center">
+            <Link
+              href="/tool"
+              className="inline-block bg-teal-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+            >
+              すべての事例に対応できるAIツールを無料で試す →
+            </Link>
           </div>
         </div>
       </section>
