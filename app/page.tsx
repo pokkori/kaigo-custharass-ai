@@ -3,6 +3,79 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import KomojuButton from "@/components/KomojuButton";
 
+// 法改正年表データ
+const LAW_TIMELINE = [
+  {
+    year: "2020年",
+    label: "厚労省ガイドライン策定",
+    color: "bg-gray-400",
+    text: "「介護現場におけるハラスメント対策マニュアル」公表。事業所の自主対応を促す指針が整備される。",
+  },
+  {
+    year: "2022年",
+    label: "省令改正（運営基準追加）",
+    color: "bg-yellow-500",
+    text: "介護保険施設・事業所の運営基準に「利用者・家族等からのハラスメント対策整備義務」が追加。努力義務として運営規程への記載が求められるように。",
+  },
+  {
+    year: "2024年",
+    label: "改正労働施策総合推進法 成立",
+    color: "bg-orange-500",
+    text: "「顧客等からの著しい迷惑行為（カスタマーハラスメント）」への対策が事業者の義務として法律に明記。介護事業所も対象に含まれる。",
+  },
+  {
+    year: "2026年10月",
+    label: "義務化施行（現在準備中）",
+    color: "bg-red-600",
+    text: "改正労働施策総合推進法第30条の7・介護運営基準改正が施行予定。未対応の場合、行政指導・監査リスクが生じる。カスハラ方針の明文化・研修実施・相談窓口設置が必須に。",
+    current: true,
+  },
+];
+
+// カスハラ対応フローデータ
+const FLOW_TYPES: Record<string, { label: string; color: string; steps: { step: string; action: string; doc: string }[] }> = {
+  abuse: {
+    label: "暴言・威圧",
+    color: "bg-red-600",
+    steps: [
+      { step: "1. 即時記録", action: "発言の日時・場所・証人名・具体的な言葉をメモ帳に即記録", doc: "インシデント記録テンプレート" },
+      { step: "2. 管理者報告", action: "その場を離れ、速やかに上長・管理者へ口頭報告。一人で抱え込まない", doc: "内部報告書テンプレート" },
+      { step: "3. 書面警告", action: "繰り返す場合、事業所名義で「行為の禁止と再発時の対応」を書面で通知", doc: "警告書テンプレート" },
+      { step: "4. 契約解除判断", action: "改善なき場合、弁護士相談のうえで契約解除を検討。記録が証拠になる", doc: "契約解除予告書テンプレート" },
+    ],
+  },
+  violence: {
+    label: "身体的暴力",
+    color: "bg-purple-700",
+    steps: [
+      { step: "1. 安全確保・退避", action: "その場を即離れる。負傷した場合は医療機関へ。複数体制に切り替え", doc: "体制変更通知書テンプレート" },
+      { step: "2. 警察への相談検討", action: "暴行罪・傷害罪に該当する可能性あり。被害届の提出を検討する", doc: "警察相談記録テンプレート" },
+      { step: "3. 家族への通知", action: "利用者の行為を家族に書面で通知。「再発時は契約解除」を明記", doc: "家族通知書テンプレート" },
+      { step: "4. 保険請求・記録整備", action: "労災申請・損害賠償に向けた証拠書類を整備。AI記録ツールを活用", doc: "証拠保全チェックリスト" },
+    ],
+  },
+  sexual: {
+    label: "セクシャルハラスメント",
+    color: "bg-pink-600",
+    steps: [
+      { step: "1. 即時報告・体制変更", action: "直ちに管理者へ報告。入浴・更衣介助は複数体制・同性介護に切り替える", doc: "体制変更通知書テンプレート" },
+      { step: "2. 詳細記録", action: "言動の内容・日時・状況を可能な限り詳細に記録。証人がいれば証言を記録", doc: "ハラスメント記録書テンプレート" },
+      { step: "3. 家族・本人への通知", action: "行為の事実と「再発した場合の契約解除」を書面で家族・本人に通知", doc: "再発防止通知書テンプレート" },
+      { step: "4. 継続観察・対応", action: "改善なき場合は契約解除手続きへ。弁護士への相談も検討する", doc: "契約解除予告書テンプレート" },
+    ],
+  },
+  claim: {
+    label: "不当クレーム・脅迫",
+    color: "bg-amber-600",
+    steps: [
+      { step: "1. 記録・録音", action: "電話・対面での発言を記録。可能な場合は録音（事前に告知）も有効", doc: "クレーム記録テンプレート" },
+      { step: "2. 毅然とした書面対応", action: "口頭ではなく書面で回答。感情的にならず、事実と規程に基づいた文章で", doc: "クレーム回答書テンプレート" },
+      { step: "3. 要求の明確化", action: "「何を求めているか」を書面で確認。曖昧な脅迫には具体化を求める", doc: "要求確認書テンプレート" },
+      { step: "4. 弁護士相談", action: "「訴える」「監査に報告する」は法的措置の示唆。弁護士への相談が有効", doc: "法的対応相談記録テンプレート" },
+    ],
+  },
+};
+
 const PAYJP_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYJP_PUBLIC_KEY ?? "";
 
 const CARE_CASES = [
@@ -47,6 +120,7 @@ const CARE_CASES = [
 export default function KaigoLP() {
   const [showPayjp, setShowPayjp] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
+  const [selectedFlowType, setSelectedFlowType] = useState<string | null>(null);
 
   useEffect(() => {
     const target = new Date("2026-10-01");
@@ -622,6 +696,164 @@ export default function KaigoLP() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* インタラクティブ対応フロー */}
+      <section className="py-14 bg-teal-50 border-t border-teal-100">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">カスハラ種別別 対応フロー</h2>
+            <p className="text-gray-500 text-sm">種別を選択すると、具体的な対応ステップと必要な書類が表示されます</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            {Object.entries(FLOW_TYPES).map(([key, val]) => (
+              <button
+                key={key}
+                onClick={() => setSelectedFlowType(selectedFlowType === key ? null : key)}
+                className={`font-bold px-5 py-2.5 rounded-full text-sm transition-colors border-2 ${selectedFlowType === key ? `${val.color} text-white border-transparent` : "bg-white text-gray-700 border-gray-200 hover:border-teal-400"}`}
+              >
+                {val.label}
+              </button>
+            ))}
+          </div>
+          {selectedFlowType && FLOW_TYPES[selectedFlowType] && (
+            <div className="bg-white border border-teal-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className={`${FLOW_TYPES[selectedFlowType].color} text-white px-6 py-3 flex items-center gap-2`}>
+                <span className="font-bold">{FLOW_TYPES[selectedFlowType].label} — 対応フロー</span>
+              </div>
+              <div className="p-6 space-y-4">
+                {FLOW_TYPES[selectedFlowType].steps.map((s, i) => (
+                  <div key={i} className="flex items-start gap-4">
+                    <div className="w-8 h-8 bg-teal-600 text-white rounded-full flex items-center justify-center font-black text-sm shrink-0">{i + 1}</div>
+                    <div className="flex-1">
+                      <p className="font-bold text-gray-900 text-sm mb-1">{s.step}</p>
+                      <p className="text-gray-700 text-sm mb-2 leading-relaxed">{s.action}</p>
+                      <span className="inline-flex items-center gap-1 text-xs bg-teal-50 text-teal-700 border border-teal-200 rounded-full px-3 py-1 font-medium">
+                        📄 {s.doc}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-4 border-t border-teal-100 text-center">
+                  <Link href="/tool" className="inline-block bg-teal-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm">
+                    このフローの書類をAIで生成する →
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+          {!selectedFlowType && (
+            <div className="bg-white border border-dashed border-teal-300 rounded-2xl p-8 text-center text-teal-400">
+              <p className="font-bold text-sm">上のボタンでカスハラ種別を選択してください</p>
+              <p className="text-xs mt-1">対応フローと必要書類が自動的に展開されます</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 法改正2024年タイムライン */}
+      <section className="py-14 bg-white border-t border-gray-100">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">法改正タイムライン</h2>
+            <p className="text-gray-500 text-sm">介護カスハラ対策に関する法令・ガイドラインの変遷</p>
+          </div>
+          <div className="relative">
+            <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gray-200"></div>
+            <div className="space-y-6">
+              {LAW_TIMELINE.map((item, i) => (
+                <div key={i} className="flex items-start gap-5 relative">
+                  <div className={`w-12 h-12 ${item.color} text-white rounded-full flex items-center justify-center text-xs font-black shrink-0 z-10 shadow-sm`}>
+                    {item.year.replace("年", "").replace("0月", "")}
+                  </div>
+                  <div className={`flex-1 rounded-xl p-4 border ${item.current ? "bg-red-50 border-red-300" : "bg-gray-50 border-gray-200"}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-gray-900 text-sm">{item.year}</span>
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${item.current ? "bg-red-600 text-white" : "bg-gray-300 text-gray-700"}`}>{item.label}</span>
+                      {item.current && <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold animate-pulse">現在準備中</span>}
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{item.text}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mt-8 bg-teal-50 border border-teal-200 rounded-xl p-5 text-center">
+            <p className="font-bold text-teal-900 text-sm mb-2">2026年10月の義務化まで残りわずか。今すぐ対応文書を準備しましょう。</p>
+            <Link href="/tool" className="inline-block bg-teal-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm">
+              義務化対応文書をAIで無料生成 →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 事業所向けマニュアルDL */}
+      <section className="py-10 bg-gray-800 text-white">
+        <div className="max-w-3xl mx-auto px-6 text-center">
+          <p className="text-gray-400 text-xs font-bold tracking-widest uppercase mb-2">無料ダウンロード</p>
+          <h2 className="text-xl font-bold mb-2">介護事業所向け カスハラ対応マニュアル（テキスト版）</h2>
+          <p className="text-gray-300 text-sm mb-5">カスハラの定義・対応フロー・証拠保全方法・義務化チェックリストをまとめたテキストマニュアルです。スタッフへの周知・研修資料としてご活用ください。</p>
+          <button
+            onClick={() => {
+              const content = `■ 介護事業所向け カスハラ対応マニュアル（簡易版）
+作成：介護カスハラAI / ポッコリラボ
+https://kaigo-custharass-ai.vercel.app
+
+━━━━━━━━━━━━━━━━━━━━━━━
+1. カスハラの定義
+━━━━━━━━━━━━━━━━━━━━━━━
+利用者・家族等から業務を遂行する上で著しく支障をきたすような行為のこと。
+正当な苦情・改善要望とは区別して対応します。
+
+【主な種類】
+・暴言・威圧（怒鳴り・脅迫的発言）
+・身体的暴力
+・セクシャルハラスメント
+・過剰な電話・要求
+・不当クレーム・脅迫
+
+━━━━━━━━━━━━━━━━━━━━━━━
+2. 発生時の基本対応フロー
+━━━━━━━━━━━━━━━━━━━━━━━
+STEP1: 安全確保（必要なら退避）
+STEP2: 管理者への即時報告
+STEP3: インシデント記録（日時・場所・発言内容・証人）
+STEP4: 書面による警告・通知
+STEP5: 弁護士相談（訴訟リスクがある場合）
+STEP6: 契約解除の検討（改善なき場合）
+
+━━━━━━━━━━━━━━━━━━━━━━━
+3. 2026年10月義務化 対応チェックリスト
+━━━━━━━━━━━━━━━━━━━━━━━
+□ カスハラ方針の明文化（就業規則・重要事項説明書への記載）
+□ カスハラの定義・禁止行為の全職員への周知・研修実施
+□ 相談窓口の設置と担当者の指名・教育
+□ 対応フロー（記録→報告→エスカレーション）の整備
+□ 悪質ケースへの具体的対処方針の文書化
+
+━━━━━━━━━━━━━━━━━━━━━━━
+4. AIツールの活用
+━━━━━━━━━━━━━━━━━━━━━━━
+介護カスハラAIを活用することで、上記の各種書類・対応文書を
+状況を入力するだけでAIが即座に生成します。
+https://kaigo-custharass-ai.vercel.app/tool
+
+※本マニュアルはAIによる参考情報です。実際の対応は管理者・専門家にご相談ください。`;
+              const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url;
+              a.download = "介護カスハラ対応マニュアル_簡易版.txt";
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
+            className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white font-bold px-8 py-3 rounded-xl transition-colors"
+          >
+            <span>📥</span>
+            <span>カスハラ対応マニュアルをダウンロード（無料・テキスト版）</span>
+          </button>
+          <p className="text-gray-500 text-xs mt-3">テキストファイル形式 · 登録不要 · 無料</p>
         </div>
       </section>
 
