@@ -61,9 +61,23 @@ export default function KaigoLP() {
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
             <button onClick={() => setShowPayjp(false)} className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
             <div className="text-3xl mb-3 text-center">🏥</div>
-            <h2 className="text-lg font-bold mb-2 text-center">介護事業所プラン</h2>
-            <p className="text-sm text-gray-500 mb-4 text-center">月額¥9,800で無制限利用</p>
-            <KomojuButton planId="business" planLabel="介護事業所プラン ¥9,800/月を始める" className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 disabled:opacity-50" />
+            <h2 className="text-lg font-bold mb-2 text-center">プランを選択</h2>
+            <p className="text-sm text-gray-500 mb-4 text-center">ご利用状況に合わせてお選びください</p>
+            <div className="space-y-3">
+              <div className="border rounded-xl p-4">
+                <p className="font-bold text-gray-900 text-sm mb-1">個人プラン <span className="text-teal-600">¥2,980/月</span></p>
+                <p className="text-xs text-gray-500 mb-2">個人スタッフ・ヘルパー向け</p>
+                <KomojuButton planId="personal" planLabel="個人プラン ¥2,980/月を始める" className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm" />
+              </div>
+              <div className="border-2 border-teal-600 rounded-xl p-4 bg-teal-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-bold text-gray-900 text-sm">事業所プラン <span className="text-teal-600">¥9,800/月</span></p>
+                  <span className="text-xs bg-teal-600 text-white px-2 py-0.5 rounded-full">人気</span>
+                </div>
+                <p className="text-xs text-gray-500 mb-2">事業所・施設単位での利用</p>
+                <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm" />
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -135,7 +149,7 @@ export default function KaigoLP() {
               onClick={() => setShowPayjp(true)}
               className="text-sm text-teal-600 underline hover:text-teal-800 transition-colors"
             >
-              事業所プラン（¥9,800/月）でフル利用する →
+              個人¥2,980 / 事業所¥9,800でフル利用する →
             </button>
           </div>
         </div>
@@ -260,14 +274,14 @@ export default function KaigoLP() {
       <section className="bg-gray-50 py-16">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-center mb-3">料金プラン</h2>
-          <p className="text-center text-gray-500 text-sm mb-10">介護事業所の規模に合わせた2プラン</p>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="border-2 border-gray-200 rounded-2xl p-8 bg-white">
-              <p className="text-gray-500 font-bold mb-2">スタータープラン</p>
-              <p className="text-4xl font-black text-gray-900 mb-1">¥9,800<span className="text-base font-normal text-gray-500">/月</span></p>
-              <p className="text-gray-400 text-sm mb-6">1事業所向け</p>
+          <p className="text-center text-gray-500 text-sm mb-10">利用シーンに合わせた3プラン</p>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="border-2 border-gray-200 rounded-2xl p-6 bg-white">
+              <p className="text-gray-500 font-bold mb-2">個人プラン</p>
+              <p className="text-4xl font-black text-gray-900 mb-1">¥2,980<span className="text-base font-normal text-gray-500">/月</span></p>
+              <p className="text-gray-400 text-sm mb-6">個人スタッフ・ヘルパー向け</p>
               <ul className="space-y-3 text-sm text-gray-700 mb-8">
-                {["カスハラ対応文 月100件生成", "証拠記録テンプレート", "介護特化プロンプト対応", "いつでも解約可能"].map((f) => (
+                {["カスハラ対応文 月30件生成", "証拠記録テンプレート", "介護特化プロンプト対応", "いつでも解約可能"].map((f) => (
                   <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold">✓</span>{f}</li>
                 ))}
               </ul>
@@ -278,13 +292,30 @@ export default function KaigoLP() {
                 申し込む
               </button>
             </div>
-            <div className="border-2 border-teal-600 rounded-2xl p-8 bg-teal-50 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-xs font-bold px-4 py-1 rounded-full">複数事業所向け</div>
-              <p className="text-teal-700 font-bold mb-2">チェーンプラン</p>
+            <div className="border-2 border-teal-600 rounded-2xl p-6 bg-teal-50 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-xs font-bold px-4 py-1 rounded-full">人気</div>
+              <p className="text-teal-700 font-bold mb-2">事業所プラン</p>
+              <p className="text-4xl font-black text-gray-900 mb-1">¥9,800<span className="text-base font-normal text-gray-500">/月</span></p>
+              <p className="text-gray-400 text-sm mb-6">1事業所向け</p>
+              <ul className="space-y-3 text-sm text-gray-700 mb-8">
+                {["カスハラ対応文 月100件生成", "証拠記録テンプレート", "介護特化プロンプト対応", "いつでも解約可能"].map((f) => (
+                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold">✓</span>{f}</li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setShowPayjp(true)}
+                className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors"
+              >
+                申し込む
+              </button>
+            </div>
+            <div className="border-2 border-gray-200 rounded-2xl p-6 bg-white relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-600 text-white text-xs font-bold px-4 py-1 rounded-full">複数事業所向け</div>
+              <p className="text-gray-700 font-bold mb-2">チェーンプラン</p>
               <p className="text-4xl font-black text-gray-900 mb-1">要相談</p>
               <p className="text-gray-400 text-sm mb-6">複数事業所・法人一括契約</p>
               <ul className="space-y-3 text-sm text-gray-700 mb-8">
-                {["スタータープラン全機能", "複数事業所の一括管理", "スタッフ研修用マニュアル生成", "優先サポート・訪問研修相談可"].map((f) => (
+                {["事業所プラン全機能", "複数事業所の一括管理", "スタッフ研修用マニュアル生成", "優先サポート・訪問研修相談可"].map((f) => (
                   <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold">✓</span>{f}</li>
                 ))}
               </ul>
@@ -292,7 +323,7 @@ export default function KaigoLP() {
                 href="https://x.com/levona_design"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors"
+                className="block w-full text-center bg-gray-700 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors"
               >
                 Xにてお問い合わせ →
               </a>
@@ -317,7 +348,7 @@ export default function KaigoLP() {
               onClick={() => setShowPayjp(true)}
               className="text-teal-100 text-sm underline hover:text-white transition-colors"
             >
-              今すぐ事業所プラン（¥9,800/月）で無制限利用する →
+              今すぐプランを選んで無制限利用する（個人¥2,980〜）→
             </button>
           </div>
           <div className="flex justify-center gap-6 mt-6 text-teal-200 text-xs">
@@ -336,7 +367,7 @@ export default function KaigoLP() {
               { q: "どんなカスハラ事例に対応していますか？", a: "怒鳴り・暴言・長時間拘束・土下座要求・SNS投稿脅迫・身体的暴力の前段階まで、介護現場で実際に起きる事例に広く対応しています。" },
               { q: "出力結果はそのまま使えますか？", a: "対応スクリプト・記録テンプレートはそのままご活用いただけます。ただし法的手続き（警察通報・成年後見申立等）は必ず専門家にご相談ください。" },
               { q: "カスハラと正当な苦情の違いは？", a: "AIがカスハラ度（高/中/低）を判定します。利用者・家族の正当な権利行使と、過剰要求・威圧行為を区別して対応策を提案します。" },
-              { q: "料金はいくらですか？", a: "月額¥4,900（プレミアム）で全機能が使えます。組織・施設での複数アカウントご利用はX @levona_designまでお問い合わせください。" },
+              { q: "料金はいくらですか？", a: "個人プラン¥2,980/月（個人スタッフ向け）と事業所プラン¥9,800/月（事業所単位）の2プランがあります。複数事業所・法人一括はXにてご相談ください。" },
             ].map((faq, i) => (
               <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
                 <p className="font-semibold text-teal-800 mb-2 text-sm">Q. {faq.q}</p>
