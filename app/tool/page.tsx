@@ -55,10 +55,18 @@ const CASE_TYPES = [
 
 const REQUESTER_TYPES = ["利用者本人", "家族・親族", "その他"];
 const SEVERITY_LEVELS = [
-  { value: "軽度", label: "🟢 軽度（一般的な苦情・要望）", score: 2, color: "bg-green-500" },
-  { value: "中度", label: "🟡 中度（度を超えた要求・繰り返し）", score: 5, color: "bg-yellow-400" },
-  { value: "重度", label: "🔴 重度（暴言・脅迫・不当要求）", score: 9, color: "bg-red-500" },
+  { value: "軽度", label: "🟡 軽度（不満・クレーム）", score: 2, color: "bg-yellow-400" },
+  { value: "中度", label: "🟠 中度（威圧・暴言）", score: 5, color: "bg-orange-500" },
+  { value: "重度", label: "🔴 重度（暴力・脅迫）", score: 9, color: "bg-red-500" },
 ];
+
+const RECORD_TEMPLATE = `【発生日時】〇〇年〇〇月〇〇日 〇〇時頃
+【場所】（施設名・場所）
+【相手】（利用者本人 / 家族 / その他）
+【言動の内容】
+【対応した職員】
+【目撃者】
+【その後の対応】`;
 
 const TABS = ["💬 口頭スクリプト", "📄 書面通知文", "📋 インシデント記録"] as const;
 type TabLabel = typeof TABS[number];
@@ -250,35 +258,51 @@ export default function KaigoTool() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">要求者</label>
-              <select
-                value={requesterType}
-                onChange={(e) => setRequesterType(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              >
-                {REQUESTER_TYPES.map((r) => (
-                  <option key={r} value={r}>{r}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">深刻度</label>
-              <select
-                value={severity}
-                onChange={(e) => setSeverity(e.target.value)}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
-              >
-                {SEVERITY_LEVELS.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </select>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">要求者</label>
+            <select
+              value={requesterType}
+              onChange={(e) => setRequesterType(e.target.value)}
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+            >
+              {REQUESTER_TYPES.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* 深刻度チェック（トグルボタン） */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">深刻度チェック</label>
+            <div className="grid grid-cols-3 gap-2">
+              {SEVERITY_LEVELS.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => setSeverity(s.value)}
+                  className={`px-3 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${
+                    severity === s.value
+                      ? "border-teal-500 bg-teal-50 text-teal-800 shadow-md scale-105"
+                      : "border-gray-200 bg-white text-gray-600 hover:border-teal-300"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">状況の詳細</label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-semibold text-gray-700">状況の詳細</label>
+              <button
+                type="button"
+                onClick={() => setSituation(RECORD_TEMPLATE)}
+                className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-teal-400 text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors font-semibold"
+              >
+                📋 カスハラ記録テンプレートを使う
+              </button>
+            </div>
             {/* シナリオプリセット */}
             <div className="mb-2 flex flex-wrap gap-1.5">
               {[
