@@ -625,6 +625,22 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* カスハラ対策ガイドリンク（SEO内部リンク） */}
+      <section className="py-10 px-4 bg-teal-50 border-t border-teal-100">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-xs font-bold text-teal-700 tracking-widest uppercase mb-2">カスハラ対策情報</p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">介護カスハラ対策完全ガイド</h2>
+          <p className="text-gray-500 text-sm mb-4">カスハラの定義・種類・2026年義務化チェックリスト・成功事例を詳しく解説</p>
+          <Link
+            href="/blog/kasuhara-guide"
+            className="inline-block bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+          >
+            カスハラ対策完全ガイドを読む →
+          </Link>
+          <p className="text-xs text-gray-400 mt-2">介護カスハラの定義・法的根拠・義務化対応まで全解説</p>
+        </div>
+      </section>
+
       {/* X Share + LINE Share */}
       <section className="py-6 px-6 text-center">
         <div className="inline-flex flex-col sm:flex-row gap-2">
