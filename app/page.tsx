@@ -97,9 +97,10 @@ export default function KaigoLP() {
       <div className="bg-gray-100 text-gray-600 text-center text-xs py-1.5 px-4">
         ⚠️ 本サービスはAIによる参考情報の提供です。法的対応・訴訟については弁護士・社会保険労務士にご相談ください。
       </div>
-      <div className="bg-teal-700 text-white text-center text-sm font-semibold py-2.5 px-4">
-        🚨 介護運営基準改正・カスハラ体制整備が義務化（2026年10月1日施行）
+      <div className="bg-red-700 text-white text-center text-sm font-semibold py-2.5 px-4">
+        🚨【法的義務】改正労働施策総合推進法・介護運営基準改正によりカスハラ体制整備が義務化（2026年10月1日施行）
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
+        <span className="ml-2 text-xs font-normal opacity-80">※未対応の場合、行政指導・監査リスクあり</span>
       </div>
 
       <section className="relative overflow-hidden">
@@ -304,6 +305,165 @@ export default function KaigoLP() {
             ))}
           </div>
           <p className="text-xs text-gray-400 text-center mt-4">※個人の感想です。効果には個人差があります。</p>
+        </div>
+      </section>
+
+      {/* 2026年義務化対応チェックリスト */}
+      <section className="py-16 bg-amber-50 border-y border-amber-200">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <span className="text-2xl">⚖️</span>
+            <h2 className="text-2xl font-bold text-gray-900">2026年10月義務化 — 事業所の対応チェックリスト</h2>
+          </div>
+          <p className="text-center text-gray-500 text-sm mb-2">改正労働施策総合推進法第30条の7・介護運営基準改正に基づく必須対応項目</p>
+          <p className="text-center text-xs text-amber-700 bg-amber-100 border border-amber-300 rounded-lg px-4 py-2 mb-8 max-w-2xl mx-auto">
+            未対応事業所は行政指導・指定取消処分のリスクがあります。今すぐ準備状況を確認してください。
+          </p>
+          <div className="bg-white border border-amber-300 rounded-2xl p-6 shadow-sm">
+            <div className="space-y-3">
+              {[
+                { item: "カスハラ方針の明文化（就業規則・重要事項説明書への記載）", status: "必須", law: "運営基準改正" },
+                { item: "カスハラの定義・禁止行為の全職員への周知・研修実施", status: "必須", law: "労働施策総合推進法" },
+                { item: "相談窓口の設置と担当者の指名・教育", status: "必須", law: "運営基準改正" },
+                { item: "カスハラ発生時の対応フロー（記録→報告→エスカレーション）の整備", status: "必須", law: "運営基準改正" },
+                { item: "悪質ケースへの具体的対処方針（契約解除基準・警察連携方針）の文書化", status: "必須", law: "労働施策総合推進法" },
+                { item: "カスハラ記録書式の整備（インシデント記録・証拠保全様式）", status: "推奨", law: "厚労省ガイドライン" },
+                { item: "顧問弁護士・社会保険労務士との連携体制の確認", status: "推奨", law: "厚労省ガイドライン" },
+              ].map((c, i) => (
+                <div key={i} className="flex items-start gap-3 p-3 rounded-xl border border-gray-100 hover:bg-amber-50 transition-colors">
+                  <div className="w-6 h-6 border-2 border-amber-400 rounded mt-0.5 shrink-0 flex items-center justify-center">
+                    <span className="text-amber-400 text-xs">□</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm text-gray-800 font-medium">{c.item}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">根拠: {c.law}</p>
+                  </div>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full shrink-0 ${c.status === "必須" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"}`}>
+                    {c.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+              <p className="text-sm font-bold text-amber-900 mb-1">このチェックリストの「必須」項目を満たす文書を、AIが即座に生成します</p>
+              <p className="text-xs text-amber-700 mb-3">対応フロー・記録書式・対処方針文書をワンクリックで作成。義務化対応をゼロから始められます。</p>
+              <a href="/tool" className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
+                義務化対応文書を無料で生成する →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BtoB費用対効果セクション */}
+      <section className="py-16 bg-white">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-2xl font-bold text-center mb-3">導入コストの比較</h2>
+          <p className="text-center text-gray-500 text-sm mb-10">介護事業所がカスハラ対策にかかる一般的なコストとの比較</p>
+          <div className="grid md:grid-cols-3 gap-5 mb-8">
+            {[
+              {
+                icon: "⚖️",
+                label: "弁護士顧問契約",
+                cost: "月額¥3万〜¥10万",
+                note: "カスハラ1件の相談のみで¥1万〜",
+                color: "border-red-200 bg-red-50",
+                textColor: "text-red-700",
+              },
+              {
+                icon: "👔",
+                label: "社労士コンサル",
+                cost: "月額¥2万〜¥5万",
+                note: "マニュアル作成は別途費用",
+                color: "border-orange-200 bg-orange-50",
+                textColor: "text-orange-700",
+              },
+              {
+                icon: "🏥",
+                label: "介護カスハラAI",
+                cost: "月額¥9,800（事業所）",
+                note: "対応文・記録・書面を無制限生成",
+                color: "border-teal-400 bg-teal-50",
+                textColor: "text-teal-700",
+                highlight: true,
+              },
+            ].map((item, i) => (
+              <div key={i} className={`border-2 rounded-2xl p-5 ${item.color} ${item.highlight ? "ring-2 ring-teal-400 shadow-lg" : ""} relative`}>
+                {item.highlight && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">最もコスパ高</div>
+                )}
+                <div className="text-3xl mb-2">{item.icon}</div>
+                <p className="font-bold text-gray-900 text-sm mb-1">{item.label}</p>
+                <p className={`text-lg font-black mb-1 ${item.textColor}`}>{item.cost}</p>
+                <p className="text-xs text-gray-500">{item.note}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-teal-50 border border-teal-200 rounded-xl p-5 text-center">
+            <p className="text-teal-900 font-bold text-base mb-1">事業所プラン¥9,800/月 — 弁護士1回相談分以下のコストで、義務化対応を完結</p>
+            <p className="text-sm text-teal-700 mb-4">スタッフ全員が24時間365日、何件でも対応文・記録テンプレートを生成できます。</p>
+            <button
+              onClick={() => setShowPayjp(true)}
+              className="bg-teal-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+            >
+              事業所プランを申し込む（¥9,800/月）→
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* 実際の対応成功事例3シナリオ */}
+      <section className="py-16 bg-gray-50">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-2xl font-bold text-center mb-3">介護現場の対応成功事例</h2>
+          <p className="text-center text-gray-400 text-sm mb-8">同じ状況に直面した事業所の対応例（すべてAIが生成した文書を活用）</p>
+          <div className="space-y-5">
+            {[
+              {
+                category: "過剰な電話・要求",
+                before: "利用者の息子が毎日15回以上電話。「いつでも担当者を出せ」と要求し、夜間も着信が続いていた。スタッフ2名が精神的に追い詰められ休職寸前。",
+                action: "AIで「連絡時間帯制限通知書」を生成。法的根拠（就業規則・連絡受付時間）を明示した書面を送付。",
+                after: "書面送付後3日で1日2〜3回に減少。「書面で来た」という事実がご家族の認識を変えた。スタッフも自信を持って対応できるようになった。",
+                icon: "📞",
+              },
+              {
+                category: "脅迫・暴言（家族）",
+                before: "「この施設は訴える」「監査を呼んでやる」と施設長に繰り返し告げる家族。対応に追われ管理者が連日残業。記録もなく証拠が残っていなかった。",
+                action: "AIでインシデント記録テンプレートと「法的措置示唆への書面対応文」を生成。「刑法上の脅迫罪に該当する場合がある旨」を文書に明記。",
+                after: "書面提出後、家族の言動が落ち着いた。記録が蓄積され、その後の行政対応・第三者委員会への報告にも活用できた。",
+                icon: "⚖️",
+              },
+              {
+                category: "身体的暴力・性的ハラスメント",
+                before: "入浴介助中の利用者による性的言動が複数回発生。スタッフが一人で対応しており、証拠もなく「言った言わない」の問題になっていた。",
+                action: "「複数体制への切り替え通知書」と「再発時の契約解除予告通知書」をAIで生成。利用者家族への書面送付と同時に複数体制に変更。",
+                after: "体制変更後は問題が発生しなくなった。書面を送付したことで家族も深刻さを認識。スタッフへのアンケートで「安心してケアできる」との回答が増加。",
+                icon: "🛡️",
+              },
+            ].map((s, i) => (
+              <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+                <div className="flex items-center gap-3 bg-teal-50 border-b border-teal-100 px-5 py-3">
+                  <span className="text-xl">{s.icon}</span>
+                  <span className="text-xs font-bold bg-teal-600 text-white px-2 py-0.5 rounded-full">{s.category}</span>
+                </div>
+                <div className="p-5 space-y-3">
+                  <div className="flex gap-2">
+                    <span className="text-xs font-bold text-red-600 bg-red-50 border border-red-200 px-2 py-0.5 rounded shrink-0 h-fit">Before</span>
+                    <p className="text-sm text-gray-700 leading-relaxed">{s.before}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded shrink-0 h-fit">対応</span>
+                    <p className="text-sm text-gray-700 leading-relaxed">{s.action}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="text-xs font-bold text-teal-600 bg-teal-50 border border-teal-200 px-2 py-0.5 rounded shrink-0 h-fit">After</span>
+                    <p className="text-sm text-gray-700 leading-relaxed">{s.after}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-gray-400 text-center mt-4">※ 事例はAIツール活用の参考例です。効果には個差があります。</p>
         </div>
       </section>
 
