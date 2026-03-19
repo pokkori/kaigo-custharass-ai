@@ -279,6 +279,21 @@ export default function KaigoTool() {
 
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">状況の詳細</label>
+            {/* シナリオプリセット */}
+            <div className="mb-2 flex flex-wrap gap-1.5">
+              {[
+                { label: "📞 過剰電話", text: "利用者の家族が毎日10回以上電話をかけてきて、「すぐにスタッフを増やせ」「他の事業所に替える」と脅してくる。スタッフが精神的に疲弊している。" },
+                { label: "🤬 暴言・怒鳴り", text: "デイサービス利用中に、利用者が突然スタッフに怒鳴り散らし「お前は使えない」「クビにしてやる」等の暴言を繰り返す。他の利用者も怯えている。" },
+                { label: "🚪 自宅訪問・待ち伏せ", text: "利用者家族が事業所に突然押しかけ、管理者に面会を強要。「責任者を出せ」と大声を上げ、業務が止まっている。" },
+                { label: "📱 SNS・レビュー脅迫", text: "サービスへの不満から「SNSで晒す」「口コミに書く」と言い、理不尽な要求（無料サービス追加等）を繰り返している。" },
+                { label: "💰 金銭要求", text: "ケア中のヒヤリハットに対して、「医療費を全額払え」「慰謝料を請求する」と法外な補償を要求してくる。" },
+              ].map((p) => (
+                <button key={p.label} type="button" onClick={() => setSituation(p.text)}
+                  className="text-xs px-2.5 py-1.5 rounded-full border border-teal-300 text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors font-medium">
+                  {p.label}
+                </button>
+              ))}
+            </div>
             <textarea
               value={situation}
               onChange={(e) => setSituation(e.target.value)}
