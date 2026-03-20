@@ -76,6 +76,15 @@ const FLOW_TYPES: Record<string, { label: string; color: string; steps: { step: 
   },
 };
 
+// 介護保険法違反リスク判定チェッカー
+const KAIGO_RISK_QUESTIONS = [
+  { id: 1, text: "利用者またはご家族から暴言・脅迫を受けたことを記録していますか？", riskIfNo: true },
+  { id: 2, text: "カスハラ行為があった場合の対応手順マニュアルが事業所にありますか？", riskIfNo: true },
+  { id: 3, text: "過去6ヶ月以内に自治体の実地指導を受けましたか？", riskIfNo: false },
+  { id: 4, text: "スタッフがカスハラを理由に離職したケースが過去1年以内にありましたか？", riskIfNo: false },
+  { id: 5, text: "事業所の運営規程にカスハラ対策条項が含まれていますか？", riskIfNo: true },
+];
+
 const PAYJP_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYJP_PUBLIC_KEY ?? "";
 
 const CARE_CASES = [
@@ -122,12 +131,50 @@ export default function KaigoLP() {
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [selectedFlowType, setSelectedFlowType] = useState<string | null>(null);
   const [facilityTab, setFacilityTab] = useState<"houmon" | "tokuyou" | "day">("houmon");
+  const [kaigoRiskAnswers, setKaigoRiskAnswers] = useState<Record<number, boolean | null>>({});
+  const [kaigoRiskResult, setKaigoRiskResult] = useState<string | null>(null);
 
   useEffect(() => {
     const target = new Date("2026-10-01");
     const diff = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     setDaysLeft(Math.max(0, diff));
   }, []);
+
+  function checkKaigoRisk() {
+    let score = 0;
+    // Q1: 記録していない(No) → リスク
+    if (kaigoRiskAnswers[1] === false) score++;
+    // Q2: マニュアルなし(No) → リスク
+    if (kaigoRiskAnswers[2] === false) score++;
+    // Q3: 実地指導を受けた(Yes) → リスク（準備重要）
+    if (kaigoRiskAnswers[3] === true) score++;
+    // Q4: 離職あり(Yes) → リスク
+    if (kaigoRiskAnswers[4] === true) score++;
+    // Q5: 運営規程に条項なし(No) → リスク
+    if (kaigoRiskAnswers[5] === false) score++;
+
+    if (score <= 1) {
+      setKaigoRiskResult("low");
+    } else if (score <= 3) {
+      setKaigoRiskResult("medium");
+    } else {
+      setKaigoRiskResult("high");
+    }
+  }
+
+  function downloadEvidenceSheet() {
+    const BOM = "\uFEFF";
+    const headers = "日時\t場所\t対象者（利用者/家族）\tカスハラ種別\t深刻度（1-5）\t具体的な言動内容\t証人\t対応者\t対応内容\t次回対応予定\t上長報告日時\t備考";
+    const example = `${new Date().toLocaleString("ja-JP")}\t訪問先・利用者宅\t家族（長男）\t暴言・威圧\t3\t「この施設はダメだ」などの怒声\tスタッフ○○\tサービス提供責任者\t一時対応後管理者へ報告\t書面警告の検討\t${new Date().toLocaleDateString("ja-JP")}\t初回記録`;
+    const content = BOM + headers + "\n" + example;
+    const blob = new Blob([content], { type: "text/tab-separated-values;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `カスハラ証拠記録シート_${new Date().toISOString().slice(0, 10)}.tsv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <main className="min-h-screen bg-white">
@@ -227,6 +274,17 @@ export default function KaigoLP() {
             >
               個人¥2,980 / 事業所¥9,800でフル利用する →
             </button>
+          </div>
+          {/* 証拠記録シートDL（ファーストビュー内） */}
+          <div className="mt-5">
+            <button
+              onClick={downloadEvidenceSheet}
+              className="inline-flex items-center gap-2 bg-white border-2 border-teal-300 text-teal-700 font-bold px-6 py-3 rounded-xl hover:bg-teal-50 transition-colors shadow-sm text-sm"
+            >
+              <span>📥</span>
+              <span>証拠記録シート（Excel対応）を無料DL</span>
+            </button>
+            <p className="text-xs text-gray-400 mt-1">TSV形式・Excel/Numbersで開けます・登録不要</p>
           </div>
         </div>
       </section>
@@ -903,6 +961,81 @@ export default function KaigoLP() {
               <p className="text-xs mt-1">対応フローと必要書類が自動的に展開されます</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* 介護保険法違反リスク判定チェッカー */}
+      <section className="py-14 bg-orange-50 border-t border-orange-100">
+        <div className="max-w-3xl mx-auto px-6">
+          <div className="text-center mb-6">
+            <div className="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-orange-200">
+              ⚖️ 介護保険法 — 指定取消リスク判定チェッカー
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">指定取消リスク、今すぐチェック</h2>
+            <p className="text-gray-500 text-sm">5つの質問に「はい」「いいえ」で答えるだけ。介護保険法上の運営基準違反リスクを判定します。</p>
+          </div>
+          <div className="bg-white border border-orange-200 rounded-2xl p-6 shadow-sm">
+            <div className="space-y-4 mb-6">
+              {KAIGO_RISK_QUESTIONS.map((q) => (
+                <div key={q.id} className="p-4 rounded-xl border border-gray-100 bg-gray-50">
+                  <p className="text-sm text-gray-800 font-medium mb-3">
+                    <span className="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-2 py-0.5 rounded-full mr-2">Q{q.id}</span>
+                    {q.text}
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setKaigoRiskAnswers(prev => ({ ...prev, [q.id]: true }))}
+                      className={`flex-1 py-2 rounded-lg text-sm font-bold border-2 transition-colors ${kaigoRiskAnswers[q.id] === true ? "bg-teal-600 text-white border-teal-600" : "bg-white text-gray-600 border-gray-200 hover:border-teal-400"}`}
+                    >
+                      はい
+                    </button>
+                    <button
+                      onClick={() => setKaigoRiskAnswers(prev => ({ ...prev, [q.id]: false }))}
+                      className={`flex-1 py-2 rounded-lg text-sm font-bold border-2 transition-colors ${kaigoRiskAnswers[q.id] === false ? "bg-red-500 text-white border-red-500" : "bg-white text-gray-600 border-gray-200 hover:border-red-400"}`}
+                    >
+                      いいえ
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={checkKaigoRisk}
+              disabled={Object.keys(kaigoRiskAnswers).length < 5}
+              className="w-full bg-orange-600 text-white font-bold py-3 rounded-xl hover:bg-orange-700 transition-colors mb-4 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              {Object.keys(kaigoRiskAnswers).length < 5 ? `あと${5 - Object.keys(kaigoRiskAnswers).length}問答えてください` : "指定取消リスクを判定する →"}
+            </button>
+
+            {kaigoRiskResult === "low" && (
+              <div className="bg-green-50 border-2 border-green-400 rounded-xl p-4">
+                <p className="text-green-800 font-bold mb-1">✅ リスクスコア: 低（0〜1項目該当）</p>
+                <p className="text-green-700 text-sm mb-3">対応体制が整っています。引き続き証拠記録の継続と運営規程の定期見直しを推奨します。2026年10月義務化に向けた仕上げとして、対応フローの文書化も進めておきましょう。</p>
+                <button onClick={downloadEvidenceSheet} className="inline-flex items-center gap-1.5 bg-green-600 text-white font-bold px-5 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm">
+                  <span>📥</span>証拠記録シートをDLして継続記録する
+                </button>
+              </div>
+            )}
+            {kaigoRiskResult === "medium" && (
+              <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-4">
+                <p className="text-yellow-800 font-bold mb-1">⚠️ リスクスコア: 中（2〜3項目該当）</p>
+                <p className="text-yellow-700 text-sm mb-3">一部リスクあり。カスハラ対応マニュアルの整備・運営規程へのカスハラ条項追加を急いでください。2026年10月義務化施行後に実地指導が入った場合、改善命令が出る可能性があります。</p>
+                <Link href="/tool" className="inline-block bg-yellow-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-yellow-700 transition-colors text-sm">
+                  AIで運営規程・マニュアルを即生成する →
+                </Link>
+              </div>
+            )}
+            {kaigoRiskResult === "high" && (
+              <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4">
+                <p className="text-red-800 font-bold mb-2">🚨 リスクスコア: 高（4〜5項目該当）</p>
+                <p className="text-red-700 text-sm mb-3">⚠️ 高リスク: 自治体の実地指導が入ると、介護保険法上の運営基準違反として<strong>改善命令・指定取消処分</strong>が出る可能性があります。記録体制・マニュアル整備・運営規程改訂を今すぐ始めてください。</p>
+                <Link href="/tool" className="inline-block bg-red-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-red-700 transition-colors text-sm">
+                  緊急：AIで義務化対応文書を今すぐ生成する →
+                </Link>
+              </div>
+            )}
+            <p className="text-xs text-gray-400 mt-3 text-center">※本チェッカーはAIによる参考判定です。実際の対応は管理者・弁護士・社労士にご確認ください。</p>
+          </div>
         </div>
       </section>
 
