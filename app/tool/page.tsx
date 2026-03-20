@@ -440,6 +440,35 @@ export default function KaigoTool() {
                     ))}
                   </ol>
                 </div>
+
+                {/* 証拠記録シートDL */}
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-sm font-bold text-amber-900 mb-1">📥 証拠記録シートをダウンロード</p>
+                  <p className="text-xs text-amber-700 mb-3">日時・対象者・状況・対応者・対応内容の列を持つTSVファイルです。Excelで開いてそのまま記録管理に活用できます。</p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const header = ["発生日時", "場所", "対象者", "カスハラ種別", "深刻度", "状況の詳細", "対応した職員", "目撃者", "その後の対応", "上長報告日時", "備考"].join("\t");
+                      const example = ["2026/04/01 10:00", "デイサービス フロア", "利用者本人", "暴言・威圧", "中度", "大声で怒鳴り散らし「クビにしろ」と繰り返す", "田中 花子", "山田 一郎", "管理者報告・書面警告を送付", "2026/04/01 11:00", "継続観察中"].join("\t");
+                      const bom = "\uFEFF";
+                      const tsvContent = bom + header + "\n" + example + "\n";
+                      const blob = new Blob([tsvContent], { type: "text/tab-separated-values;charset=utf-8;" });
+                      const url = URL.createObjectURL(blob);
+                      const a = document.createElement("a");
+                      a.href = url;
+                      a.download = `介護カスハラ証拠記録_${new Date().toISOString().slice(0,10)}.tsv`;
+                      document.body.appendChild(a);
+                      a.click();
+                      document.body.removeChild(a);
+                      URL.revokeObjectURL(url);
+                      track('evidence_sheet_downloaded', { service: '介護カスハラAI' });
+                    }}
+                    className="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
+                  >
+                    📥 証拠記録シート（Excel対応TSV）をDL
+                  </button>
+                  <p className="text-xs text-amber-600 text-center mt-1">Excelで開く→「データ」タブで管理するだけ</p>
+                </div>
                 {/* 専門家相談アフィリエイト（A8.net申請後URLを差し替え） */}
                 <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
                   <p className="text-sm font-black text-teal-900 mb-1">⚖️ 深刻なケースは弁護士に相談</p>
