@@ -661,6 +661,55 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* 介護カスハラAIだけができること — 差別化SEOセクション */}
+      <section className="bg-white border-t border-teal-100 py-14 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="inline-block bg-teal-100 text-teal-700 text-xs font-bold px-3 py-1 rounded-full mb-3">介護特化の強み</div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">介護カスハラAIだけができる3つのこと</h2>
+            <p className="text-sm text-gray-500">汎用クレーム対応ツールや社労士コンサルとの決定的な違い</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-5 mb-8">
+            {[
+              {
+                icon: "⚖️",
+                title: "介護保険法・運営基準を自動引用",
+                desc: "「介護保険法第〇条」「介護運営基準改正（2026年10月施行）」を対応文に自動引用。一般クレームAIには真似できない、介護特有の法的根拠が即使えます。",
+                badge: "汎用AIにはない",
+              },
+              {
+                icon: "🏠",
+                title: "訪問介護・特養・デイ別に最適化",
+                desc: "「単独訪問中のカスハラ」「夜間帯施設での対応」「デイ送迎中の問題」——事業所形態ごとに異なるリスクに特化した書面が生成されます。",
+                badge: "社労士コンサルより速い",
+              },
+              {
+                icon: "📋",
+                title: "証拠記録シートをワンクリックDL",
+                desc: "対応文生成後、Excelで即使える証拠記録シート（日時・場所・発言・対応者・深刻度）をダウンロード。行政指導・国保連への報告にそのまま使えます。",
+                badge: "義務化対応に直結",
+              },
+            ].map(item => (
+              <div key={item.title} className="bg-teal-50 rounded-2xl p-5 border border-teal-200">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-2xl">{item.icon}</span>
+                  <span className="text-xs bg-teal-600 text-white font-bold px-2 py-0.5 rounded-full">{item.badge}</span>
+                </div>
+                <h3 className="font-bold text-teal-900 mb-2 text-sm">{item.title}</h3>
+                <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-teal-600 text-white rounded-2xl p-6 text-center max-w-2xl mx-auto">
+            <p className="font-bold text-lg mb-1">社労士1回相談（¥1万〜）より安く、今すぐ対応文が生成できます</p>
+            <p className="text-teal-100 text-sm mb-4">事業所プラン¥9,800/月 — 弁護士顧問契約の1/30以下のコストで義務化対応を完結</p>
+            <Link href="/tool" className="inline-block bg-white text-teal-700 font-bold px-8 py-3 rounded-xl hover:bg-teal-50 text-sm">
+              無料で3回試してみる →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-teal-700 py-16 text-center px-4 text-white overflow-x-hidden">
         <div className="max-w-2xl mx-auto">
           <p className="text-teal-200 text-sm font-semibold mb-2">2026年10月 義務化まで残りわずか</p>
