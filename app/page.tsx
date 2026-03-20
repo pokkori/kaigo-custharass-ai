@@ -121,6 +121,7 @@ export default function KaigoLP() {
   const [showPayjp, setShowPayjp] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [selectedFlowType, setSelectedFlowType] = useState<string | null>(null);
+  const [facilityTab, setFacilityTab] = useState<"houmon" | "tokuyou" | "day">("houmon");
 
   useEffect(() => {
     const target = new Date("2026-10-01");
@@ -680,14 +681,161 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* 事業所種別 対応ガイドタブ */}
+      <section className="py-14 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="text-center mb-8">
+            <div className="inline-block bg-teal-100 text-teal-700 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-teal-200">
+              事業所種別ガイド
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">あなたの事業所に合わせた対応ガイド</h2>
+            <p className="text-gray-500 text-sm">訪問介護・特養・デイサービスそれぞれの特性に合わせたカスハラ対応のポイントを紹介します</p>
+          </div>
+          {/* タブ */}
+          <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl">
+            {([
+              { key: "houmon", label: "訪問介護事業所", icon: "🏠" },
+              { key: "tokuyou", label: "特養・老健", icon: "🏥" },
+              { key: "day", label: "デイサービス", icon: "🚌" },
+            ] as const).map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setFacilityTab(tab.key)}
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-bold transition-colors ${facilityTab === tab.key ? "bg-teal-600 text-white shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+              >
+                <span>{tab.icon}</span>
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span className="sm:hidden">{tab.icon}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* 訪問介護 */}
+          {facilityTab === "houmon" && (
+            <div className="bg-teal-50 border border-teal-200 rounded-2xl p-6 space-y-5">
+              <div>
+                <h3 className="font-bold text-teal-900 text-lg mb-2">🏠 訪問介護事業所向けカスハラ対応</h3>
+                <p className="text-sm text-teal-800">訪問介護は「一人でご自宅に伺う」特性から、カスハラリスクが最も高い介護形態です。密室・孤立環境でのスタッフ保護が最重要課題です。</p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  { title: "リスク特性", icon: "⚠️", items: ["単独訪問による孤立リスク", "密室環境でのセクハラ", "利用者宅での暴言・暴力", "記録者・証人がいない"] },
+                  { title: "必須対策", icon: "🛡️", items: ["複数訪問体制への切り替え基準を明文化", "訪問前・後の報告ルール整備", "スタッフからのSOS連絡体制", "「対応できない場合は退出する」権限の付与"] },
+                  { title: "AIで生成できる文書", icon: "📄", items: ["複数体制切り替え通知書", "緊急連絡ルール設定通知", "セクハラ再発防止通知書", "訪問中断・契約解除予告書"] },
+                  { title: "義務化対応ポイント", icon: "✅", items: ["訪問介護特有のリスクを就業規則に明記", "単独訪問時の安全確認フロー整備", "カスハラ報告書式の統一", "スタッフへの定期研修記録"] },
+                ].map((card) => (
+                  <div key={card.title} className="bg-white border border-teal-100 rounded-xl p-4">
+                    <p className="font-bold text-teal-800 text-sm mb-2">{card.icon} {card.title}</p>
+                    <ul className="space-y-1">
+                      {card.items.map((item) => (
+                        <li key={item} className="text-xs text-gray-700 flex items-start gap-1.5">
+                          <span className="text-teal-500 shrink-0 mt-0.5">▶</span>{item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 特養・老健 */}
+          {facilityTab === "tokuyou" && (
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 space-y-5">
+              <div>
+                <h3 className="font-bold text-blue-900 text-lg mb-2">🏥 特養・老健向けカスハラ対応</h3>
+                <p className="text-sm text-blue-800">特養・老健では、長期入所の利用者家族との関係悪化や、認知症に起因する利用者からの行為が課題です。組織的な記録管理と多職種連携が重要です。</p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  { title: "リスク特性", icon: "⚠️", items: ["長期入所による家族の過剰介入", "認知症利用者からの暴言・暴力", "夜間帯の少人数体制での対応", "「以前はそんなことなかった」という否定的クレーム"] },
+                  { title: "必須対策", icon: "🛡️", items: ["入所時の重要事項説明書にカスハラ方針を明記", "夜間帯の対応フローと記録体制", "多職種チームでの対応方針統一", "家族面談の記録・議事録の徹底"] },
+                  { title: "AIで生成できる文書", icon: "📄", items: ["重要事項説明書のカスハラ条項", "家族向けカスハラ方針通知書", "繰り返しクレームへの書面回答書", "施設内研修用マニュアル"] },
+                  { title: "義務化対応ポイント", icon: "✅", items: ["施設全体のカスハラ対応方針の策定", "相談窓口担当者の指名・研修", "管理者・施設長への報告フロー整備", "行政報告用のインシデント記録様式統一"] },
+                ].map((card) => (
+                  <div key={card.title} className="bg-white border border-blue-100 rounded-xl p-4">
+                    <p className="font-bold text-blue-800 text-sm mb-2">{card.icon} {card.title}</p>
+                    <ul className="space-y-1">
+                      {card.items.map((item) => (
+                        <li key={item} className="text-xs text-gray-700 flex items-start gap-1.5">
+                          <span className="text-blue-500 shrink-0 mt-0.5">▶</span>{item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* デイサービス */}
+          {facilityTab === "day" && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 space-y-5">
+              <div>
+                <h3 className="font-bold text-emerald-900 text-lg mb-2">🚌 デイサービス向けカスハラ対応</h3>
+                <p className="text-sm text-emerald-800">デイサービスは送迎・入浴・レクリエーションなど多岐にわたる場面でのカスハラリスクがあります。「通所をやめさせたくない」という家族心理も対応を難しくする要因です。</p>
+              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                {[
+                  { title: "リスク特性", icon: "⚠️", items: ["送迎時の利用者・家族対応", "入浴介助中のセクハラ", "「他の利用者に迷惑をかける」行為への対応", "家族からの「もっと特別扱いしろ」要求"] },
+                  { title: "必須対策", icon: "🛡️", items: ["サービス利用契約書にカスハラ条項を追加", "送迎担当の複数体制化基準の明文化", "利用停止の判断フローと記録体制", "他の利用者への影響を含めた記録"] },
+                  { title: "AIで生成できる文書", icon: "📄", items: ["サービス利用規約のカスハラ条項", "利用者家族への警告通知書", "一時利用停止通知書", "他利用者保護を含む対応記録書"] },
+                  { title: "義務化対応ポイント", icon: "✅", items: ["通所介護の運営規程へのカスハラ条項追加", "スタッフへの定期研修の記録", "苦情受付窓口の設置と周知", "利用者・家族向けの利用ルール説明"] },
+                ].map((card) => (
+                  <div key={card.title} className="bg-white border border-emerald-100 rounded-xl p-4">
+                    <p className="font-bold text-emerald-800 text-sm mb-2">{card.icon} {card.title}</p>
+                    <ul className="space-y-1">
+                      {card.items.map((item) => (
+                        <li key={item} className="text-xs text-gray-700 flex items-start gap-1.5">
+                          <span className="text-emerald-500 shrink-0 mt-0.5">▶</span>{item}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-6 text-center">
+            <Link href="/tool" className="inline-block bg-teal-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm">
+              あなたの事業所の状況に合わせた対応文をAIで生成する →
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section className="py-12 bg-gray-50">
         <div className="max-w-2xl mx-auto px-4">
           <h2 className="text-xl font-bold text-center text-gray-800 mb-6">よくある質問</h2>
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: [
+                  { "@type": "Question", name: "カスハラとクレームの違いは何ですか？", acceptedAnswer: { "@type": "Answer", text: "正当なクレームは利用者・家族が改善を求める権利の行使であり、適切に対応すべきものです。一方カスハラは、要求内容や手段が社会通念上著しく相当性を欠く行為（暴言・脅迫・長時間拘束・業務妨害等）を指します。本ツールはAIがカスハラ度（高/中/低）を判定し、両者を区別して対応策を提案します。" } },
+                  { "@type": "Question", name: "どんなカスハラ事例に対応していますか？", acceptedAnswer: { "@type": "Answer", text: "怒鳴り・暴言・長時間拘束・土下座要求・SNS投稿脅迫・身体的暴力の前段階まで、介護現場で実際に起きる事例に広く対応しています。" } },
+                  { "@type": "Question", name: "出力結果はそのまま使えますか？", acceptedAnswer: { "@type": "Answer", text: "対応スクリプト・記録テンプレートはそのままご活用いただけます。ただし法的手続き（警察通報・成年後見申立等）は必ず専門家にご相談ください。" } },
+                  { "@type": "Question", name: "2026年10月の義務化に対応できますか？", acceptedAnswer: { "@type": "Answer", text: "はい。改正労働施策総合推進法・介護運営基準改正に基づくカスハラ方針の明文化・対応フロー整備・記録書式の準備を、AIが生成する文書でサポートします。義務化チェックリストの全項目に対応した文書を即座に生成できます。" } },
+                  { "@type": "Question", name: "個人スタッフでも使えますか？", acceptedAnswer: { "@type": "Answer", text: "はい。個人プラン（¥2,980/月）は個人スタッフ・ヘルパー向けです。事業所プラン（¥9,800/月）は事業所単位での利用に対応しています。" } },
+                  { "@type": "Question", name: "利用者・家族に対して強硬な対応をすることになりませんか？", acceptedAnswer: { "@type": "Answer", text: "本ツールはカスハラ（過剰要求・暴言・脅迫）と正当な苦情を明確に区別します。正当な要望には丁寧に対応することを前提に、度を超えた行為からスタッフを守る文書を生成します。利用者の権利を尊重した文言での対応文を生成します。" } },
+                  { "@type": "Question", name: "料金はいくらですか？", acceptedAnswer: { "@type": "Answer", text: "個人プラン¥2,980/月（個人スタッフ向け）と事業所プラン¥9,800/月（事業所単位）の2プランがあります。複数事業所・法人一括はXにてご相談ください。" } },
+                  { "@type": "Question", name: "訪問介護と施設介護で対応内容は違いますか？", acceptedAnswer: { "@type": "Answer", text: "はい。訪問介護事業所・特養・デイサービスそれぞれの状況・体制に合わせた対応文を生成します。訪問介護では単独対応が多いため、体制変更通知や記録の重要性が特に高く、そのポイントを踏まえた文書を生成します。" } },
+                ],
+              }),
+            }}
+          />
           <div className="space-y-4">
             {[
+              { q: "カスハラとクレームの違いは何ですか？", a: "正当なクレームは利用者・家族が改善を求める権利の行使であり、適切に対応すべきものです。カスハラは要求内容や手段が社会通念上著しく相当性を欠く行為（暴言・脅迫・長時間拘束・業務妨害等）を指します。本ツールはAIがカスハラ度（高/中/低）を判定し、両者を区別して対応策を提案します。" },
+              { q: "2026年10月の義務化に対応できますか？", a: "はい。改正労働施策総合推進法・介護運営基準改正に基づくカスハラ方針の明文化・対応フロー整備・記録書式の準備を、AIが生成する文書でサポートします。義務化チェックリストの全項目に対応した文書を即座に生成できます。" },
               { q: "どんなカスハラ事例に対応していますか？", a: "怒鳴り・暴言・長時間拘束・土下座要求・SNS投稿脅迫・身体的暴力の前段階まで、介護現場で実際に起きる事例に広く対応しています。" },
+              { q: "訪問介護と施設介護で対応内容は違いますか？", a: "はい。訪問介護事業所・特養・デイサービスそれぞれの状況・体制に合わせた対応文を生成します。訪問介護では単独対応が多いため、体制変更通知や記録の重要性が特に高く、そのポイントを踏まえた文書を生成します。" },
+              { q: "個人スタッフでも使えますか？", a: "はい。個人プラン（¥2,980/月）は個人スタッフ・ヘルパー向けです。事業所プラン（¥9,800/月）は事業所単位での利用に対応しています。複数事業所・法人一括はXにてご相談ください。" },
+              { q: "利用者・家族への対応が強硬になりませんか？", a: "本ツールはカスハラ（過剰要求・暴言・脅迫）と正当な苦情を明確に区別します。正当な要望には丁寧に対応することを前提に、度を超えた行為からスタッフを守る文書を生成します。利用者の権利を尊重した文言での対応文を提供します。" },
               { q: "出力結果はそのまま使えますか？", a: "対応スクリプト・記録テンプレートはそのままご活用いただけます。ただし法的手続き（警察通報・成年後見申立等）は必ず専門家にご相談ください。" },
-              { q: "カスハラと正当な苦情の違いは？", a: "AIがカスハラ度（高/中/低）を判定します。利用者・家族の正当な権利行使と、過剰要求・威圧行為を区別して対応策を提案します。" },
               { q: "料金はいくらですか？", a: "個人プラン¥2,980/月（個人スタッフ向け）と事業所プラン¥9,800/月（事業所単位）の2プランがあります。複数事業所・法人一括はXにてご相談ください。" },
             ].map((faq, i) => (
               <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
