@@ -99,7 +99,7 @@ function CopyBtn({ text, label = "📋 コピーする", className = "" }: { tex
   };
   return (
     <div className="relative inline-block">
-      <button onClick={handleCopy} className={`text-xs hover:underline transition-colors ${className}`}>
+      <button onClick={handleCopy} aria-label="テキストをクリップボードにコピーする" className={`text-xs hover:underline transition-colors ${className}`}>
         {copied ? "✅ コピー完了！" : label}
       </button>
       {copied && (
@@ -124,6 +124,7 @@ export default function KaigoTool() {
   const [hitLimit, setHitLimit] = useState(false);
   const [showPayjp, setShowPayjp] = useState(false);
   const [completionVisible, setCompletionVisible] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const resultRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -173,6 +174,7 @@ export default function KaigoTool() {
       setCompletionVisible(true);
       setTimeout(() => setCompletionVisible(false), 4000);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+      setTimeout(() => setShowShareModal(true), 2000);
     } catch {
       setError("通信エラーが発生しました。再試行してください。");
     } finally {
@@ -215,10 +217,10 @@ export default function KaigoTool() {
           <a href="/" className="text-sm text-gray-400 hover:underline mt-3 block">トップへ戻る</a>
         </div>
         {showPayjp && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4" role="dialog" aria-modal="true" aria-labelledby="tool-kaigo-plan-title">
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
-              <button onClick={() => setShowPayjp(false)} className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
-              <h2 className="text-lg font-bold mb-4 text-center">プランに登録</h2>
+              <button onClick={() => setShowPayjp(false)} aria-label="プラン登録モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
+              <h2 id="tool-kaigo-plan-title" className="text-lg font-bold mb-4 text-center">プランに登録</h2>
               <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50" />
             </div>
           </div>
@@ -246,6 +248,8 @@ export default function KaigoTool() {
                 <button
                   key={t}
                   onClick={() => setCaseType(t)}
+                  aria-label={`カスハラ種別「${t}」を選択する`}
+                  aria-pressed={caseType === t}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
                     caseType === t
                       ? "bg-teal-600 text-white border-teal-600"
@@ -263,6 +267,7 @@ export default function KaigoTool() {
             <select
               value={requesterType}
               onChange={(e) => setRequesterType(e.target.value)}
+              aria-label="カスハラの要求者種別を選択してください"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
             >
               {REQUESTER_TYPES.map((r) => (
@@ -280,6 +285,8 @@ export default function KaigoTool() {
                   key={s.value}
                   type="button"
                   onClick={() => setSeverity(s.value)}
+                  aria-label={`深刻度「${s.value}」を選択する`}
+                  aria-pressed={severity === s.value}
                   className={`px-3 py-2.5 rounded-xl text-sm font-bold border-2 transition-all ${
                     severity === s.value
                       ? "border-teal-500 bg-teal-50 text-teal-800 shadow-md scale-105"
@@ -298,6 +305,7 @@ export default function KaigoTool() {
               <button
                 type="button"
                 onClick={() => setSituation(RECORD_TEMPLATE)}
+                aria-label="カスハラ記録テンプレートを状況入力欄にセットする"
                 className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-teal-400 text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors font-semibold"
               >
                 📋 カスハラ記録テンプレートを使う
@@ -313,6 +321,7 @@ export default function KaigoTool() {
                 { label: "💰 金銭要求", text: "ケア中のヒヤリハットに対して、「医療費を全額払え」「慰謝料を請求する」と法外な補償を要求してくる。" },
               ].map((p) => (
                 <button key={p.label} type="button" onClick={() => setSituation(p.text)}
+                  aria-label={`シナリオ「${p.label.replace(/^.{2}/, "")}」のサンプルテキストを状況入力欄にセットする`}
                   className="text-xs px-2.5 py-1.5 rounded-full border border-teal-300 text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors font-medium">
                   {p.label}
                 </button>
@@ -324,6 +333,7 @@ export default function KaigoTool() {
               placeholder="例：利用者の家族が毎日10回以上電話をかけてきて、「すぐにスタッフを増やせ」「他の事業所に替える」と脅してくる。スタッフが精神的に疲弊している。"
               rows={5}
               maxLength={1500}
+              aria-label="カスハラの状況を詳しく入力してください（最大1500文字）"
               className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
             />
             <p className="text-xs text-gray-400 text-right mt-1">{situation.length}/1500文字</p>
@@ -338,6 +348,7 @@ export default function KaigoTool() {
           <button
             onClick={handleGenerate}
             disabled={loading || !situation.trim()}
+            aria-label="入力した情報を元にカスハラ対応文書をAIで生成する"
             className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {loading ? "生成中..." : "対応文を生成する"}
@@ -384,11 +395,14 @@ export default function KaigoTool() {
             {tabs && (
               <>
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-                  <div className="flex border-b border-gray-200 overflow-x-auto">
+                  <div className="flex border-b border-gray-200 overflow-x-auto" role="tablist" aria-label="生成結果タブ">
                     {TABS.map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
+                        role="tab"
+                        aria-selected={activeTab === tab}
+                        aria-label={`${tab}タブを表示する`}
                         className={`flex-shrink-0 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                           activeTab === tab
                             ? "border-teal-600 text-teal-600 bg-teal-50"
@@ -447,6 +461,7 @@ export default function KaigoTool() {
                   <p className="text-xs text-amber-700 mb-3">日時・対象者・状況・対応者・対応内容の列を持つTSVファイルです。Excelで開いてそのまま記録管理に活用できます。</p>
                   <button
                     type="button"
+                    aria-label="カスハラ証拠記録シート（Excel対応TSV形式）をダウンロードする"
                     onClick={() => {
                       const header = ["発生日時", "場所", "対象者", "カスハラ種別", "深刻度", "状況の詳細", "対応した職員", "目撃者", "その後の対応", "上長報告日時", "備考"].join("\t");
                       const example = ["2026/04/01 10:00", "デイサービス フロア", "利用者本人", "暴言・威圧", "中度", "大声で怒鳴り散らし「クビにしろ」と繰り返す", "田中 花子", "山田 一郎", "管理者報告・書面警告を送付", "2026/04/01 11:00", "継続観察中"].join("\t");

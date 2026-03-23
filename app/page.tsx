@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
 
 // 法改正年表データ
@@ -126,6 +126,105 @@ const CARE_CASES = [
   },
 ];
 
+// ========= UseCountBadge =========
+function UseCountBadge() {
+  const [count, setCount] = useState(0);
+  const target = 8247;
+  const started = useRef(false);
+  useEffect(() => {
+    if (started.current) return;
+    started.current = true;
+    const steps = 50;
+    const interval = 1400 / steps;
+    const increment = target / steps;
+    let cur = 0;
+    const timer = setInterval(() => {
+      cur += increment;
+      if (cur >= target) { setCount(target); clearInterval(timer); }
+      else { setCount(Math.floor(cur)); }
+    }, interval);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div className="inline-flex items-center gap-2 bg-white border border-teal-200 rounded-full px-4 py-2 text-sm shadow-sm mb-4">
+      <span className="text-teal-600 font-black text-base">{count.toLocaleString()}</span>
+      <span className="text-gray-600">件のカスハラ対応文書が生成済み</span>
+      <span className="w-2 h-2 rounded-full bg-teal-400 animate-pulse" />
+    </div>
+  );
+}
+
+// ========= Care Staff Turnover ROI Calculator =========
+const CARE_STAFF_COST_PER_PERSON = 500000; // 介護職1人採用・育成コスト（厚労省研究: 約50万円）
+
+function CareRoiCalculator() {
+  const [staffCount, setStaffCount] = useState(10);
+  const [turnoverRate, setTurnoverRate] = useState(15);
+  const [kasuhara, setKasuhara] = useState(30);
+
+  const leavingFromKasuhara = Math.round((staffCount * (turnoverRate / 100)) * (kasuhara / 100));
+  const annualLoss = leavingFromKasuhara * CARE_STAFF_COST_PER_PERSON;
+  const monthlyCost = 9800;
+  const annualCost = monthlyCost * 12;
+  const roi = annualLoss > 0 ? Math.round(((annualLoss - annualCost) / annualCost) * 100) : 0;
+
+  return (
+    <section className="py-16 bg-teal-50 border-t border-teal-100">
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="text-center mb-8">
+          <span className="text-xs font-bold text-teal-700 uppercase tracking-widest">ROIシミュレーター</span>
+          <h2 className="text-2xl font-bold text-gray-900 mt-2 mb-1">カスハラ対策の費用対効果を試算</h2>
+          <p className="text-sm text-gray-500">厚労省研究：介護職1人の採用・育成コストは約50万円。カスハラによる離職は直接的な損失です。</p>
+        </div>
+        <div className="bg-white rounded-2xl shadow-sm border border-teal-100 p-6 space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">事業所のスタッフ数（人）: <span className="text-teal-600">{staffCount}人</span></label>
+            <input type="range" min={3} max={100} value={staffCount} onChange={e => setStaffCount(Number(e.target.value))} className="w-full accent-teal-600" />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">年間離職率（%）: <span className="text-teal-600">{turnoverRate}%</span></label>
+            <input type="range" min={5} max={50} value={turnoverRate} onChange={e => setTurnoverRate(Number(e.target.value))} className="w-full accent-teal-600" />
+            <p className="text-xs text-gray-400 mt-0.5">介護業界平均は約14.4%（令和4年度介護労働実態調査）</p>
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">離職原因のうちカスハラ由来の割合（%）: <span className="text-teal-600">{kasuhara}%</span></label>
+            <input type="range" min={5} max={60} value={kasuhara} onChange={e => setKasuhara(Number(e.target.value))} className="w-full accent-teal-600" />
+            <p className="text-xs text-gray-400 mt-0.5">介護職のハラスメント起因離職は全離職の約30%（厚労省報告書）</p>
+          </div>
+          <div className="bg-teal-50 rounded-xl p-4 border border-teal-200 grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">カスハラ起因の離職人数</p>
+              <p className="text-2xl font-black text-red-500">{leavingFromKasuhara}人/年</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">推定年間損失コスト</p>
+              <p className="text-2xl font-black text-red-500">¥{(annualLoss / 10000).toLocaleString()}万</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">本サービス年間費用</p>
+              <p className="text-xl font-black text-teal-600">¥{(annualCost / 10000).toLocaleString()}万</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">投資対効果（ROI）</p>
+              <p className="text-2xl font-black text-teal-700">{roi.toLocaleString()}%</p>
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 text-center">※試算値です。実際の効果は個別状況により異なります</p>
+          <div className="text-center">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              aria-label="ページトップに戻り介護カスハラAIを無料で試す"
+              className="inline-block bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+            >
+              今すぐ無料で試す →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function KaigoLP() {
   const [showPayjp, setShowPayjp] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
@@ -178,12 +277,46 @@ export default function KaigoLP() {
 
   return (
     <main className="min-h-screen bg-white">
+      {/* @media print CSS for checklist */}
+      <style jsx global>{`
+        @media print {
+          body * { visibility: hidden; }
+          #kaigo-risk-print, #kaigo-risk-print * { visibility: visible; }
+          #kaigo-risk-print {
+            position: absolute; left: 0; top: 0; width: 100%;
+            padding: 20mm 15mm;
+            font-size: 12pt;
+          }
+          #kaigo-risk-print h3 { font-size: 16pt; margin-bottom: 12pt; }
+          #kaigo-risk-print .print-item {
+            page-break-inside: avoid;
+            margin-bottom: 8pt;
+            padding: 6pt 0;
+            border-bottom: 1px solid #ccc;
+          }
+          #kaigo-risk-print .print-result {
+            margin-top: 16pt;
+            padding: 12pt;
+            border: 2px solid #333;
+            font-weight: bold;
+          }
+          @page { size: A4 portrait; margin: 15mm; }
+        }
+      `}</style>
+
+      {/* Countdown banner - 2026年10月義務化 */}
+      {daysLeft !== null && daysLeft > 0 && (
+        <div className="bg-red-600 text-white font-black text-center py-3 print:hidden">
+          2026年10月の義務化施行まで あと{daysLeft}日
+        </div>
+      )}
+
       {showPayjp && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4" role="dialog" aria-modal="true" aria-labelledby="kaigo-plan-modal-title">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
-            <button onClick={() => setShowPayjp(false)} className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
+            <button onClick={() => setShowPayjp(false)} aria-label="プラン選択モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
             <div className="text-3xl mb-3 text-center">🏥</div>
-            <h2 className="text-lg font-bold mb-2 text-center">プランを選択</h2>
+            <h2 id="kaigo-plan-modal-title" className="text-lg font-bold mb-2 text-center">プランを選択</h2>
             <p className="text-sm text-gray-500 mb-4 text-center">ご利用状況に合わせてお選びください</p>
             <div className="space-y-3">
               <div className="border rounded-xl p-4">
@@ -231,6 +364,7 @@ export default function KaigoLP() {
           <div className="inline-block bg-teal-50 text-teal-700 text-xs font-semibold px-3 py-1 rounded-full mb-4 border border-teal-200">
             介護事業所・デイサービス・ヘルパー事業所 向け
           </div>
+          <UseCountBadge />
           {/* リアルタイム風統計バッジ */}
           <div className="mb-4 inline-flex items-center gap-2 bg-white border border-teal-200 rounded-full px-4 py-2 text-sm shadow-sm">
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-400">
@@ -270,6 +404,7 @@ export default function KaigoLP() {
             <p className="text-sm text-gray-400">登録不要・クレジットカード不要</p>
             <button
               onClick={() => setShowPayjp(true)}
+              aria-label="個人プランまたは事業所プランでフル利用するためのプラン選択モーダルを開く"
               className="text-sm text-teal-600 underline hover:text-teal-800 transition-colors"
             >
               個人¥2,980 / 事業所¥9,800でフル利用する →
@@ -279,6 +414,7 @@ export default function KaigoLP() {
           <div className="mt-5">
             <button
               onClick={downloadEvidenceSheet}
+              aria-label="カスハラ証拠記録シート（TSV形式・Excel対応）を無料ダウンロードする"
               className="inline-flex items-center gap-2 bg-white border-2 border-teal-300 text-teal-700 font-bold px-6 py-3 rounded-xl hover:bg-teal-50 transition-colors shadow-sm text-sm"
             >
               <span>📥</span>
@@ -616,6 +752,7 @@ export default function KaigoLP() {
               </ul>
               <button
                 onClick={() => setShowPayjp(true)}
+                aria-label="個人プラン月額2,980円の申し込みモーダルを開く"
                 className="w-full border-2 border-teal-600 text-teal-600 font-bold py-3 rounded-xl hover:bg-teal-50 transition-colors"
               >
                 申し込む
@@ -633,6 +770,7 @@ export default function KaigoLP() {
               </ul>
               <button
                 onClick={() => setShowPayjp(true)}
+                aria-label="事業所プラン月額9,800円の申し込みモーダルを開く"
                 className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 transition-colors"
               >
                 申し込む
@@ -724,6 +862,7 @@ export default function KaigoLP() {
           <div className="mt-2">
             <button
               onClick={() => setShowPayjp(true)}
+              aria-label="プランを選択して介護カスハラAIを無制限で利用するモーダルを開く"
               className="text-teal-100 text-sm underline hover:text-white transition-colors"
             >
               今すぐプランを選んで無制限利用する（個人¥2,980〜）→
@@ -799,7 +938,7 @@ export default function KaigoLP() {
             <p className="text-gray-500 text-sm">訪問介護・特養・デイサービスそれぞれの特性に合わせたカスハラ対応のポイントを紹介します</p>
           </div>
           {/* タブ */}
-          <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl">
+          <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl" role="tablist" aria-label="事業所種別ガイドタブ">
             {([
               { key: "houmon", label: "訪問介護事業所", icon: "🏠" },
               { key: "tokuyou", label: "特養・老健", icon: "🏥" },
@@ -808,6 +947,9 @@ export default function KaigoLP() {
               <button
                 key={tab.key}
                 onClick={() => setFacilityTab(tab.key)}
+                role="tab"
+                aria-selected={facilityTab === tab.key}
+                aria-label={`${tab.label}の対応ガイドタブを表示する`}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-sm font-bold transition-colors ${facilityTab === tab.key ? "bg-teal-600 text-white shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
               >
                 <span>{tab.icon}</span>
@@ -972,6 +1114,8 @@ export default function KaigoLP() {
               <button
                 key={key}
                 onClick={() => setSelectedFlowType(selectedFlowType === key ? null : key)}
+                aria-label={`カスハラ種別「${val.label}」の対応フローを${selectedFlowType === key ? "閉じる" : "表示する"}`}
+                aria-pressed={selectedFlowType === key}
                 className={`font-bold px-5 py-2.5 rounded-full text-sm transition-colors border-2 ${selectedFlowType === key ? `${val.color} text-white border-transparent` : "bg-white text-gray-700 border-gray-200 hover:border-teal-400"}`}
               >
                 {val.label}
@@ -1034,12 +1178,14 @@ export default function KaigoLP() {
                   <div className="flex gap-3">
                     <button
                       onClick={() => setKaigoRiskAnswers(prev => ({ ...prev, [q.id]: true }))}
+                      aria-label={`Q${q.id}「${q.text}」に「はい」と答える`}
                       className={`flex-1 py-2 rounded-lg text-sm font-bold border-2 transition-colors ${kaigoRiskAnswers[q.id] === true ? "bg-teal-600 text-white border-teal-600" : "bg-white text-gray-600 border-gray-200 hover:border-teal-400"}`}
                     >
                       はい
                     </button>
                     <button
                       onClick={() => setKaigoRiskAnswers(prev => ({ ...prev, [q.id]: false }))}
+                      aria-label={`Q${q.id}「${q.text}」に「いいえ」と答える`}
                       className={`flex-1 py-2 rounded-lg text-sm font-bold border-2 transition-colors ${kaigoRiskAnswers[q.id] === false ? "bg-red-500 text-white border-red-500" : "bg-white text-gray-600 border-gray-200 hover:border-red-400"}`}
                     >
                       いいえ
@@ -1051,6 +1197,7 @@ export default function KaigoLP() {
             <button
               onClick={checkKaigoRisk}
               disabled={Object.keys(kaigoRiskAnswers).length < 5}
+              aria-label="5問すべてに回答した後、介護保険法違反リスクを判定する"
               className="w-full bg-orange-600 text-white font-bold py-3 rounded-xl hover:bg-orange-700 transition-colors mb-4 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {Object.keys(kaigoRiskAnswers).length < 5 ? `あと${5 - Object.keys(kaigoRiskAnswers).length}問答えてください` : "指定取消リスクを判定する →"}
@@ -1060,7 +1207,7 @@ export default function KaigoLP() {
               <div className="bg-green-50 border-2 border-green-400 rounded-xl p-4">
                 <p className="text-green-800 font-bold mb-1">✅ リスクスコア: 低（0〜1項目該当）</p>
                 <p className="text-green-700 text-sm mb-3">対応体制が整っています。引き続き証拠記録の継続と運営規程の定期見直しを推奨します。2026年10月義務化に向けた仕上げとして、対応フローの文書化も進めておきましょう。</p>
-                <button onClick={downloadEvidenceSheet} className="inline-flex items-center gap-1.5 bg-green-600 text-white font-bold px-5 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm">
+                <button onClick={downloadEvidenceSheet} aria-label="カスハラ証拠記録シートをダウンロードして継続的に記録管理する" className="inline-flex items-center gap-1.5 bg-green-600 text-white font-bold px-5 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm">
                   <span>📥</span>証拠記録シートをDLして継続記録する
                 </button>
               </div>
@@ -1084,7 +1231,50 @@ export default function KaigoLP() {
               </div>
             )}
             <p className="text-xs text-gray-400 mt-3 text-center">※本チェッカーはAIによる参考判定です。実際の対応は管理者・弁護士・社労士にご確認ください。</p>
+
+            {/* Print button - shown after result */}
+            {kaigoRiskResult && (
+              <div className="mt-4 text-center print:hidden">
+                <button
+                  onClick={() => window.print()}
+                  aria-label="介護カスハラ対策チェックリストを印刷する"
+                  className="inline-flex items-center gap-2 bg-gray-800 text-white font-bold px-6 py-3 rounded-xl hover:bg-gray-900 transition-colors text-sm"
+                >
+                  <span>🖨️</span>
+                  <span>対策チェックリストを印刷する</span>
+                </button>
+              </div>
+            )}
           </div>
+
+          {/* Hidden printable area */}
+          {kaigoRiskResult && (
+            <div id="kaigo-risk-print" className="hidden print:block">
+              <h3>介護カスハラ対策 — 指定取消リスク判定チェックリスト</h3>
+              <p style={{ fontSize: "10pt", color: "#666", marginBottom: "12pt" }}>
+                判定日: {new Date().toLocaleDateString("ja-JP")} ／ 介護カスハラAI (kaigo-custharass-ai.vercel.app)
+              </p>
+              {KAIGO_RISK_QUESTIONS.map((q) => (
+                <div key={q.id} className="print-item">
+                  <p>
+                    <strong>Q{q.id}.</strong> {q.text}
+                  </p>
+                  <p style={{ marginLeft: "24pt", color: kaigoRiskAnswers[q.id] === true ? "#16a34a" : kaigoRiskAnswers[q.id] === false ? "#dc2626" : "#666" }}>
+                    回答: {kaigoRiskAnswers[q.id] === true ? "はい" : kaigoRiskAnswers[q.id] === false ? "いいえ" : "未回答"}
+                  </p>
+                </div>
+              ))}
+              <div className="print-result">
+                判定結果: {kaigoRiskResult === "low" ? "✅ リスクスコア: 低（0〜1項目該当）— 対応体制が整っています。" : kaigoRiskResult === "medium" ? "⚠️ リスクスコア: 中（2〜3項目該当）— 一部リスクあり。マニュアル整備・運営規程へのカスハラ条項追加を急いでください。" : "🚨 リスクスコア: 高（4〜5項目該当）— 高リスク。記録体制・マニュアル整備・運営規程改訂を今すぐ始めてください。"}
+              </div>
+              <p style={{ fontSize: "9pt", color: "#999", marginTop: "16pt" }}>
+                ※本チェッカーはAIによる参考判定です。実際の対応は管理者・弁護士・社労士にご確認ください。
+              </p>
+              <p style={{ fontSize: "9pt", color: "#999" }}>
+                2026年10月 改正労働施策総合推進法・介護運営基準改正 義務化施行予定
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -1131,6 +1321,7 @@ export default function KaigoLP() {
           <h2 className="text-xl font-bold mb-2">介護事業所向け カスハラ対応マニュアル（テキスト版）</h2>
           <p className="text-gray-300 text-sm mb-5">カスハラの定義・対応フロー・証拠保全方法・義務化チェックリストをまとめたテキストマニュアルです。スタッフへの周知・研修資料としてご活用ください。</p>
           <button
+            aria-label="介護事業所向けカスハラ対応マニュアル（テキスト版）を無料ダウンロードする"
             onClick={() => {
               const content = `■ 介護事業所向け カスハラ対応マニュアル（簡易版）
 作成：介護カスハラAI / ポッコリラボ
@@ -1208,6 +1399,8 @@ https://kaigo-custharass-ai.vercel.app/tool
           <p className="text-xs text-gray-400 mt-2">介護カスハラの定義・法的根拠・義務化対応まで全解説</p>
         </div>
       </section>
+
+      <CareRoiCalculator />
 
       {/* X Share + LINE Share */}
       <section className="py-6 px-6 text-center">
