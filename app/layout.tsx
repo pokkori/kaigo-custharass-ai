@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     description: DESC,
   },
   metadataBase: new URL(SITE_URL),
+  manifest: "/manifest.json",
 };
 
 const breadcrumbLd = {
