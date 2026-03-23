@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 const SITE_URL = "https://kaigo-custharass-ai.vercel.app";
 const TITLE = "介護カスハラAI｜介護事業所のカスタマーハラスメント対応を15秒で｜運営基準対応";
@@ -67,7 +63,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="antialiased">
         {children}
         <Analytics />
       </body>
