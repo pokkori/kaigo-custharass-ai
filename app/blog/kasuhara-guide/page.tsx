@@ -84,8 +84,8 @@ export default function KasuharaGuidePage() {
     <div className="min-h-screen bg-white">
       <nav className="border-b border-gray-100 px-6 py-4 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/" className="font-bold text-gray-900">🏥 介護カスハラAI</Link>
-          <Link href="/tool" className="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
+          <Link href="/" aria-label="介護カスハラAIトップページへ" className="font-bold text-gray-900">🏥 介護カスハラAI</Link>
+          <Link href="/tool" aria-label="介護カスハラAIツールを無料で3回試す" className="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
             無料で試す（3回）
           </Link>
         </div>
@@ -222,7 +222,7 @@ export default function KasuharaGuidePage() {
           </div>
           <div className="mt-6 bg-teal-50 border border-teal-200 rounded-xl p-5 text-center">
             <p className="font-bold text-teal-800 text-sm mb-2">このチェックリストの全項目をAIが文書化します</p>
-            <Link href="/tool" className="inline-block mt-2 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm">
+            <Link href="/tool" aria-label="カスハラ義務化対応文書を無料でAI生成する" className="inline-block mt-2 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm">
               義務化対応文書を無料で生成する →
             </Link>
           </div>
