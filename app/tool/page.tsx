@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
 import { track } from '@vercel/analytics';
+import { updateStreak } from "@/lib/streak";
 
 function renderMarkdown(text: string): string {
   const lines = text.split("\n");
@@ -181,6 +182,9 @@ export default function KaigoTool() {
       setCount(newCount);
       localStorage.setItem(STORAGE_KEY, String(newCount));
       if (newCount >= FREE_LIMIT) { track('paywall_shown', { service: '介護カスハラAI' }); setHitLimit(true); }
+
+      // ストリーク更新
+      updateStreak("kaigo_kasuhara");
 
       // 達成感バナー表示
       setCompletionVisible(true);
@@ -441,13 +445,14 @@ export default function KaigoTool() {
                   <p className="text-sm font-bold text-teal-800 mb-3">同じ悩みを持つ介護スタッフに届けましょう</p>
                   <a
                     href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                      `「カスハラ深刻度${currentSeverity.score}/10... 対応文書が30秒で完成した😮 介護現場の理不尽に困ってる方へ → https://kaigo-custharass-ai.vercel.app #介護カスハラ対策 #カスハラ #介護現場`
+                      `「カスハラ深刻度${currentSeverity.score}/10... 対応文書が30秒で完成した 介護現場の理不尽に困ってる方へ → https://kaigo-custharass-ai.vercel.app #介護カスハラ対策 #カスハラ #介護現場`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label="介護カスハラAIを使ったことをXにシェアする"
                     className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg hover:scale-105 transition-transform"
                   >
-                    𝕏 でシェアして仲間に教える
+                    Xでシェア
                   </a>
                 </div>
                 {/* 次のアクション3選 */}

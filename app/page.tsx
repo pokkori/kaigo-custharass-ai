@@ -665,7 +665,7 @@ export default function KaigoLP() {
             <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
               <p className="text-sm font-bold text-amber-900 mb-1">このチェックリストの「必須」項目を満たす文書を、AIが即座に生成します</p>
               <p className="text-xs text-amber-700 mb-3">対応フロー・記録書式・対処方針文書をワンクリックで作成。義務化対応をゼロから始められます。</p>
-              <a href="/tool" className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
+              <a href="/tool" aria-label="介護カスハラAIツールで義務化対応文書を無料で生成する" className="inline-block bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors">
                 義務化対応文書を無料で生成する →
               </a>
             </div>
@@ -722,6 +722,7 @@ export default function KaigoLP() {
             <p className="text-sm text-teal-700 mb-4">スタッフ全員が24時間365日、何件でも対応文・記録テンプレートを生成できます。</p>
             <button
               onClick={() => setShowPayjp(true)}
+              aria-label="事業所プラン月額9,800円の申し込みモーダルを開く"
               className="bg-teal-600 text-white font-bold px-8 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
             >
               事業所プランを申し込む（¥9,800/月）→
@@ -1480,9 +1481,10 @@ https://kaigo-custharass-ai.vercel.app/tool
       <section className="py-6 px-6 text-center">
         <div className="inline-flex flex-col sm:flex-row gap-2">
           <a
-            href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent("介護カスハラAI — 介護施設のカスタマーハラスメント対応文書を30秒で生成💼 証拠保全・エスカレーション判断もAIがサポート → https://kaigo-custharass-ai.vercel.app #介護 #カスハラ対応 #AI")}
+            href={"https://twitter.com/intent/tweet?text=" + encodeURIComponent("介護カスハラAI — 介護施設のカスタマーハラスメント対応文書を30秒で生成 証拠保全・エスカレーション判断もAIがサポート → https://kaigo-custharass-ai.vercel.app #介護 #カスハラ対応 #AI")}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="介護カスハラAIを使ったことをXにシェアする"
             className="inline-flex items-center gap-2 bg-black hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-xl text-sm transition-colors"
           >
             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
@@ -1491,9 +1493,10 @@ https://kaigo-custharass-ai.vercel.app/tool
             Xでシェアする
           </a>
           <a
-            href={"https://line.me/R/msg/text/?" + encodeURIComponent("介護カスハラAI💼 介護施設のカスハラ対応文書を30秒で生成！証拠保全・エスカレーション判断もAIサポート → https://kaigo-custharass-ai.vercel.app")}
+            href={"https://line.me/R/msg/text/?" + encodeURIComponent("介護カスハラAI 介護施設のカスハラ対応文書を30秒で生成！証拠保全・エスカレーション判断もAIサポート → https://kaigo-custharass-ai.vercel.app")}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="介護カスハラAIをLINEで友人に送る"
             className="inline-flex items-center gap-2 text-white font-bold py-3 px-6 rounded-xl text-sm transition-colors"
             style={{ background: "#06C755" }}
           >
