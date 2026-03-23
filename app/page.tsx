@@ -2,6 +2,29 @@
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
+import { updateStreak, loadStreak, getStreakMilestoneMessage } from "@/lib/streak";
+
+// 相談履歴の型
+interface ConsultHistory {
+  text: string;
+  date: string;
+}
+
+// 相談履歴の読み込み・保存
+function loadHistory(): ConsultHistory[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem("kaigo_history") ?? "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(entries: ConsultHistory[]) {
+  try {
+    localStorage.setItem("kaigo_history", JSON.stringify(entries.slice(0, 5)));
+  } catch { /* noop */ }
+}
 
 // 法改正年表データ
 const LAW_TIMELINE = [
@@ -232,11 +255,23 @@ export default function KaigoLP() {
   const [facilityTab, setFacilityTab] = useState<"houmon" | "tokuyou" | "day">("houmon");
   const [kaigoRiskAnswers, setKaigoRiskAnswers] = useState<Record<number, boolean | null>>({});
   const [kaigoRiskResult, setKaigoRiskResult] = useState<string | null>(null);
+  const [streakCount, setStreakCount] = useState(0);
+  const [streakMilestone, setStreakMilestone] = useState<string | null>(null);
+  const [consultHistory, setConsultHistory] = useState<ConsultHistory[]>([]);
 
   useEffect(() => {
     const target = new Date("2026-10-01");
     const diff = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     setDaysLeft(Math.max(0, diff));
+
+    // ストリーク更新
+    const streak = updateStreak("kaigo");
+    setStreakCount(streak.count);
+    const msg = getStreakMilestoneMessage(streak.count);
+    if (msg) setStreakMilestone(msg);
+
+    // 相談履歴読み込み
+    setConsultHistory(loadHistory());
   }, []);
 
   function checkKaigoRisk() {
@@ -311,6 +346,13 @@ export default function KaigoLP() {
         </div>
       )}
 
+      {/* ストリークマイルストーン通知 */}
+      {streakMilestone && (
+        <div className="bg-teal-500 text-white text-center text-sm font-bold py-2 px-4 print:hidden animate-pulse">
+          {streakMilestone} {streakCount}日連続でご利用中です
+        </div>
+      )}
+
       {showPayjp && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4" role="dialog" aria-modal="true" aria-labelledby="kaigo-plan-modal-title">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
@@ -339,7 +381,14 @@ export default function KaigoLP() {
 
       <nav className="border-b border-gray-100 px-6 py-4 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <span className="font-bold text-gray-900">🏥 介護カスハラAI</span>
+          <div className="flex items-center gap-3">
+            <span className="font-bold text-gray-900">🏥 介護カスハラAI</span>
+            {streakCount >= 2 && (
+              <span className="hidden sm:inline-flex items-center gap-1 bg-teal-50 border border-teal-200 text-teal-700 text-xs font-bold px-2.5 py-1 rounded-full" aria-label={`${streakCount}日連続利用中`}>
+                <span>連続{streakCount}日</span>
+              </span>
+            )}
+          </div>
           <Link
             href="/tool"
             className="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors"
@@ -466,7 +515,7 @@ export default function KaigoLP() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {CARE_CASES.map((c) => (
-              <div key={c.name} className="border border-gray-200 rounded-xl p-5 bg-white">
+              <div key={c.name} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-5">
                 <div className="text-2xl mb-2">{c.icon}</div>
                 <h3 className="font-bold text-gray-900 mb-2">{c.name}</h3>
                 <p className="text-xs text-teal-600 font-medium mb-3">{c.pain}</p>
@@ -510,7 +559,7 @@ export default function KaigoLP() {
                 desc: "「1日何十回も電話してくる」への連絡ルール設定文・通知書テンプレートを生成。境界線を明確に設定できます。",
               },
             ].map((f) => (
-              <div key={f.title} className="bg-white rounded-xl p-6 border border-gray-200">
+              <div key={f.title} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-6">
                 <div className="text-2xl mb-2">{f.icon}</div>
                 <h3 className="font-bold text-gray-900 mb-2">{f.title}</h3>
                 <p className="text-sm text-gray-500">{f.desc}</p>
@@ -566,7 +615,7 @@ export default function KaigoLP() {
               { role: "デイサービス施設長・50代", text: "「訴える」「監査を呼ぶ」と脅してくる家族への対応に悩んでいました。法的根拠のある毅然とした文書が作れるので、スタッフも自信を持って対応できています。" },
               { role: "ヘルパー事業所・サービス提供責任者・30代", text: "インシデント記録の書き方がわからず、行政報告のたびに困っていました。このツールで記録テンプレートが即生成されるので、事業所全体の記録品質が上がりました。" },
             ].map((v, i) => (
-              <div key={i} className="bg-white rounded-xl p-5 border border-gray-200">
+              <div key={i} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-5">
                 <div className="flex text-yellow-400 text-sm mb-3">{"★★★★★"}</div>
                 <p className="text-sm text-gray-700 mb-3 leading-relaxed">{v.text}</p>
                 <p className="text-xs text-gray-400">{v.role}</p>
@@ -1093,7 +1142,7 @@ export default function KaigoLP() {
               { q: "カスハラを受けたスタッフのメンタルケアは？", a: "カスハラを受けたスタッフへの心理的サポートは事業者の義務です。本ツールは対応文書生成のほか、2026年10月義務化に向けた相談窓口設置・研修実施の文書雛形も提供します。深刻なケースでは産業医・EAP（従業員支援プログラム）への連携をおすすめします。" },
               { q: "家族（第三者）からのカスハラにも対応できますか？", a: "はい。要求者として「家族・親族」を選択することで、家族からの不当クレーム・威圧・脅迫に特化した対応文を生成します。同居家族・遠方家族・複数家族間の調整が難しいケースも想定した書面通知文を出力します。" },
             ].map((faq, i) => (
-              <div key={i} className="bg-white rounded-xl p-5 shadow-sm">
+              <div key={i} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-5">
                 <p className="font-semibold text-teal-800 mb-2 text-sm">Q. {faq.q}</p>
                 <p className="text-sm text-gray-600">A. {faq.a}</p>
               </div>
@@ -1399,6 +1448,31 @@ https://kaigo-custharass-ai.vercel.app/tool
           <p className="text-xs text-gray-400 mt-2">介護カスハラの定義・法的根拠・義務化対応まで全解説</p>
         </div>
       </section>
+
+      {/* 相談履歴パネル */}
+      {consultHistory.length > 0 && (
+        <section className="py-10 bg-teal-50 border-t border-teal-100 print:hidden">
+          <div className="max-w-3xl mx-auto px-6">
+            <div className="text-center mb-5">
+              <span className="text-xs font-bold text-teal-700 uppercase tracking-widest">あなたの相談履歴</span>
+              <h2 className="text-lg font-bold text-gray-900 mt-1">最近の相談（過去{consultHistory.length}件）</h2>
+            </div>
+            <div className="space-y-3">
+              {consultHistory.map((entry, i) => (
+                <div key={i} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl px-5 py-3 flex items-center justify-between gap-4">
+                  <p className="text-sm text-gray-700 truncate flex-1">{entry.text}</p>
+                  <time className="text-xs text-gray-400 shrink-0 whitespace-nowrap">{entry.date}</time>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/tool" className="inline-block bg-teal-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-teal-700 transition-colors text-sm">
+                続きをAIで生成する →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       <CareRoiCalculator />
 

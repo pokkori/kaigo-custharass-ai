@@ -138,6 +138,18 @@ export default function KaigoTool() {
   const handleGenerate = async () => {
     if (!situation.trim()) { setError("状況を入力してください"); return; }
     track('ai_generated', { service: '介護カスハラAI' });
+
+    // 相談履歴を保存
+    try {
+      const existing = JSON.parse(localStorage.getItem("kaigo_history") ?? "[]") as { text: string; date: string }[];
+      const entry = {
+        text: situation.slice(0, 50),
+        date: new Date().toLocaleString("ja-JP", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }),
+      };
+      const updated = [entry, ...existing].slice(0, 5);
+      localStorage.setItem("kaigo_history", JSON.stringify(updated));
+    } catch { /* noop */ }
+
     setLoading(true);
     setError("");
     setTabs(null);
