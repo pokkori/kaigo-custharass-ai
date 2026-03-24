@@ -112,37 +112,37 @@ const PAYJP_PUBLIC_KEY = process.env.NEXT_PUBLIC_PAYJP_PUBLIC_KEY ?? "";
 
 const CARE_CASES = [
   {
-    icon: "😤",
+    icon: "",
     name: "暴言・威圧",
     examples: ["「殺すぞ」「首にしろ」等の暴言", "大声で怒鳴り続ける", "他スタッフの悪口を繰り返す"],
     pain: "録音・証拠化と毅然とした対応文が必要。",
   },
   {
-    icon: "📞",
+    icon: "",
     name: "過剰な電話・要求",
     examples: ["1日何十回も電話してくる", "対応時間外の深夜連絡", "「すぐ来い」の無理な要求"],
     pain: "境界線の設定と記録管理が重要。",
   },
   {
-    icon: "💴",
+    icon: "",
     name: "金品・サービス要求",
     examples: ["規定外のサービスを要求", "「もっとやれ」の過剰要求", "返金・賠償の不当要求"],
     pain: "契約範囲を明確にした毅然対応が必要。",
   },
   {
-    icon: "👨‍👩‍👧",
+    icon: "‍‍",
     name: "家族からの過剰要求",
     examples: ["「訴える」などの法的脅迫", "業務妨害に至る繰り返しの要求", "同一要求の際限ない繰り返し"],
     pain: "記録の蓄積と段階的対応が有効。",
   },
   {
-    icon: "🏛",
+    icon: "",
     name: "行政・苦情申し立て",
     examples: ["市区町村への苦情申立", "国保連への申立て脅迫", "監査を匂わせる脅迫"],
     pain: "事実確認と適切な記録・報告が必要。",
   },
   {
-    icon: "⚖",
+    icon: "",
     name: "法的措置の示唆",
     examples: ["「弁護士に相談する」", "「裁判所に訴える」", "内容証明郵便を送りつける"],
     pain: "法的根拠に基づく毅然対応文が必要。",
@@ -199,7 +199,7 @@ function CareRoiCalculator() {
           <h2 className="text-2xl font-bold text-gray-900 mt-2 mb-1">カスハラ対策の費用対効果を試算</h2>
           <p className="text-sm text-gray-500">厚労省研究：介護職1人の採用・育成コストは約50万円。カスハラによる離職は直接的な損失です。</p>
         </div>
-        <div className="bg-white rounded-2xl shadow-sm border border-teal-100 p-6 space-y-5">
+        <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-sm border border-teal-100 p-6 space-y-5">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">事業所のスタッフ数（人）: <span className="text-teal-600">{staffCount}人</span></label>
             <input type="range" min={3} max={100} value={staffCount} onChange={e => setStaffCount(Number(e.target.value))} className="w-full accent-teal-600" />
@@ -356,8 +356,8 @@ export default function KaigoLP() {
       {showPayjp && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4" role="dialog" aria-modal="true" aria-labelledby="kaigo-plan-modal-title">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
-            <button onClick={() => setShowPayjp(false)} aria-label="プラン選択モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
-            <div className="text-3xl mb-3 text-center">🏥</div>
+            <button onClick={() => setShowPayjp(false)} aria-label="プラン選択モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl"></button>
+            <div className="text-3xl mb-3 text-center"></div>
             <h2 id="kaigo-plan-modal-title" className="text-lg font-bold mb-2 text-center">プランを選択</h2>
             <p className="text-sm text-gray-500 mb-4 text-center">ご利用状況に合わせてお選びください</p>
             <div className="space-y-3">
@@ -382,7 +382,7 @@ export default function KaigoLP() {
       <nav className="border-b border-gray-100 px-6 py-4 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="font-bold text-gray-900">🏥 介護カスハラAI</span>
+            <span className="font-bold text-gray-900"> 介護カスハラAI</span>
             {streakCount >= 2 && (
               <span className="hidden sm:inline-flex items-center gap-1 bg-teal-50 border border-teal-200 text-teal-700 text-xs font-bold px-2.5 py-1 rounded-full" aria-label={`${streakCount}日連続利用中`}>
                 <span>連続{streakCount}日</span>
@@ -399,10 +399,10 @@ export default function KaigoLP() {
       </nav>
 
       <div className="bg-gray-100 text-gray-600 text-center text-xs py-1.5 px-4">
-        ⚠️ 本サービスはAIによる参考情報の提供です。法的対応・訴訟については弁護士・社会保険労務士にご相談ください。
+        ! 本サービスはAIによる参考情報の提供です。法的対応・訴訟については弁護士・社会保険労務士にご相談ください。
       </div>
       <div className="bg-red-700 text-white text-center text-sm font-semibold py-2.5 px-4">
-        🚨【法的義務】改正労働施策総合推進法・介護運営基準改正によりカスハラ体制整備が義務化（2026年10月1日施行）
+        【法的義務】改正労働施策総合推進法・介護運営基準改正によりカスハラ体制整備が義務化（2026年10月1日施行）
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
         <span className="ml-2 text-xs font-normal opacity-80">※未対応の場合、行政指導・監査リスクあり</span>
       </div>
@@ -466,7 +466,7 @@ export default function KaigoLP() {
               aria-label="カスハラ証拠記録シート（TSV形式・Excel対応）を無料ダウンロードする"
               className="inline-flex items-center gap-2 bg-white border-2 border-teal-300 text-teal-700 font-bold px-6 py-3 rounded-xl hover:bg-teal-50 transition-colors shadow-sm text-sm"
             >
-              <span>📥</span>
+              <span></span>
               <span>証拠記録シート（Excel対応）を無料DL</span>
             </button>
             <p className="text-xs text-gray-400 mt-1">TSV形式・Excel/Numbersで開けます・登録不要</p>
@@ -488,7 +488,7 @@ export default function KaigoLP() {
               "「カスハラを受けたスタッフが精神的に追い詰められているが、会社として動けていない」",
             ].map((v, i) => (
               <div key={i} className="flex items-start gap-3 bg-red-50 border border-red-100 rounded-xl px-5 py-4">
-                <span className="text-red-400 font-bold text-lg mt-0.5 shrink-0">✗</span>
+                <span className="text-red-400 font-bold text-lg mt-0.5 shrink-0"></span>
                 <p className="text-sm text-gray-700 leading-relaxed">{v}</p>
               </div>
             ))}
@@ -511,11 +511,11 @@ export default function KaigoLP() {
           <h2 className="text-2xl font-bold text-center mb-3">介護現場のカスハラは「特殊」です</h2>
           <p className="text-center text-gray-500 text-sm mb-10">一般企業向けのクレーム対応では対処できない、介護特有の問題があります</p>
           <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 mb-8 text-sm text-teal-800">
-            ✅ <strong>正当なご意見・改善要望はカスハラではありません。</strong>本ツールは、利用者・ご家族の権利を守りながら、業務妨害・脅迫・暴言など「度を超えた行為」から事業所とスタッフを守るためのものです。
+            OK <strong>正当なご意見・改善要望はカスハラではありません。</strong>本ツールは、利用者・ご家族の権利を守りながら、業務妨害・脅迫・暴言など「度を超えた行為」から事業所とスタッフを守るためのものです。
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
             {CARE_CASES.map((c) => (
-              <div key={c.name} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-5">
+              <div key={c.name} className="bg-white/80 backdrop-blur-md border border-white/40 shadow-lg rounded-xl p-5">
                 <div className="text-2xl mb-2">{c.icon}</div>
                 <h3 className="font-bold text-gray-900 mb-2">{c.name}</h3>
                 <p className="text-xs text-teal-600 font-medium mb-3">{c.pain}</p>
@@ -539,27 +539,27 @@ export default function KaigoLP() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {[
               {
-                icon: "📝",
+                icon: "",
                 title: "カスハラ対応文の即生成",
                 desc: "状況・相手・深刻度を入力するだけ。厚労省ガイドライン準拠の毅然とした対応文が15秒で生成されます。",
               },
               {
-                icon: "📋",
+                icon: "",
                 title: "カスハラ証拠記録テンプレート",
                 desc: "日時・場所・発言内容・対応経緯を整理した記録テンプレートを生成。行政への報告や訴訟対応に備えた証拠管理ができます。",
               },
               {
-                icon: "🛡",
+                icon: "",
                 title: "不当要求の断り文",
                 desc: "「契約外のサービスを要求」「スタッフの交代を執拗に要求」への明確な断り文。感情的にならず毅然と断れます。",
               },
               {
-                icon: "📞",
+                icon: "",
                 title: "過剰な電話への対応文",
                 desc: "「1日何十回も電話してくる」への連絡ルール設定文・通知書テンプレートを生成。境界線を明確に設定できます。",
               },
             ].map((f) => (
-              <div key={f.title} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-6">
+              <div key={f.title} className="bg-white/80 backdrop-blur-md border border-white/40 shadow-lg rounded-xl p-6">
                 <div className="text-2xl mb-2">{f.icon}</div>
                 <h3 className="font-bold text-gray-900 mb-2">{f.title}</h3>
                 <p className="text-sm text-gray-500">{f.desc}</p>
@@ -575,7 +575,7 @@ export default function KaigoLP() {
           {/* 厚労省ガイドライン準拠バッジ */}
           <div className="flex justify-center mb-10">
             <div className="inline-flex items-center gap-3 bg-green-50 border-2 border-green-500 rounded-2xl px-6 py-4 shadow-sm">
-              <span className="text-2xl">🛡️</span>
+              <span className="text-2xl">️</span>
               <div>
                 <p className="text-green-700 font-bold text-sm">厚生労働省ガイドライン対応</p>
                 <p className="text-green-600 text-xs">介護現場のハラスメント対策マニュアル準拠</p>
@@ -589,10 +589,10 @@ export default function KaigoLP() {
           <p className="text-center text-gray-400 text-sm mb-8">様々な介護事業形態でご活用いただいています</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { icon: "🏠", name: "特別養護老人ホーム", detail: "定員80名規模" },
-              { icon: "🏥", name: "介護老人保健施設", detail: "リハビリ特化型" },
-              { icon: "🏡", name: "グループホーム", detail: "定員9名規模" },
-              { icon: "🚌", name: "デイサービスセンター", detail: "通所介護事業所" },
+              { icon: "", name: "特別養護老人ホーム", detail: "定員80名規模" },
+              { icon: "", name: "介護老人保健施設", detail: "リハビリ特化型" },
+              { icon: "", name: "グループホーム", detail: "定員9名規模" },
+              { icon: "", name: "デイサービスセンター", detail: "通所介護事業所" },
             ].map((f) => (
               <div key={f.name} className="flex flex-col items-center bg-teal-50 border border-teal-100 rounded-xl py-5 px-3 text-center">
                 <span className="text-3xl mb-2">{f.icon}</span>
@@ -615,8 +615,8 @@ export default function KaigoLP() {
               { role: "デイサービス施設長・50代", text: "「訴える」「監査を呼ぶ」と脅してくる家族への対応に悩んでいました。法的根拠のある毅然とした文書が作れるので、スタッフも自信を持って対応できています。" },
               { role: "ヘルパー事業所・サービス提供責任者・30代", text: "インシデント記録の書き方がわからず、行政報告のたびに困っていました。このツールで記録テンプレートが即生成されるので、事業所全体の記録品質が上がりました。" },
             ].map((v, i) => (
-              <div key={i} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-lg rounded-xl p-5">
-                <div className="flex text-yellow-400 text-sm mb-3">{"★★★★★"}</div>
+              <div key={i} className="bg-white/80 backdrop-blur-md border border-white/40 shadow-lg rounded-xl p-5">
+                <div className="flex text-yellow-400 text-sm mb-3">{""}</div>
                 <p className="text-sm text-gray-700 mb-3 leading-relaxed">{v.text}</p>
                 <p className="text-xs text-gray-400">{v.role}</p>
               </div>
@@ -630,7 +630,7 @@ export default function KaigoLP() {
       <section className="py-16 bg-amber-50 border-y border-amber-200">
         <div className="max-w-3xl mx-auto px-6">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-2xl">⚖️</span>
+            <span className="text-2xl"></span>
             <h2 className="text-2xl font-bold text-gray-900">2026年10月義務化 — 事業所の対応チェックリスト</h2>
           </div>
           <p className="text-center text-gray-500 text-sm mb-2">改正労働施策総合推進法第30条の7・介護運営基準改正に基づく必須対応項目</p>
@@ -681,7 +681,7 @@ export default function KaigoLP() {
           <div className="grid md:grid-cols-3 gap-5 mb-8">
             {[
               {
-                icon: "⚖️",
+                icon: "",
                 label: "弁護士顧問契約",
                 cost: "月額¥3万〜¥10万",
                 note: "カスハラ1件の相談のみで¥1万〜",
@@ -689,7 +689,7 @@ export default function KaigoLP() {
                 textColor: "text-red-700",
               },
               {
-                icon: "👔",
+                icon: "",
                 label: "社労士コンサル",
                 cost: "月額¥2万〜¥5万",
                 note: "マニュアル作成は別途費用",
@@ -697,7 +697,7 @@ export default function KaigoLP() {
                 textColor: "text-orange-700",
               },
               {
-                icon: "🏥",
+                icon: "",
                 label: "介護カスハラAI",
                 cost: "月額¥9,800（事業所）",
                 note: "対応文・記録・書面を無制限生成",
@@ -706,7 +706,7 @@ export default function KaigoLP() {
                 highlight: true,
               },
             ].map((item, i) => (
-              <div key={i} className={`border-2 rounded-2xl p-5 ${item.color} ${item.highlight ? "ring-2 ring-teal-400 shadow-lg" : ""} relative`}>
+              <div key={i} className={`bg-white/80 backdrop-blur-md border-2 rounded-2xl p-5 ${item.color} ${item.highlight ? "ring-2 ring-teal-400 shadow-lg" : ""} relative`}>
                 {item.highlight && (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full">最もコスパ高</div>
                 )}
@@ -743,21 +743,21 @@ export default function KaigoLP() {
                 before: "利用者の息子が毎日15回以上電話。「いつでも担当者を出せ」と要求し、夜間も着信が続いていた。スタッフ2名が精神的に追い詰められ休職寸前。",
                 action: "AIで「連絡時間帯制限通知書」を生成。法的根拠（就業規則・連絡受付時間）を明示した書面を送付。",
                 after: "書面送付後3日で1日2〜3回に減少。「書面で来た」という事実がご家族の認識を変えた。スタッフも自信を持って対応できるようになった。",
-                icon: "📞",
+                icon: "",
               },
               {
                 category: "脅迫・暴言（家族）",
                 before: "「この施設は訴える」「監査を呼んでやる」と施設長に繰り返し告げる家族。対応に追われ管理者が連日残業。記録もなく証拠が残っていなかった。",
                 action: "AIでインシデント記録テンプレートと「法的措置示唆への書面対応文」を生成。「刑法上の脅迫罪に該当する場合がある旨」を文書に明記。",
                 after: "書面提出後、家族の言動が落ち着いた。記録が蓄積され、その後の行政対応・第三者委員会への報告にも活用できた。",
-                icon: "⚖️",
+                icon: "",
               },
               {
                 category: "身体的暴力・性的ハラスメント",
                 before: "入浴介助中の利用者による性的言動が複数回発生。スタッフが一人で対応しており、証拠もなく「言った言わない」の問題になっていた。",
                 action: "「複数体制への切り替え通知書」と「再発時の契約解除予告通知書」をAIで生成。利用者家族への書面送付と同時に複数体制に変更。",
                 after: "体制変更後は問題が発生しなくなった。書面を送付したことで家族も深刻さを認識。スタッフへのアンケートで「安心してケアできる」との回答が増加。",
-                icon: "🛡️",
+                icon: "️",
               },
             ].map((s, i) => (
               <div key={i} className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
@@ -791,13 +791,13 @@ export default function KaigoLP() {
           <h2 className="text-2xl font-bold text-center mb-3">料金プラン</h2>
           <p className="text-center text-gray-500 text-sm mb-10">利用シーンに合わせた3プラン</p>
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="border-2 border-gray-200 rounded-2xl p-6 bg-white">
+            <div className="bg-white/80 backdrop-blur-md border-2 border-gray-200 rounded-2xl p-6">
               <p className="text-gray-500 font-bold mb-2">個人プラン</p>
               <p className="text-4xl font-black text-gray-900 mb-1">¥2,980<span className="text-base font-normal text-gray-500">/月</span></p>
               <p className="text-gray-400 text-sm mb-6">個人スタッフ・ヘルパー向け</p>
               <ul className="space-y-3 text-sm text-gray-700 mb-8">
                 {["カスハラ対応文 月30件生成", "証拠記録テンプレート", "介護特化プロンプト対応", "いつでも解約可能"].map((f) => (
-                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold"></span>{f}</li>
                 ))}
               </ul>
               <button
@@ -808,14 +808,14 @@ export default function KaigoLP() {
                 申し込む
               </button>
             </div>
-            <div className="border-2 border-teal-600 rounded-2xl p-6 bg-teal-50 relative">
+            <div className="bg-white/80 backdrop-blur-md border-2 border-teal-600 rounded-2xl p-6 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-xs font-bold px-4 py-1 rounded-full">人気</div>
               <p className="text-teal-700 font-bold mb-2">事業所プラン</p>
               <p className="text-4xl font-black text-gray-900 mb-1">¥9,800<span className="text-base font-normal text-gray-500">/月</span></p>
               <p className="text-gray-400 text-sm mb-6">1事業所向け</p>
               <ul className="space-y-3 text-sm text-gray-700 mb-8">
                 {["カスハラ対応文 月100件生成", "証拠記録テンプレート", "介護特化プロンプト対応", "いつでも解約可能"].map((f) => (
-                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold"></span>{f}</li>
                 ))}
               </ul>
               <button
@@ -826,14 +826,14 @@ export default function KaigoLP() {
                 申し込む
               </button>
             </div>
-            <div className="border-2 border-gray-200 rounded-2xl p-6 bg-white relative">
+            <div className="bg-white/80 backdrop-blur-md border-2 border-gray-200 rounded-2xl p-6 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-600 text-white text-xs font-bold px-4 py-1 rounded-full">複数事業所向け</div>
               <p className="text-gray-700 font-bold mb-2">チェーンプラン</p>
               <p className="text-4xl font-black text-gray-900 mb-1">要相談</p>
               <p className="text-gray-400 text-sm mb-6">複数事業所・法人一括契約</p>
               <ul className="space-y-3 text-sm text-gray-700 mb-8">
                 {["事業所プラン全機能", "複数事業所の一括管理", "スタッフ研修用マニュアル生成", "優先サポート・訪問研修相談可"].map((f) => (
-                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold">✓</span>{f}</li>
+                  <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold"></span>{f}</li>
                 ))}
               </ul>
               <a
@@ -860,19 +860,19 @@ export default function KaigoLP() {
           <div className="grid md:grid-cols-3 gap-5 mb-8">
             {[
               {
-                icon: "⚖️",
+                icon: "",
                 title: "介護保険法・運営基準を自動引用",
                 desc: "「介護保険法第〇条」「介護運営基準改正（2026年10月施行）」を対応文に自動引用。一般クレームAIには真似できない、介護特有の法的根拠が即使えます。",
                 badge: "汎用AIにはない",
               },
               {
-                icon: "🏠",
+                icon: "",
                 title: "訪問介護・特養・デイ別に最適化",
                 desc: "「単独訪問中のカスハラ」「夜間帯施設での対応」「デイ送迎中の問題」——事業所形態ごとに異なるリスクに特化した書面が生成されます。",
                 badge: "社労士コンサルより速い",
               },
               {
-                icon: "📋",
+                icon: "",
                 title: "証拠記録シートをワンクリックDL",
                 desc: "対応文生成後、Excelで即使える証拠記録シート（日時・場所・発言・対応者・深刻度）をダウンロード。行政指導・国保連への報告にそのまま使えます。",
                 badge: "義務化対応に直結",
@@ -919,9 +919,9 @@ export default function KaigoLP() {
             </button>
           </div>
           <div className="flex justify-center gap-6 mt-6 text-teal-200 text-xs">
-            <span>✓ 登録不要</span>
-            <span>✓ 介護保険法準拠</span>
-            <span>✓ いつでも解約可</span>
+            <span> 登録不要</span>
+            <span> 介護保険法準拠</span>
+            <span> いつでも解約可</span>
           </div>
         </div>
       </section>
@@ -990,9 +990,9 @@ export default function KaigoLP() {
           {/* タブ */}
           <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-xl" role="tablist" aria-label="事業所種別ガイドタブ">
             {([
-              { key: "houmon", label: "訪問介護事業所", icon: "🏠" },
-              { key: "tokuyou", label: "特養・老健", icon: "🏥" },
-              { key: "day", label: "デイサービス", icon: "🚌" },
+              { key: "houmon", label: "訪問介護事業所", icon: "" },
+              { key: "tokuyou", label: "特養・老健", icon: "" },
+              { key: "day", label: "デイサービス", icon: "" },
             ] as const).map((tab) => (
               <button
                 key={tab.key}
@@ -1013,15 +1013,15 @@ export default function KaigoLP() {
           {facilityTab === "houmon" && (
             <div className="bg-teal-50 border border-teal-200 rounded-2xl p-6 space-y-5">
               <div>
-                <h3 className="font-bold text-teal-900 text-lg mb-2">🏠 訪問介護事業所向けカスハラ対応</h3>
+                <h3 className="font-bold text-teal-900 text-lg mb-2"> 訪問介護事業所向けカスハラ対応</h3>
                 <p className="text-sm text-teal-800">訪問介護は「一人でご自宅に伺う」特性から、カスハラリスクが最も高い介護形態です。密室・孤立環境でのスタッフ保護が最重要課題です。</p>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 {[
-                  { title: "リスク特性", icon: "⚠️", items: ["単独訪問による孤立リスク", "密室環境でのセクハラ", "利用者宅での暴言・暴力", "記録者・証人がいない"] },
-                  { title: "必須対策", icon: "🛡️", items: ["複数訪問体制への切り替え基準を明文化", "訪問前・後の報告ルール整備", "スタッフからのSOS連絡体制", "「対応できない場合は退出する」権限の付与"] },
-                  { title: "AIで生成できる文書", icon: "📄", items: ["複数体制切り替え通知書", "緊急連絡ルール設定通知", "セクハラ再発防止通知書", "訪問中断・契約解除予告書"] },
-                  { title: "義務化対応ポイント", icon: "✅", items: ["訪問介護特有のリスクを就業規則に明記", "単独訪問時の安全確認フロー整備", "カスハラ報告書式の統一", "スタッフへの定期研修記録"] },
+                  { title: "リスク特性", icon: "!", items: ["単独訪問による孤立リスク", "密室環境でのセクハラ", "利用者宅での暴言・暴力", "記録者・証人がいない"] },
+                  { title: "必須対策", icon: "️", items: ["複数訪問体制への切り替え基準を明文化", "訪問前・後の報告ルール整備", "スタッフからのSOS連絡体制", "「対応できない場合は退出する」権限の付与"] },
+                  { title: "AIで生成できる文書", icon: "", items: ["複数体制切り替え通知書", "緊急連絡ルール設定通知", "セクハラ再発防止通知書", "訪問中断・契約解除予告書"] },
+                  { title: "義務化対応ポイント", icon: "OK", items: ["訪問介護特有のリスクを就業規則に明記", "単独訪問時の安全確認フロー整備", "カスハラ報告書式の統一", "スタッフへの定期研修記録"] },
                 ].map((card) => (
                   <div key={card.title} className="bg-white border border-teal-100 rounded-xl p-4">
                     <p className="font-bold text-teal-800 text-sm mb-2">{card.icon} {card.title}</p>
@@ -1042,15 +1042,15 @@ export default function KaigoLP() {
           {facilityTab === "tokuyou" && (
             <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6 space-y-5">
               <div>
-                <h3 className="font-bold text-blue-900 text-lg mb-2">🏥 特養・老健向けカスハラ対応</h3>
+                <h3 className="font-bold text-blue-900 text-lg mb-2"> 特養・老健向けカスハラ対応</h3>
                 <p className="text-sm text-blue-800">特養・老健では、長期入所の利用者家族との関係悪化や、認知症に起因する利用者からの行為が課題です。組織的な記録管理と多職種連携が重要です。</p>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 {[
-                  { title: "リスク特性", icon: "⚠️", items: ["長期入所による家族の過剰介入", "認知症利用者からの暴言・暴力", "夜間帯の少人数体制での対応", "「以前はそんなことなかった」という否定的クレーム"] },
-                  { title: "必須対策", icon: "🛡️", items: ["入所時の重要事項説明書にカスハラ方針を明記", "夜間帯の対応フローと記録体制", "多職種チームでの対応方針統一", "家族面談の記録・議事録の徹底"] },
-                  { title: "AIで生成できる文書", icon: "📄", items: ["重要事項説明書のカスハラ条項", "家族向けカスハラ方針通知書", "繰り返しクレームへの書面回答書", "施設内研修用マニュアル"] },
-                  { title: "義務化対応ポイント", icon: "✅", items: ["施設全体のカスハラ対応方針の策定", "相談窓口担当者の指名・研修", "管理者・施設長への報告フロー整備", "行政報告用のインシデント記録様式統一"] },
+                  { title: "リスク特性", icon: "!", items: ["長期入所による家族の過剰介入", "認知症利用者からの暴言・暴力", "夜間帯の少人数体制での対応", "「以前はそんなことなかった」という否定的クレーム"] },
+                  { title: "必須対策", icon: "️", items: ["入所時の重要事項説明書にカスハラ方針を明記", "夜間帯の対応フローと記録体制", "多職種チームでの対応方針統一", "家族面談の記録・議事録の徹底"] },
+                  { title: "AIで生成できる文書", icon: "", items: ["重要事項説明書のカスハラ条項", "家族向けカスハラ方針通知書", "繰り返しクレームへの書面回答書", "施設内研修用マニュアル"] },
+                  { title: "義務化対応ポイント", icon: "OK", items: ["施設全体のカスハラ対応方針の策定", "相談窓口担当者の指名・研修", "管理者・施設長への報告フロー整備", "行政報告用のインシデント記録様式統一"] },
                 ].map((card) => (
                   <div key={card.title} className="bg-white border border-blue-100 rounded-xl p-4">
                     <p className="font-bold text-blue-800 text-sm mb-2">{card.icon} {card.title}</p>
@@ -1071,15 +1071,15 @@ export default function KaigoLP() {
           {facilityTab === "day" && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 space-y-5">
               <div>
-                <h3 className="font-bold text-emerald-900 text-lg mb-2">🚌 デイサービス向けカスハラ対応</h3>
+                <h3 className="font-bold text-emerald-900 text-lg mb-2"> デイサービス向けカスハラ対応</h3>
                 <p className="text-sm text-emerald-800">デイサービスは送迎・入浴・レクリエーションなど多岐にわたる場面でのカスハラリスクがあります。「通所をやめさせたくない」という家族心理も対応を難しくする要因です。</p>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 {[
-                  { title: "リスク特性", icon: "⚠️", items: ["送迎時の利用者・家族対応", "入浴介助中のセクハラ", "「他の利用者に迷惑をかける」行為への対応", "家族からの「もっと特別扱いしろ」要求"] },
-                  { title: "必須対策", icon: "🛡️", items: ["サービス利用契約書にカスハラ条項を追加", "送迎担当の複数体制化基準の明文化", "利用停止の判断フローと記録体制", "他の利用者への影響を含めた記録"] },
-                  { title: "AIで生成できる文書", icon: "📄", items: ["サービス利用規約のカスハラ条項", "利用者家族への警告通知書", "一時利用停止通知書", "他利用者保護を含む対応記録書"] },
-                  { title: "義務化対応ポイント", icon: "✅", items: ["通所介護の運営規程へのカスハラ条項追加", "スタッフへの定期研修の記録", "苦情受付窓口の設置と周知", "利用者・家族向けの利用ルール説明"] },
+                  { title: "リスク特性", icon: "!", items: ["送迎時の利用者・家族対応", "入浴介助中のセクハラ", "「他の利用者に迷惑をかける」行為への対応", "家族からの「もっと特別扱いしろ」要求"] },
+                  { title: "必須対策", icon: "️", items: ["サービス利用契約書にカスハラ条項を追加", "送迎担当の複数体制化基準の明文化", "利用停止の判断フローと記録体制", "他の利用者への影響を含めた記録"] },
+                  { title: "AIで生成できる文書", icon: "", items: ["サービス利用規約のカスハラ条項", "利用者家族への警告通知書", "一時利用停止通知書", "他利用者保護を含む対応記録書"] },
+                  { title: "義務化対応ポイント", icon: "OK", items: ["通所介護の運営規程へのカスハラ条項追加", "スタッフへの定期研修の記録", "苦情受付窓口の設置と周知", "利用者・家族向けの利用ルール説明"] },
                 ].map((card) => (
                   <div key={card.title} className="bg-white border border-emerald-100 rounded-xl p-4">
                     <p className="font-bold text-emerald-800 text-sm mb-2">{card.icon} {card.title}</p>
@@ -1185,7 +1185,7 @@ export default function KaigoLP() {
                       <p className="font-bold text-gray-900 text-sm mb-1">{s.step}</p>
                       <p className="text-gray-700 text-sm mb-2 leading-relaxed">{s.action}</p>
                       <span className="inline-flex items-center gap-1 text-xs bg-teal-50 text-teal-700 border border-teal-200 rounded-full px-3 py-1 font-medium">
-                        📄 {s.doc}
+                         {s.doc}
                       </span>
                     </div>
                   </div>
@@ -1212,7 +1212,7 @@ export default function KaigoLP() {
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-6">
             <div className="inline-block bg-orange-100 text-orange-700 text-xs font-bold px-3 py-1 rounded-full mb-3 border border-orange-200">
-              ⚖️ 介護保険法 — 指定取消リスク判定チェッカー
+               介護保険法 — 指定取消リスク判定チェッカー
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">指定取消リスク、今すぐチェック</h2>
             <p className="text-gray-500 text-sm">5つの質問に「はい」「いいえ」で答えるだけ。介護保険法上の運営基準違反リスクを判定します。</p>
@@ -1255,16 +1255,16 @@ export default function KaigoLP() {
 
             {kaigoRiskResult === "low" && (
               <div className="bg-green-50 border-2 border-green-400 rounded-xl p-4">
-                <p className="text-green-800 font-bold mb-1">✅ リスクスコア: 低（0〜1項目該当）</p>
+                <p className="text-green-800 font-bold mb-1">OK リスクスコア: 低（0〜1項目該当）</p>
                 <p className="text-green-700 text-sm mb-3">対応体制が整っています。引き続き証拠記録の継続と運営規程の定期見直しを推奨します。2026年10月義務化に向けた仕上げとして、対応フローの文書化も進めておきましょう。</p>
                 <button onClick={downloadEvidenceSheet} aria-label="カスハラ証拠記録シートをダウンロードして継続的に記録管理する" className="inline-flex items-center gap-1.5 bg-green-600 text-white font-bold px-5 py-2 rounded-xl hover:bg-green-700 transition-colors text-sm">
-                  <span>📥</span>証拠記録シートをDLして継続記録する
+                  <span></span>証拠記録シートをDLして継続記録する
                 </button>
               </div>
             )}
             {kaigoRiskResult === "medium" && (
               <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-4">
-                <p className="text-yellow-800 font-bold mb-1">⚠️ リスクスコア: 中（2〜3項目該当）</p>
+                <p className="text-yellow-800 font-bold mb-1">! リスクスコア: 中（2〜3項目該当）</p>
                 <p className="text-yellow-700 text-sm mb-3">一部リスクあり。カスハラ対応マニュアルの整備・運営規程へのカスハラ条項追加を急いでください。2026年10月義務化施行後に実地指導が入った場合、改善命令が出る可能性があります。</p>
                 <Link href="/tool" className="inline-block bg-yellow-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-yellow-700 transition-colors text-sm">
                   AIで運営規程・マニュアルを即生成する →
@@ -1273,8 +1273,8 @@ export default function KaigoLP() {
             )}
             {kaigoRiskResult === "high" && (
               <div className="bg-red-50 border-2 border-red-500 rounded-xl p-4">
-                <p className="text-red-800 font-bold mb-2">🚨 リスクスコア: 高（4〜5項目該当）</p>
-                <p className="text-red-700 text-sm mb-3">⚠️ 高リスク: 自治体の実地指導が入ると、介護保険法上の運営基準違反として<strong>改善命令・指定取消処分</strong>が出る可能性があります。記録体制・マニュアル整備・運営規程改訂を今すぐ始めてください。</p>
+                <p className="text-red-800 font-bold mb-2"> リスクスコア: 高（4〜5項目該当）</p>
+                <p className="text-red-700 text-sm mb-3">! 高リスク: 自治体の実地指導が入ると、介護保険法上の運営基準違反として<strong>改善命令・指定取消処分</strong>が出る可能性があります。記録体制・マニュアル整備・運営規程改訂を今すぐ始めてください。</p>
                 <Link href="/tool" className="inline-block bg-red-600 text-white font-bold px-6 py-2.5 rounded-xl hover:bg-red-700 transition-colors text-sm">
                   緊急：AIで義務化対応文書を今すぐ生成する →
                 </Link>
@@ -1290,7 +1290,7 @@ export default function KaigoLP() {
                   aria-label="介護カスハラ対策チェックリストを印刷する"
                   className="inline-flex items-center gap-2 bg-gray-800 text-white font-bold px-6 py-3 rounded-xl hover:bg-gray-900 transition-colors text-sm"
                 >
-                  <span>🖨️</span>
+                  <span>️</span>
                   <span>対策チェックリストを印刷する</span>
                 </button>
               </div>
@@ -1315,7 +1315,7 @@ export default function KaigoLP() {
                 </div>
               ))}
               <div className="print-result">
-                判定結果: {kaigoRiskResult === "low" ? "✅ リスクスコア: 低（0〜1項目該当）— 対応体制が整っています。" : kaigoRiskResult === "medium" ? "⚠️ リスクスコア: 中（2〜3項目該当）— 一部リスクあり。マニュアル整備・運営規程へのカスハラ条項追加を急いでください。" : "🚨 リスクスコア: 高（4〜5項目該当）— 高リスク。記録体制・マニュアル整備・運営規程改訂を今すぐ始めてください。"}
+                判定結果: {kaigoRiskResult === "low" ? "OK リスクスコア: 低（0〜1項目該当）— 対応体制が整っています。" : kaigoRiskResult === "medium" ? "! リスクスコア: 中（2〜3項目該当）— 一部リスクあり。マニュアル整備・運営規程へのカスハラ条項追加を急いでください。" : " リスクスコア: 高（4〜5項目該当）— 高リスク。記録体制・マニュアル整備・運営規程改訂を今すぐ始めてください。"}
               </div>
               <p style={{ fontSize: "9pt", color: "#999", marginTop: "16pt" }}>
                 ※本チェッカーはAIによる参考判定です。実際の対応は管理者・弁護士・社労士にご確認ください。
@@ -1427,7 +1427,7 @@ https://kaigo-custharass-ai.vercel.app/tool
             }}
             className="inline-flex items-center gap-2 bg-teal-500 hover:bg-teal-400 text-white font-bold px-8 py-3 rounded-xl transition-colors"
           >
-            <span>📥</span>
+            <span></span>
             <span>カスハラ対応マニュアルをダウンロード（無料・テキスト版）</span>
           </button>
           <p className="text-gray-500 text-xs mt-3">テキストファイル形式 · 登録不要 · 無料</p>
