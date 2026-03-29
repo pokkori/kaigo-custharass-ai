@@ -1,0 +1,55 @@
+name: Quality Check CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript check
+        run: npx tsc --noEmit
+
+      - name: Build check
+        run: npm run build
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://example.com
+
+      - name: Emoji scan (JSX禁止)
+        run: |
+          EMOJI_PATTERN='[🔥😊🎯🚀💡🎉✨🌟💪🎊❤️💔🙏👍👎😂🤣😍🥰😘😭😢😤😡🤯🥺😱😨]'
+          if grep -rnP "$EMOJI_PATTERN" app/ --include="*.tsx" --include="*.ts" --include="*.jsx" 2>/dev/null; then
+            echo "FAIL: Emoji found in source files"
+            exit 1
+          fi
+          echo "PASS: No emoji in source"
+
+      - name: Check aria-label coverage
+        run: |
+          MISSING=$(grep -rn '<button\b\|<Button\b' app/ --include="*.tsx" --include="*.jsx" 2>/dev/null | grep -v 'aria-label' | wc -l)
+          echo "Buttons potentially missing aria-label: $MISSING"
+          if [ "$MISSING" -gt 20 ]; then
+            echo "WARNING: Too many buttons missing aria-label (threshold: 20)"
+          fi
+
+      - name: Check llms.txt exists
+        run: |
+          if [ ! -f "public/llms.txt" ]; then
+            echo "WARNING: public/llms.txt not found (GEO対策)"
+          else
+            echo "PASS: llms.txt exists"
+          fi

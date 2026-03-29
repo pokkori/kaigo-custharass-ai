@@ -20,7 +20,7 @@ export default function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ fontSize: 80, marginBottom: 16 }}>🛡️</div>
+        <div style={{ fontSize: 80, marginBottom: 16 }}>️</div>
         <div style={{ fontSize: 52, fontWeight: 700, color: "#99f6e4", marginBottom: 16, textAlign: "center" }}>
           介護カスハラAI
         </div>

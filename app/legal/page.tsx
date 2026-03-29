@@ -6,7 +6,7 @@ const ITEMS = [
   { label: "運営責任者", value: "ポッコリラボ 代表 新美" },
   { label: "所在地", value: "非公開（請求があれば遅滞なく開示します）" },
   { label: "お問い合わせ", value: "levonadesign@gmail.com（X: @levona_design）" },
-  { label: "販売価格", value: "スタータープラン ¥9,800/月（税込）" },
+  { label: "販売価格", value: "個人プラン ¥2,980/月（税込）、事業所プラン ¥9,800/月（税込）" },
   { label: "支払方法", value: "クレジットカード（オンライン決済サービス経由）（Visa・Mastercard・American Express・JCB）" },
   { label: "支払時期", value: "お申込み時に即時決済。以降、毎月同日に自動更新" },
   { label: "サービス提供時期", value: "決済完了後、即時ご利用いただけます" },

@@ -13,35 +13,35 @@ export const metadata: Metadata = {
 const KASUHARA_TYPES = [
   {
     type: "身体的暴力",
-    icon: "👊",
+    icon: "",
     examples: ["殴る・蹴る等の暴力行為", "物を投げつける", "スタッフの身体への接触"],
     law: "刑法第208条（暴行罪）",
     response: "即時退避・記録・警察通報を検討",
   },
   {
     type: "精神的暴力",
-    icon: "😡",
+    icon: "",
     examples: ["「殺すぞ」等の脅迫発言", "大声・怒鳴り続け", "侮辱・差別的発言"],
     law: "刑法第222条（脅迫罪）",
     response: "記録・書面対応・弁護士相談",
   },
   {
     type: "過剰な要求",
-    icon: "📞",
+    icon: "",
     examples: ["1日何十回もの電話", "深夜の連絡要求", "契約外サービスの要求"],
     law: "業務妨害罪・不退去罪",
     response: "連絡ルール設定・書面通知",
   },
   {
     type: "セクシャルハラスメント",
-    icon: "🚨",
+    icon: "",
     examples: ["性的言動・接触", "「担当を替えろ」の繰り返し", "卑猥な発言"],
     law: "強制わいせつ罪等",
     response: "複数体制・警察連携・通知書",
   },
   {
     type: "行政・法的脅迫",
-    icon: "⚖️",
+    icon: "",
     examples: ["「監査を呼ぶ」", "「訴える・弁護士に頼む」", "国保連への申立脅迫"],
     law: "対応は記録と毅然対応が原則",
     response: "事実確認・記録蓄積・顧問弁護士相談",
@@ -84,7 +84,7 @@ export default function KasuharaGuidePage() {
     <div className="min-h-screen bg-white">
       <nav className="border-b border-gray-100 px-6 py-4 sticky top-0 bg-white/95 backdrop-blur z-10">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link href="/" aria-label="介護カスハラAIトップページへ" className="font-bold text-gray-900">🏥 介護カスハラAI</Link>
+          <Link href="/" aria-label="介護カスハラAIトップページへ" className="font-bold text-gray-900"> 介護カスハラAI</Link>
           <Link href="/tool" aria-label="介護カスハラAIツールを無料で3回試す" className="bg-teal-600 text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-teal-700 transition-colors">
             無料で試す（3回）
           </Link>
@@ -121,7 +121,7 @@ export default function KasuharaGuidePage() {
       {/* 目次 */}
       <section className="py-8 px-4 bg-teal-50 border-b border-teal-100">
         <div className="max-w-3xl mx-auto">
-          <h2 className="font-bold text-teal-800 text-sm mb-3">📋 このガイドで分かること</h2>
+          <h2 className="font-bold text-teal-800 text-sm mb-3"> このガイドで分かること</h2>
           <ol className="space-y-1 text-sm text-teal-700">
             {[
               "介護カスハラとは何か（定義・具体例）",
@@ -150,7 +150,7 @@ export default function KasuharaGuidePage() {
             </p>
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
-            <p className="text-amber-800 text-sm font-bold mb-1">✅ カスハラと正当な苦情の違い</p>
+            <p className="text-amber-800 text-sm font-bold mb-1">OK カスハラと正当な苦情の違い</p>
             <p className="text-amber-700 text-sm">利用者・家族の正当な改善要望はカスハラではありません。サービスの質向上のために真摯に受け止めるべき「正当な苦情」と、業務妨害・脅迫等の「カスハラ」を区別して対応することが重要です。</p>
           </div>
           <p className="text-gray-700 text-sm leading-relaxed">

@@ -138,7 +138,7 @@ export default function PayjpModal({
         </button>
 
         <p className="text-xs text-gray-400 mt-4 text-center">
-          🔒 カード情報はPAY.JP（PCI DSS準拠）で安全に処理されます。当サービスには保存されません。
+           カード情報はPAY.JP（PCI DSS準拠）で安全に処理されます。当サービスには保存されません。
         </p>
       </div>
     </div>

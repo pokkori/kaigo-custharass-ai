@@ -56,9 +56,9 @@ const CASE_TYPES = [
 
 const REQUESTER_TYPES = ["利用者本人", "家族・親族", "その他"];
 const SEVERITY_LEVELS = [
-  { value: "軽度", label: "🟡 軽度（不満・クレーム）", score: 2, color: "bg-yellow-400" },
-  { value: "中度", label: "🟠 中度（威圧・暴言）", score: 5, color: "bg-orange-500" },
-  { value: "重度", label: "🔴 重度（暴力・脅迫）", score: 9, color: "bg-red-500" },
+  { value: "軽度", label: " 軽度（不満・クレーム）", score: 2, color: "bg-yellow-400" },
+  { value: "中度", label: " 中度（威圧・暴言）", score: 5, color: "bg-orange-500" },
+  { value: "重度", label: " 重度（暴力・脅迫）", score: 9, color: "bg-red-500" },
 ];
 
 const RECORD_TEMPLATE = `【発生日時】〇〇年〇〇月〇〇日 〇〇時頃
@@ -69,7 +69,7 @@ const RECORD_TEMPLATE = `【発生日時】〇〇年〇〇月〇〇日 〇〇時
 【目撃者】
 【その後の対応】`;
 
-const TABS = ["💬 口頭スクリプト", "📄 書面通知文", "📋 インシデント記録"] as const;
+const TABS = [" 口頭スクリプト", " 書面通知文", " インシデント記録"] as const;
 type TabLabel = typeof TABS[number];
 
 const FREE_LIMIT = 3;
@@ -78,9 +78,9 @@ const STORAGE_KEY = "kaigo_use_count";
 function parseResultToTabs(text: string): Record<TabLabel, string> {
   const parts = text.split(/^---$/m).map((s) => s.trim()).filter(Boolean);
   return {
-    "💬 口頭スクリプト": parts[0] || "",
-    "📄 書面通知文": parts[1] || "",
-    "📋 インシデント記録": parts[2] || "",
+    " 口頭スクリプト": parts[0] || "",
+    " 書面通知文": parts[1] || "",
+    " インシデント記録": parts[2] || "",
   };
 }
 
@@ -91,7 +91,7 @@ function parseResult(text: string) {
 }
 
 // コピーボタン（フィードバック付き）
-function CopyBtn({ text, label = "📋 コピーする", className = "" }: { text: string; label?: string; className?: string }) {
+function CopyBtn({ text, label = " コピーする", className = "" }: { text: string; label?: string; className?: string }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
     navigator.clipboard.writeText(text);
@@ -101,11 +101,11 @@ function CopyBtn({ text, label = "📋 コピーする", className = "" }: { tex
   return (
     <div className="relative inline-block">
       <button onClick={handleCopy} aria-label="テキストをクリップボードにコピーする" className={`text-xs hover:underline transition-colors ${className}`}>
-        {copied ? "✅ コピー完了！" : label}
+        {copied ? "OK コピー完了！" : label}
       </button>
       {copied && (
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-green-600 text-white text-xs rounded-lg px-2 py-1 whitespace-nowrap shadow-lg animate-bounce">
-          ✅ コピー完了！
+          OK コピー完了！
         </div>
       )}
     </div>
@@ -119,7 +119,7 @@ export default function KaigoTool() {
   const [situation, setSituation] = useState("");
   const [loading, setLoading] = useState(false);
   const [tabs, setTabs] = useState<Record<TabLabel, string> | null>(null);
-  const [activeTab, setActiveTab] = useState<TabLabel>("💬 口頭スクリプト");
+  const [activeTab, setActiveTab] = useState<TabLabel>(" 口頭スクリプト");
   const [error, setError] = useState("");
   const [count, setCount] = useState(0);
   const [hitLimit, setHitLimit] = useState(false);
@@ -178,7 +178,7 @@ export default function KaigoTool() {
         setTabs(parseResultToTabs(fullText));
       }
       setTabs(parseResultToTabs(fullText));
-      setActiveTab("💬 口頭スクリプト");
+      setActiveTab(" 口頭スクリプト");
       setCount(newCount);
       localStorage.setItem(STORAGE_KEY, String(newCount));
       if (newCount >= FREE_LIMIT) { track('paywall_shown', { service: '介護カスハラAI' }); setHitLimit(true); }
@@ -202,7 +202,7 @@ export default function KaigoTool() {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-2xl p-8 shadow-sm text-center border border-gray-200">
-          <div className="text-5xl mb-4">🔒</div>
+          <div className="text-5xl mb-4"></div>
           <h2 className="text-xl font-bold text-gray-900 mb-2">無料体験（{FREE_LIMIT}回）終了</h2>
           <p className="text-gray-500 text-sm mb-6">
             事業所プランで介護カスハラ対応文を無制限に生成できます。
@@ -215,15 +215,15 @@ export default function KaigoTool() {
           {/* 安心保証バッジ */}
           <div className="flex items-center justify-center gap-4 mt-3">
             <div className="flex items-center gap-1 text-xs text-slate-400">
-              <span>🔒</span>
+              <span></span>
               <span>SSL暗号化決済</span>
             </div>
             <div className="flex items-center gap-1 text-xs text-slate-400">
-              <span>✅</span>
+              <span>OK</span>
               <span>いつでもキャンセル可能</span>
             </div>
             <div className="flex items-center gap-1 text-xs text-slate-400">
-              <span>💳</span>
+              <span></span>
               <span>PAY.JP安全決済</span>
             </div>
           </div>
@@ -235,7 +235,7 @@ export default function KaigoTool() {
         {showPayjp && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4" role="dialog" aria-modal="true" aria-labelledby="tool-kaigo-plan-title">
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
-              <button onClick={() => setShowPayjp(false)} aria-label="プラン登録モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl">✕</button>
+              <button onClick={() => setShowPayjp(false)} aria-label="プラン登録モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl"></button>
               <h2 id="tool-kaigo-plan-title" className="text-lg font-bold mb-4 text-center">プランに登録</h2>
               <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50" />
             </div>
@@ -256,7 +256,7 @@ export default function KaigoTool() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6 space-y-5">
+        <div className="backdrop-blur-sm bg-white/80 border border-white/30 shadow-lg rounded-2xl p-6 mb-6 space-y-5">
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-2">カスハラの種別</label>
             <div className="flex flex-wrap gap-2">
@@ -284,7 +284,7 @@ export default function KaigoTool() {
               value={requesterType}
               onChange={(e) => setRequesterType(e.target.value)}
               aria-label="カスハラの要求者種別を選択してください"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+              className="w-full bg-white/60 border border-white/30 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 focus:shadow-[0_0_15px_rgba(20,184,166,0.15)] transition-all"
             >
               {REQUESTER_TYPES.map((r) => (
                 <option key={r} value={r}>{r}</option>
@@ -324,17 +324,17 @@ export default function KaigoTool() {
                 aria-label="カスハラ記録テンプレートを状況入力欄にセットする"
                 className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-teal-400 text-teal-700 bg-teal-50 hover:bg-teal-100 transition-colors font-semibold"
               >
-                📋 カスハラ記録テンプレートを使う
+                 カスハラ記録テンプレートを使う
               </button>
             </div>
             {/* シナリオプリセット */}
             <div className="mb-2 flex flex-wrap gap-1.5">
               {[
-                { label: "📞 過剰電話", text: "利用者の家族が毎日10回以上電話をかけてきて、「すぐにスタッフを増やせ」「他の事業所に替える」と脅してくる。スタッフが精神的に疲弊している。" },
-                { label: "🤬 暴言・怒鳴り", text: "デイサービス利用中に、利用者が突然スタッフに怒鳴り散らし「お前は使えない」「クビにしてやる」等の暴言を繰り返す。他の利用者も怯えている。" },
-                { label: "🚪 自宅訪問・待ち伏せ", text: "利用者家族が事業所に突然押しかけ、管理者に面会を強要。「責任者を出せ」と大声を上げ、業務が止まっている。" },
-                { label: "📱 SNS・レビュー脅迫", text: "サービスへの不満から「SNSで晒す」「口コミに書く」と言い、理不尽な要求（無料サービス追加等）を繰り返している。" },
-                { label: "💰 金銭要求", text: "ケア中のヒヤリハットに対して、「医療費を全額払え」「慰謝料を請求する」と法外な補償を要求してくる。" },
+                { label: " 過剰電話", text: "利用者の家族が毎日10回以上電話をかけてきて、「すぐにスタッフを増やせ」「他の事業所に替える」と脅してくる。スタッフが精神的に疲弊している。" },
+                { label: " 暴言・怒鳴り", text: "デイサービス利用中に、利用者が突然スタッフに怒鳴り散らし「お前は使えない」「クビにしてやる」等の暴言を繰り返す。他の利用者も怯えている。" },
+                { label: " 自宅訪問・待ち伏せ", text: "利用者家族が事業所に突然押しかけ、管理者に面会を強要。「責任者を出せ」と大声を上げ、業務が止まっている。" },
+                { label: " SNS・レビュー脅迫", text: "サービスへの不満から「SNSで晒す」「口コミに書く」と言い、理不尽な要求（無料サービス追加等）を繰り返している。" },
+                { label: " 金銭要求", text: "ケア中のヒヤリハットに対して、「医療費を全額払え」「慰謝料を請求する」と法外な補償を要求してくる。" },
               ].map((p) => (
                 <button key={p.label} type="button" onClick={() => setSituation(p.text)}
                   aria-label={`シナリオ「${p.label.replace(/^.{2}/, "")}」のサンプルテキストを状況入力欄にセットする`}
@@ -350,7 +350,7 @@ export default function KaigoTool() {
               rows={5}
               maxLength={1500}
               aria-label="カスハラの状況を詳しく入力してください（最大1500文字）"
-              className="w-full border border-gray-200 rounded-lg px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400 resize-none"
+              className="w-full bg-white/60 border border-white/30 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 focus:shadow-[0_0_15px_rgba(20,184,166,0.15)] resize-none transition-all"
             />
             <p className="text-xs text-gray-400 text-right mt-1">{situation.length}/1500文字</p>
           </div>
@@ -365,9 +365,15 @@ export default function KaigoTool() {
             onClick={handleGenerate}
             disabled={loading || !situation.trim()}
             aria-label="入力した情報を元にカスハラ対応文書をAIで生成する"
-            className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="w-full font-bold py-4 min-h-[52px] rounded-xl text-white transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:hover:translate-y-0"
+            style={{ background: 'linear-gradient(135deg, #0D9488 0%, #14B8A6 100%)', boxShadow: '0 0 20px rgba(20, 184, 166, 0.3), 0 4px 12px rgba(0,0,0,0.15)' }}
           >
-            {loading ? "生成中..." : "対応文を生成する"}
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.3"/><path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/></svg>
+                生成中...
+              </span>
+            ) : "対応文を生成する"}
           </button>
         </div>
 
@@ -375,7 +381,7 @@ export default function KaigoTool() {
         <div className={`transition-all duration-500 overflow-hidden ${completionVisible ? "max-h-48 opacity-100 mb-4" : "max-h-0 opacity-0"}`}>
           <div className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white rounded-2xl px-5 py-4 shadow-lg">
             <div className="flex items-center gap-2 font-bold text-base mb-3">
-              <span className="text-2xl">✅</span>
+              <span className="text-2xl">OK</span>
               <span>対応文書 作成完了！</span>
             </div>
             {/* カスハラ深刻度スコアバー */}
@@ -402,10 +408,17 @@ export default function KaigoTool() {
         {(loading || tabs) && (
           <div ref={resultRef} className="space-y-4">
             {loading && !tabs && (
-              <div className="bg-white rounded-xl border border-gray-200 p-10 text-center">
+              <div className="backdrop-blur-sm bg-white/80 border border-white/30 shadow-lg rounded-2xl p-10 text-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 mx-auto mb-4" />
-                <p className="text-sm text-gray-500 font-medium">AIが対応文を作成中...</p>
-                <p className="text-xs text-gray-400 mt-1">💬 口頭スクリプト → 📄 書面通知文 → 📋 インシデント記録</p>
+                <p className="text-sm text-gray-600 font-medium">AIが対応文を作成中...</p>
+                <p className="text-xs text-gray-400 mt-1 mb-4">口頭スクリプト / 書面通知文 / インシデント記録</p>
+                {/* Skeleton pulse */}
+                <div className="space-y-3 max-w-sm mx-auto">
+                  <div className="h-4 bg-gray-200/70 rounded-lg animate-pulse w-3/4 mx-auto" />
+                  <div className="h-4 bg-gray-200/70 rounded-lg animate-pulse w-full" />
+                  <div className="h-4 bg-gray-200/70 rounded-lg animate-pulse w-5/6 mx-auto" />
+                  <div className="h-4 bg-gray-200/70 rounded-lg animate-pulse w-2/3 mx-auto" />
+                </div>
               </div>
             )}
             {tabs && (
@@ -431,7 +444,7 @@ export default function KaigoTool() {
                   </div>
                   <div className="p-5">
                     <div className="flex justify-end mb-3">
-                      <CopyBtn text={tabs[activeTab]} label="📋 コピーする" className="text-teal-600 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-50" />
+                      <CopyBtn text={tabs[activeTab]} label=" コピーする" className="text-teal-600 border border-teal-200 rounded-lg px-3 py-1.5 hover:bg-teal-50" />
                     </div>
                     <div
                       className="prose prose-sm max-w-none min-h-[180px]"
@@ -443,26 +456,39 @@ export default function KaigoTool() {
                 {/* シェアボタン */}
                 <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 text-center">
                   <p className="text-sm font-bold text-teal-800 mb-3">同じ悩みを持つ介護スタッフに届けましょう</p>
-                  <a
-                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-                      `「カスハラ深刻度${currentSeverity.score}/10... 対応文書が30秒で完成した 介護現場の理不尽に困ってる方へ → https://kaigo-custharass-ai.vercel.app #介護カスハラ対策 #カスハラ #介護現場`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="介護カスハラAIを使ったことをXにシェアする"
-                    className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg hover:scale-105 transition-transform"
-                  >
-                    Xでシェア
-                  </a>
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    <a
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                        `「カスハラ深刻度${currentSeverity.score}/10... 対応文書が30秒で完成した 介護現場の理不尽に困ってる方へ → https://kaigo-custharass-ai.vercel.app #介護カスハラ対策 #カスハラ #介護現場`
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="介護カスハラAIを使ったことをXにシェアする"
+                      className="inline-flex items-center gap-2 bg-black text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-gray-800 transition-colors shadow-lg"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.742l7.732-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                      Xでシェア
+                    </a>
+                    <a
+                      href={`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent("https://kaigo-custharass-ai.vercel.app")}&text=${encodeURIComponent("介護現場のカスハラ対応文書が30秒で作れるAIツール。同僚にも教えてあげよう #介護カスハラ対策 #介護現場")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label="介護カスハラAIを同僚にLINEで共有する"
+                      className="inline-flex items-center gap-2 bg-[#06C755] hover:bg-[#05b34c] text-white px-5 py-2.5 rounded-lg text-sm font-bold transition-colors shadow-lg"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.124 2 11.207c0 2.816 1.394 5.312 3.567 6.949-.157.584-.509 2.125-.584 2.453-.09.397.145.39.305.284.125-.083 1.978-1.301 2.78-1.831.636.09 1.293.138 1.932.138 5.523 0 10-4.124 10-9.207C20 6.124 17.523 2 12 2z"/></svg>
+                      同僚にLINEで共有
+                    </a>
+                  </div>
                 </div>
                 {/* 次のアクション3選 */}
                 <div className="bg-white border border-teal-200 rounded-xl p-4">
-                  <p className="text-sm font-bold text-teal-800 mb-3">📋 次にやるべきこと3選</p>
+                  <p className="text-sm font-bold text-teal-800 mb-3"> 次にやるべきこと3選</p>
                   <ol className="space-y-2">
                     {[
-                      { icon: "📝", text: "上司・管理者に今回のケースを口頭で報告する" },
-                      { icon: "🗂️", text: "インシデント記録シートに日時・状況・対応を記録する" },
-                      { icon: "📞", text: "深刻なケースは施設の顧問弁護士・警察に相談する" },
+                      { icon: "", text: "上司・管理者に今回のケースを口頭で報告する" },
+                      { icon: "️", text: "インシデント記録シートに日時・状況・対応を記録する" },
+                      { icon: "", text: "深刻なケースは施設の顧問弁護士・警察に相談する" },
                     ].map((item, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm text-gray-700">
                         <span className="text-lg leading-none">{item.icon}</span>
@@ -474,7 +500,7 @@ export default function KaigoTool() {
 
                 {/* 証拠記録シートDL */}
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                  <p className="text-sm font-bold text-amber-900 mb-1">📥 証拠記録シートをダウンロード</p>
+                  <p className="text-sm font-bold text-amber-900 mb-1"> 証拠記録シートをダウンロード</p>
                   <p className="text-xs text-amber-700 mb-3">日時・対象者・状況・対応者・対応内容の列を持つTSVファイルです。Excelで開いてそのまま記録管理に活用できます。</p>
                   <button
                     type="button"
@@ -497,13 +523,13 @@ export default function KaigoTool() {
                     }}
                     className="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm transition-colors"
                   >
-                    📥 証拠記録シート（Excel対応TSV）をDL
+                     証拠記録シート（Excel対応TSV）をDL
                   </button>
                   <p className="text-xs text-amber-600 text-center mt-1">Excelで開く→「データ」タブで管理するだけ</p>
                 </div>
                 {/* 専門家相談アフィリエイト（A8.net申請後URLを差し替え） */}
                 <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
-                  <p className="text-sm font-black text-teal-900 mb-1">⚖️ 深刻なケースは弁護士に相談</p>
+                  <p className="text-sm font-black text-teal-900 mb-1"> 深刻なケースは弁護士に相談</p>
                   <p className="text-xs text-teal-700 mb-3">カスハラ・不当要求が悪化している場合は弁護士が最短解決策。施設顧問弁護士の費用目安も確認できます。</p>
                   {/* TODO: Replace href with A8.net affiliate URL after approval */}
                   <a href="https://www.bengo4.com/c_1011/" target="_blank" rel="noopener noreferrer sponsored"
@@ -518,7 +544,7 @@ export default function KaigoTool() {
                 </div>
                 {/* ストレスケアアフィリエイト（A8.net SOELU） */}
                 <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                  <p className="text-sm font-black text-green-900 mb-1">🧘 介護職員のストレス発散・体のケアに</p>
+                  <p className="text-sm font-black text-green-900 mb-1"> 介護職員のストレス発散・体のケアに</p>
                   <p className="text-xs text-green-700 mb-3">毎日の緊張をほぐすオンラインヨガ。自宅で好きな時間に受講でき、介護職のメンタルリセットにおすすめです。</p>
                   <a href="https://px.a8.net/svt/ejp?a8mat=4AZIOF+8OKLDE+4EPM+63OY9" target="_blank" rel="noopener noreferrer sponsored"
                     className="flex items-center justify-between bg-white border border-green-300 rounded-xl px-3 py-2.5 hover:bg-green-50 transition-colors">
