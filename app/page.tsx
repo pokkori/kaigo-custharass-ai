@@ -3,6 +3,8 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
 import { updateStreak, loadStreak, getStreakMilestoneMessage } from "@/lib/streak";
+import { StreakBanner } from "@/components/StreakBanner";
+import { UsageCounter } from "@/components/UsageCounter";
 import { THEMES } from "@/lib/design-system-themes";
 import { ShareButtons } from "@/components/ShareButtons";
 import { AdBanner } from "@/components/AdBanner";
@@ -423,6 +425,8 @@ export default function KaigoLP() {
         <span className="ml-2 text-xs font-normal opacity-80">※未対応の場合、行政指導・監査リスクあり</span>
       </div>
 
+      <StreakBanner />
+
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 pointer-events-none" />
         <div className="relative max-w-4xl mx-auto px-4 py-10 md:py-20 text-center overflow-x-hidden">
@@ -459,6 +463,7 @@ export default function KaigoLP() {
               <span className="text-white/60 text-xs">2026年10月義務化に先行対応</span>
             </div>
           </div>
+          <div className="max-w-xs mx-auto mb-4"><UsageCounter /></div>
           <Link
             href="/tool"
             className="inline-block text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-2xl mb-4 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto min-h-[52px]"

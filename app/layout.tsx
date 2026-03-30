@@ -4,6 +4,7 @@ import { Analytics } from "@vercel/analytics/react";
 import FeedbackButton from "@/components/FeedbackButton";
 import { GoogleAdScript } from "@/components/GoogleAdScript";
 import "./globals.css";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
@@ -87,6 +88,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       </head>
       <body className={`${notoSansJP.className} antialiased`}>
         {children}
+        <InstallPrompt />
         <footer className="flex justify-center py-2">
           <FeedbackButton serviceName="介護カスハラAI" />
         </footer>
