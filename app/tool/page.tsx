@@ -350,13 +350,14 @@ export default function KaigoTool() {
               rows={5}
               maxLength={1500}
               aria-label="カスハラの状況を詳しく入力してください（最大1500文字）"
+              aria-busy={loading}
               className="w-full bg-white/60 border border-white/30 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-500/50 focus:border-teal-400 focus:shadow-[0_0_15px_rgba(20,184,166,0.15)] resize-none transition-all"
             />
             <p className="text-xs text-gray-400 text-right mt-1">{situation.length}/1500文字</p>
           </div>
 
           {error && (
-            <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <div role="alert" className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-4 py-3">
               {error}
             </div>
           )}
@@ -365,6 +366,7 @@ export default function KaigoTool() {
             onClick={handleGenerate}
             disabled={loading || !situation.trim()}
             aria-label="入力した情報を元にカスハラ対応文書をAIで生成する"
+            aria-busy={loading}
             className="w-full font-bold py-4 min-h-[52px] rounded-xl text-white transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.98] disabled:opacity-60 disabled:hover:translate-y-0"
             style={{ background: 'linear-gradient(135deg, #0D9488 0%, #14B8A6 100%)', boxShadow: '0 0 20px rgba(20, 184, 166, 0.3), 0 4px 12px rgba(0,0,0,0.15)' }}
           >
