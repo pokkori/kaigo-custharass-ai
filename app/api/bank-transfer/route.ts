@@ -1,0 +1,160 @@
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
+import { getSupabaseAdmin } from "@/lib/supabase";
+import crypto from "crypto";
+
+export const dynamic = "force-dynamic";
+
+const resend = new Resend(process.env.RESEND_API_KEY!);
+
+const BANK_NAME = process.env.BANK_NAME ?? "[BANK_NAME]";
+const BRANCH_NAME = process.env.BRANCH_NAME ?? "[BRANCH_NAME]";
+const ACCOUNT_NUMBER = process.env.ACCOUNT_NUMBER ?? "[ACCOUNT_NUMBER]";
+const ACCOUNT_HOLDER = process.env.ACCOUNT_HOLDER ?? "[ACCOUNT_HOLDER]";
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "";
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "https://kaigo-cusharass-ai.vercel.app";
+
+const PLANS: Record<string, { label: string; price: string; amount: number }> = {
+  personal: { label: "個人プラン", price: "¥2,980/月", amount: 2980 },
+  business: { label: "事業所プラン", price: "¥9,800/月", amount: 9800 },
+};
+
+function generateActivationToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    let body: Record<string, unknown>;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json({ error: "リクエストの形式が正しくありません" }, { status: 400 });
+    }
+    const { name, email, plan } = body as { name?: string; email?: string; plan?: string };
+
+    // バリデーション
+    if (!name || typeof name !== "string" || name.trim().length === 0) {
+      return NextResponse.json({ error: "お名前を入力してください" }, { status: 400 });
+    }
+    if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "正しいメールアドレスを入力してください" }, { status: 400 });
+    }
+    if (!plan || !PLANS[plan]) {
+      return NextResponse.json({ error: "プランを選択してください" }, { status: 400 });
+    }
+
+    const planInfo = PLANS[plan];
+    const activationToken = generateActivationToken();
+    const supabase = getSupabaseAdmin();
+
+    // Supabaseに申し込みレコード保存
+    const { error: dbError } = await supabase.from("bank_transfer_applications").insert({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      plan,
+      plan_label: planInfo.label,
+      amount: planInfo.amount,
+      is_active: false,
+      activation_token: activationToken,
+      app_id: "kaigo-cusharass-ai",
+      created_at: new Date().toISOString(),
+    });
+
+    if (dbError) {
+      console.error("[bank-transfer] DB insert error:", dbError.message);
+      // DBエラーでもメール送信は続行（ログは残す）
+    }
+
+    // ユーザーへの自動返信メール
+    await resend.emails.send({
+      from: FROM_EMAIL,
+      to: email.toLowerCase().trim(),
+      subject: "【介護カスハラAI】お申し込みありがとうございます - 振込先のご案内",
+      html: buildUserEmailHtml({ name: name.trim(), planInfo }),
+    });
+
+    // 管理者通知メール
+    if (ADMIN_EMAIL) {
+      const activateUrl = `${APP_URL}/api/bank-transfer/activate?token=${activationToken}&email=${encodeURIComponent(email.toLowerCase().trim())}`;
+      await resend.emails.send({
+        from: FROM_EMAIL,
+        to: ADMIN_EMAIL,
+        subject: `【要対応】銀行振込申し込み: ${name.trim()} (${planInfo.label})`,
+        html: buildAdminEmailHtml({ name: name.trim(), email, planInfo, activateUrl }),
+      });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[bank-transfer] unexpected error:", err);
+    return NextResponse.json({ error: "申し込み処理に失敗しました。しばらくしてから再度お試しください。" }, { status: 500 });
+  }
+}
+
+function buildUserEmailHtml(params: { name: string; planInfo: typeof PLANS[string] }): string {
+  const { name, planInfo } = params;
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><title>振込先のご案内</title></head>
+<body style="font-family: sans-serif; color: #222; background: #f9fafb; padding: 24px;">
+  <div style="max-width: 560px; margin: 0 auto; background: #fff; border-radius: 12px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.07);">
+    <h1 style="font-size: 20px; color: #0f766e; margin-bottom: 4px;">お申し込みありがとうございます</h1>
+    <p style="color: #555; font-size: 14px; margin-bottom: 24px;">介護カスハラAI</p>
+
+    <p>${name} 様</p>
+    <p>このたびは介護カスハラAIにお申し込みいただき、誠にありがとうございます。</p>
+    <p>以下の口座へお振込みをお願いいたします。ご入金確認後、24時間以内にアカウントを有効化いたします。</p>
+
+    <div style="background: #f0fdf4; border: 1px solid #6ee7b7; border-radius: 8px; padding: 20px; margin: 24px 0;">
+      <h2 style="font-size: 15px; color: #065f46; margin-bottom: 12px;">振込先口座</h2>
+      <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+        <tr><td style="padding: 6px 0; color: #555; width: 120px;">銀行名</td><td style="font-weight: bold;">${BANK_NAME}</td></tr>
+        <tr><td style="padding: 6px 0; color: #555;">支店名</td><td style="font-weight: bold;">${BRANCH_NAME}</td></tr>
+        <tr><td style="padding: 6px 0; color: #555;">口座種別</td><td style="font-weight: bold;">普通</td></tr>
+        <tr><td style="padding: 6px 0; color: #555;">口座番号</td><td style="font-weight: bold;">${ACCOUNT_NUMBER}</td></tr>
+        <tr><td style="padding: 6px 0; color: #555;">口座名義</td><td style="font-weight: bold;">${ACCOUNT_HOLDER}</td></tr>
+      </table>
+    </div>
+
+    <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+      <p style="margin: 0; font-size: 14px;"><strong>お申し込みプラン:</strong> ${planInfo.label}（${planInfo.price}）</p>
+      <p style="margin: 6px 0 0; font-size: 14px;"><strong>振込金額:</strong> ${planInfo.price.replace("/月", "")}（初月分）</p>
+      <p style="margin: 6px 0 0; font-size: 13px; color: #92400e;">※お振込み名義に「お名前」をご入力ください</p>
+    </div>
+
+    <p style="font-size: 13px; color: #6b7280;">ご入金確認後、このメールアドレスに有効化完了のご連絡をお送りいたします（通常24時間以内）。</p>
+    <p style="font-size: 13px; color: #6b7280;">ご不明な点は <a href="mailto:${FROM_EMAIL}" style="color: #0f766e;">${FROM_EMAIL}</a> までお問い合わせください。</p>
+
+    <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+    <p style="font-size: 12px; color: #9ca3af; margin: 0;">介護カスハラAI | 本AIは参考情報の提供を目的としています。法的対応については弁護士・社会保険労務士にご相談ください。</p>
+  </div>
+</body>
+</html>`;
+}
+
+function buildAdminEmailHtml(params: {
+  name: string;
+  email: string;
+  planInfo: typeof PLANS[string];
+  activateUrl: string;
+}): string {
+  const { name, email, planInfo, activateUrl } = params;
+  return `<!DOCTYPE html>
+<html lang="ja">
+<head><meta charset="UTF-8"><title>銀行振込申し込み通知</title></head>
+<body style="font-family: sans-serif; color: #222; padding: 24px;">
+  <h2>銀行振込申し込みがありました</h2>
+  <table style="border-collapse: collapse; font-size: 14px;">
+    <tr><td style="padding: 6px 12px 6px 0; color: #555;">氏名</td><td><strong>${name}</strong></td></tr>
+    <tr><td style="padding: 6px 12px 6px 0; color: #555;">メール</td><td>${email}</td></tr>
+    <tr><td style="padding: 6px 12px 6px 0; color: #555;">プラン</td><td>${planInfo.label}（${planInfo.price}）</td></tr>
+    <tr><td style="padding: 6px 12px 6px 0; color: #555;">金額</td><td>${planInfo.amount.toLocaleString()}円</td></tr>
+  </table>
+  <p style="margin-top: 20px;">入金確認後、以下のURLをクリックしてアクティベートしてください:</p>
+  <a href="${activateUrl}" style="background: #0f766e; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; display: inline-block; font-weight: bold;">アカウントをアクティベート</a>
+  <p style="font-size: 12px; color: #9ca3af; margin-top: 16px;">URL: ${activateUrl}</p>
+</body>
+</html>`;
+}

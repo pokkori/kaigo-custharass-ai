@@ -40,9 +40,10 @@ function shouldSendDay3(record: Awaited<ReturnType<typeof fetchPendingRecords>>[
 
 export async function GET(req: NextRequest) {
   // CRONシークレット認証（Vercel CRONからのみ受け付ける）
+  // CRON_SECRET 未設定の場合も 401 を返す（環境変数なしで動かさない）
   const authHeader = req.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
