@@ -42,6 +42,17 @@ export default function LegalPage() {
             <li>基盤モデル提供者（Anthropic, Inc.）のサービス停止や仕様変更により、本サービスの機能が変更・停止される場合があります。</li>
           </ol>
         </div>
+
+        <div className="mt-10 pt-8 border-t border-gray-200 text-center">
+          <p className="text-sm text-gray-600 mb-3">お問い合わせはこちら</p>
+          <Link
+            href="/contact"
+            className="inline-block bg-blue-600 text-white text-sm font-medium px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            お問い合わせフォーム
+          </Link>
+          <p className="text-xs text-gray-400 mt-2">2営業日以内にご返信いたします（土日祝を除く）</p>
+        </div>
       </div>
     </div>
   );
