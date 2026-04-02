@@ -204,7 +204,7 @@ export default function KaigoTool() {
           ? "アクセスが集中しています。しばらくお待ちください。"
           : msg.includes("529") || msg.toLowerCase().includes("overload")
           ? "AIサーバーが混雑しています。少し待ってから再試行してください。"
-          : "通信エラーが発生しました。再試行してください。"
+          : "少し時間をおいてもう一度お試しください。"
       );
     } finally {
       setLoading(false);
@@ -388,7 +388,7 @@ export default function KaigoTool() {
                 <svg className="w-5 h-5 animate-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" opacity="0.3"/><path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/></svg>
                 生成中...
               </span>
-            ) : "対応文を生成する"}
+            ) : "無料で対応文を生成する"}
           </button>
         </div>
 
