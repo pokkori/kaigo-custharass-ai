@@ -1,0 +1,32 @@
+name: Daily Supabase Backup
+on:
+  schedule:
+    - cron: '0 20 * * *'  # 毎日JST 5:00
+  workflow_dispatch:  # 手動実行も可能
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://github.com/supabase/cli/releases/latest/download/supabase_linux_amd64.tar.gz | tar -xz
+          sudo mv supabase /usr/local/bin/supabase
+
+      - name: Dump Database
+        env:
+          DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          if [ -n "$DATABASE_URL" ]; then
+            supabase db dump --db-url "$DATABASE_URL" --data-only -f backup_$(date +%Y%m%d).sql
+          else
+            echo "SUPABASE_DB_URL not set, skipping backup"
+            touch backup_$(date +%Y%m%d).sql
+          fi
+
+      - name: Upload Backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: backup_*.sql
+          retention-days: 30
