@@ -2,6 +2,7 @@
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
+import BankTransferModal from "@/components/BankTransferModal";
 import { updateStreak, loadStreak, getStreakMilestoneMessage } from "@/lib/streak";
 import { StreakBanner } from "@/components/StreakBanner";
 import { UsageCounter } from "@/components/UsageCounter";
@@ -212,17 +213,17 @@ function CareRoiCalculator() {
         </div>
         <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-teal-100 p-6 space-y-5">
           <div>
-            <label className="block text-sm font-semibold text-white/80 mb-1">事業所のスタッフ数（人）: <span className="text-teal-600">{staffCount}人</span></label>
-            <input type="range" min={3} max={100} value={staffCount} onChange={e => setStaffCount(Number(e.target.value))} className="w-full accent-teal-600" />
+            <label htmlFor="roi-staff-count" className="block text-sm font-semibold text-white/80 mb-1">事業所のスタッフ数（人）: <span className="text-teal-600">{staffCount}人</span></label>
+            <input id="roi-staff-count" type="range" min={3} max={100} value={staffCount} onChange={e => setStaffCount(Number(e.target.value))} className="w-full accent-teal-600" aria-label={`事業所のスタッフ数: ${staffCount}人`} />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-white/80 mb-1">年間離職率（%）: <span className="text-teal-600">{turnoverRate}%</span></label>
-            <input type="range" min={5} max={50} value={turnoverRate} onChange={e => setTurnoverRate(Number(e.target.value))} className="w-full accent-teal-600" />
+            <label htmlFor="roi-turnover-rate" className="block text-sm font-semibold text-white/80 mb-1">年間離職率（%）: <span className="text-teal-600">{turnoverRate}%</span></label>
+            <input id="roi-turnover-rate" type="range" min={5} max={50} value={turnoverRate} onChange={e => setTurnoverRate(Number(e.target.value))} className="w-full accent-teal-600" aria-label={`年間離職率: ${turnoverRate}%`} />
             <p className="text-xs text-white/40 mt-0.5">介護業界平均は約14.4%（令和4年度介護労働実態調査）</p>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-white/80 mb-1">離職原因のうちカスハラ由来の割合（%）: <span className="text-teal-600">{kasuhara}%</span></label>
-            <input type="range" min={5} max={60} value={kasuhara} onChange={e => setKasuhara(Number(e.target.value))} className="w-full accent-teal-600" />
+            <label htmlFor="roi-kasuhara-ratio" className="block text-sm font-semibold text-white/80 mb-1">離職原因のうちカスハラ由来の割合（%）: <span className="text-teal-600">{kasuhara}%</span></label>
+            <input id="roi-kasuhara-ratio" type="range" min={5} max={60} value={kasuhara} onChange={e => setKasuhara(Number(e.target.value))} className="w-full accent-teal-600" aria-label={`カスハラ由来の離職割合: ${kasuhara}%`} />
             <p className="text-xs text-white/40 mt-0.5">介護職のハラスメント起因離職は全離職の約30%（厚労省報告書）</p>
           </div>
           <div className="bg-teal-500/10 rounded-xl p-4 border border-teal-200 grid grid-cols-2 gap-4 text-center">
@@ -261,6 +262,7 @@ function CareRoiCalculator() {
 
 export default function KaigoLP() {
   const [showPayjp, setShowPayjp] = useState(false);
+  const [showBankTransfer, setShowBankTransfer] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [selectedFlowType, setSelectedFlowType] = useState<string | null>(null);
   const [facilityTab, setFacilityTab] = useState<"houmon" | "tokuyou" | "day">("houmon");
@@ -321,8 +323,49 @@ export default function KaigoLP() {
     URL.revokeObjectURL(url);
   }
 
+  const faqs = [
+    { q: '介護カスハラAIはどんなサービスですか？', a: 'カスタマーハラスメント（カスハラ）への対応文をAIが即座に生成するWebサービスです。介護現場でのクレームや暴言に対し、適切な対応文章を提示します。登録不要・無料からご利用いただけます。' },
+    { q: '無料で使えますか？', a: '月3回まで無料でご利用いただけます。それ以上ご利用の場合は有料プランへのアップグレードが必要です。' },
+    { q: '東京都のカスハラ対策奨励金に使えますか？', a: '介護カスハラAIは東京都のカスタマーハラスメント対策奨励金の対象ツールとして申請可能です。詳しくは東京都の公式サイトをご確認ください。' },
+    { q: 'スマートフォンでも使えますか？', a: 'はい、PCでもスマートフォンでもご利用いただけます。アプリのインストール不要で、ブラウザからそのまま利用できます。' },
+    { q: '2026年義務化されたカスハラ対策とは何ですか？', a: '2024年の労働施策総合推進法改正により、事業者はカスタマーハラスメントから従業員を守る対策が義務化されました。介護カスハラAIはその対策支援ツールとして活用できます。' },
+  ];
+
   return (
-    <main className="min-h-screen text-white relative" style={{ background: T.bg }}>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'FAQPage',
+            mainEntity: faqs.map(faq => ({
+              '@type': 'Question',
+              name: faq.q,
+              acceptedAnswer: { '@type': 'Answer', text: faq.a },
+            })),
+          }).replace(/</g, '\\u003c'),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: '介護カスハラAI',
+            applicationCategory: 'BusinessApplication',
+            operatingSystem: 'Web',
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'JPY',
+              description: '月3回まで無料',
+            },
+          }).replace(/</g, '\\u003c'),
+        }}
+      />
+      <main className="min-h-screen text-white relative" style={{ background: T.bg }}>
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
         {[{size:4,x:'10%',y:'20%',dur:'6s',delay:'0s'},{size:3,x:'85%',y:'15%',dur:'8s',delay:'1s'},{size:5,x:'70%',y:'60%',dur:'7s',delay:'2s'},{size:3,x:'25%',y:'75%',dur:'9s',delay:'0.5s'},{size:4,x:'50%',y:'40%',dur:'10s',delay:'3s'},{size:6,x:'90%',y:'80%',dur:'7s',delay:'1.5s'}].map((p,i)=>(<div key={i} className="absolute rounded-full animate-pulse" style={{width:p.size,height:p.size,left:p.x,top:p.y,background:T.particleColor,animationDuration:p.dur,animationDelay:p.delay}}/>))}
       </div>
@@ -391,8 +434,22 @@ export default function KaigoLP() {
                 <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm" />
               </div>
             </div>
+            <div className="mt-4 pt-4 border-t border-white/10 text-center">
+              <p className="text-xs text-white/40 mb-2">クレジットカード以外の方はこちら</p>
+              <button
+                onClick={() => { setShowPayjp(false); setShowBankTransfer(true); }}
+                className="text-sm text-teal-400 underline hover:text-teal-300 transition-colors min-h-[44px] px-2"
+                aria-label="銀行振込で申し込むフォームを開く"
+              >
+                銀行振込で申し込む
+              </button>
+            </div>
           </div>
         </div>
+      )}
+
+      {showBankTransfer && (
+        <BankTransferModal onClose={() => setShowBankTransfer(false)} />
       )}
 
       <nav className="px-6 py-4 sticky top-0 z-10 border-b border-white/5" style={{ background: 'rgba(11,15,30,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
@@ -424,7 +481,7 @@ export default function KaigoLP() {
       <div className="bg-red-700 text-white text-center text-sm font-semibold py-2.5 px-4">
         【法的義務】改正労働施策総合推進法・介護運営基準改正によりカスハラ体制整備が義務化（2026年10月1日施行）
         {daysLeft !== null && daysLeft > 0 && <strong> — あと{daysLeft}日</strong>}
-        <span className="ml-2 text-xs font-normal opacity-80">※未対応の場合、行政指導・監査リスクあり</span>
+        <span className="ml-2 text-xs font-normal">※未対応の場合、行政指導・監査リスクあり</span>
       </div>
 
       <StreakBanner />
@@ -546,7 +603,7 @@ export default function KaigoLP() {
             ].map((v, i) => (
               <div key={i} className="flex items-start gap-3 bg-red-500/10 border border-red-100 rounded-xl px-5 py-4">
                 <span className="text-red-400 font-bold text-lg mt-0.5 shrink-0"></span>
-                <p className="text-sm text-white/80 leading-relaxed">{v}</p>
+                <p className="text-sm text-red-900 leading-relaxed">{v}</p>
               </div>
             ))}
           </div>
@@ -555,7 +612,7 @@ export default function KaigoLP() {
             <p className="text-sm text-teal-700">状況を入力するだけで、厚労省ガイドライン準拠の対応文・記録テンプレートが15秒で生成されます。</p>
             <Link
               href="/tool"
-              className="inline-block mt-4 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+              className="inline-block mt-4 bg-teal-700 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-800 transition-colors text-sm"
             >
               無料で試してみる（3回・登録不要）→
             </Link>
@@ -635,7 +692,7 @@ export default function KaigoLP() {
               <svg className="w-6 h-6 text-green-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" strokeLinecap="round" strokeLinejoin="round"/></svg>
               <div>
                 <p className="text-green-700 font-bold text-sm">厚生労働省ガイドライン対応</p>
-                <p className="text-green-600 text-xs">介護現場のハラスメント対策マニュアル準拠</p>
+                <p className="text-green-700 text-xs">介護現場のハラスメント対策マニュアル準拠</p>
               </div>
               <span className="ml-2 bg-green-500/100 text-white text-xs font-bold px-3 py-1 rounded-full">認定準拠</span>
             </div>
@@ -655,8 +712,8 @@ export default function KaigoLP() {
                 <div className="w-10 h-10 rounded-xl mb-2 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #CCFBF1, #99F6E4)' }}>
                   <svg className="w-5 h-5 text-teal-700" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
-                <p className="font-bold text-white text-xs mb-1">{f.name}</p>
-                <p className="text-teal-600 text-xs">{f.detail}</p>
+                <p className="font-bold text-teal-900 text-xs mb-1">{f.name}</p>
+                <p className="text-teal-800 text-xs">{f.detail}</p>
               </div>
             ))}
           </div>
@@ -1586,6 +1643,19 @@ https://kaigo-custharass-ai.vercel.app/tool
 
       <CrossSell currentService="介護カスハラAI" />
 
+      {/* FAQセクション */}
+      <section aria-label="よくある質問" className="py-12 px-4 max-w-2xl mx-auto">
+        <h2 className="text-2xl font-bold mb-8 text-center">よくある質問</h2>
+        <div className="space-y-4">
+          {faqs.map((faq, i) => (
+            <details key={i} className="border border-white/20 rounded-lg p-4 cursor-pointer">
+              <summary className="font-semibold">{faq.q}</summary>
+              <p className="mt-3 text-white/60">{faq.a}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
       <footer className="border-t py-6 text-center text-xs text-white/40">
         <div className="space-x-4 mb-2">
           <Link href="/legal" className="hover:underline">特定商取引法に基づく表記</Link>
@@ -1597,5 +1667,6 @@ https://kaigo-custharass-ai.vercel.app/tool
       </footer>
       <AdBanner slot="" />
     </main>
+    </>
   );
 }
