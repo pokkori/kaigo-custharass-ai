@@ -197,7 +197,13 @@ ${severityGuidance}
     const stream = getClient().messages.stream({
       model: "claude-sonnet-4-6",
       max_tokens: 4096,
-      system: systemPrompt,
+      system: [
+        {
+          type: "text",
+          text: systemPrompt,
+          cache_control: { type: "ephemeral" },
+        },
+      ],
       messages: [{ role: "user", content: prompt }],
     });
 
