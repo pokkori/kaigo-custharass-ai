@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
+import { markConverted } from '@/lib/trial-sequences'
 
 export const dynamic = 'force-dynamic'
 
@@ -41,6 +42,15 @@ export async function POST(req: Request) {
         maxAge: 60 * 60 * 24 * 32,
         path: '/',
       })
+
+      // 有料転換記録（以降のシーケンスメールをスキップ）
+      const email = session.email ?? session.customer_information?.email
+      if (email) {
+        markConverted(email).catch((err: unknown) =>
+          console.error('[komoju/verify] markConverted error:', err)
+        )
+      }
+
       return NextResponse.json({ verified: true, planId })
     }
 
@@ -90,6 +100,15 @@ export async function GET(req: Request) {
         maxAge: 60 * 60 * 24 * 32,
         path: '/',
       })
+
+      // 有料転換記録（以降のシーケンスメールをスキップ）
+      const email = session.email ?? session.customer_information?.email
+      if (email) {
+        markConverted(email as string).catch((err: unknown) =>
+          console.error('[komoju/verify GET] markConverted error:', err)
+        )
+      }
+
       return NextResponse.json({ verified: true, planId })
     }
 
