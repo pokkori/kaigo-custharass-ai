@@ -474,7 +474,11 @@ export default function KaigoLP() {
           >
             無料でAI対応文を生成 →
           </Link>
-          <p className="text-xs opacity-60 mt-2">※現場経験者監修</p>
+          <p className="text-xs text-green-300 mt-2 font-semibold">
+            東京都奨励金（最大40万円）で実質無料導入可能 ·
+            <a href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/" target="_blank" rel="noopener noreferrer" className="underline ml-1">詳細はこちら</a>
+          </p>
+          <p className="text-xs opacity-60 mt-1">※現場経験者監修</p>
           <div className="flex flex-col items-center gap-1">
             <p className="text-sm text-white/40">登録不要・クレジットカード不要</p>
             <button
@@ -496,6 +500,33 @@ export default function KaigoLP() {
               <span>証拠記録シート（Excel対応）を無料DL</span>
             </button>
             <p className="text-xs text-white/40 mt-1">TSV形式・Excel/Numbersで開けます・登録不要</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 東京都奨励金バナー */}
+      <section className="py-6 px-4 bg-gradient-to-r from-green-700 to-emerald-700 print:hidden">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-start gap-3">
+            <svg className="w-8 h-8 text-white shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <div>
+              <p className="font-bold text-lg text-white">東京都カスハラ対策奨励金で実質無料導入</p>
+              <p className="text-green-100 text-sm mt-1">
+                東京都の奨励金（最大40万円）を活用すると、介護カスハラAI（事業所プラン¥9,800/月）が
+                <strong className="text-white">実質1年以上無料</strong>で導入できます。
+              </p>
+              <p className="text-green-200 text-xs mt-2">
+                ※従業員300名以下の都内中小企業・社会福祉法人対象・先着2,000件・第3回申請受付中
+              </p>
+              <a
+                href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-2 bg-white text-green-700 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-green-50 transition"
+              >
+                東京都公式サイトで詳細を確認 →
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -878,6 +909,37 @@ export default function KaigoLP() {
               </a>
             </div>
           </div>
+          {/* 奨励金活用シミュレーション */}
+          <div className="mt-10 bg-green-900/30 border border-green-600/50 rounded-2xl p-6">
+            <div className="flex items-start gap-3 mb-4">
+              <svg className="w-6 h-6 text-green-400 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <div>
+                <p className="font-bold text-green-300">東京都奨励金活用シミュレーション</p>
+                <p className="text-xs text-green-400 mt-0.5">従業員300名以下の都内中小企業・社会福祉法人対象</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+              <div className="bg-white/5 rounded-xl p-4 text-center">
+                <p className="text-xs text-white/50 mb-1">東京都奨励金（最大）</p>
+                <p className="text-2xl font-black text-green-400">400,000円</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-4 text-center">
+                <p className="text-xs text-white/50 mb-1">事業所プラン年間費用</p>
+                <p className="text-2xl font-black text-white">117,600円</p>
+                <p className="text-xs text-white/40">¥9,800 × 12ヶ月</p>
+              </div>
+              <div className="bg-green-600/20 border border-green-500/50 rounded-xl p-4 text-center">
+                <p className="text-xs text-green-300 mb-1">実質コスト</p>
+                <p className="text-2xl font-black text-green-300">実質無料</p>
+                <p className="text-xs text-green-400">さらに3年以上利用可能</p>
+              </div>
+            </div>
+            <p className="text-xs text-white/40 mt-3 text-center">
+              ※奨励金の受給には申請審査があります。受給を保証するものではありません。詳細は
+              <a href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/" target="_blank" rel="noopener noreferrer" className="text-green-400 underline ml-1">東京都公式サイト</a>
+              をご確認ください。
+            </p>
+          </div>
         </div>
       </section>
 
@@ -1161,6 +1223,8 @@ export default function KaigoLP() {
                   { "@type": "Question", name: "証拠記録はどうやって管理すればいいですか？", acceptedAnswer: { "@type": "Answer", text: "ツールの結果画面から「証拠記録シート（TSV形式）」をダウンロードできます。日時・場所・対象者・状況・対応者・対応内容の列が整備されており、Excelで開いてそのまま記録管理に使えます。法的手続き・労災申請・契約解除の際の証拠として機能します。" } },
                   { "@type": "Question", name: "カスハラを受けたスタッフのメンタルケアは？", acceptedAnswer: { "@type": "Answer", text: "カスハラを受けたスタッフへの心理的サポートは事業者の義務です。本ツールは対応文書生成のほか、2026年10月義務化に向けた相談窓口設置・研修実施の文書雛形も提供します。深刻なケースでは産業医・EAP（従業員支援プログラム）への連携をおすすめします。" } },
                   { "@type": "Question", name: "家族（第三者）からのカスハラにも対応できますか？", acceptedAnswer: { "@type": "Answer", text: "はい。要求者として「家族・親族」を選択することで、家族からの不当クレーム・威圧・脅迫に特化した対応文を生成します。同居家族・遠方家族・複数家族間の調整が難しいケースも想定した書面通知文を出力します。" } },
+                  { "@type": "Question", name: "東京都の奨励金は本当に使えますか？", acceptedAnswer: { "@type": "Answer", text: "「東京都カスハラ防止対策助成金」の対象サービスとして活用いただける可能性があります。従業員300名以下の都内中小企業・社会福祉法人が対象で、最大40万円の補助を受けられます（申請審査あり）。詳細は東京都公式サイトをご確認ください。" } },
+                  { "@type": "Question", name: "奨励金申請の手続きはどうすればいいですか？", acceptedAnswer: { "@type": "Answer", text: "概ね①Gビズ IDの取得、②カスハラ対策マニュアル作成（本AIが支援）、③本サービスの導入証明書の取得、④申請書提出の流れで進みます。詳細な手順・最新情報は必ず東京都公式サイト（東京都カスハラ防止対策奨励金）でご確認ください。" } },
                 ],
               }),
             }}
@@ -1178,6 +1242,8 @@ export default function KaigoLP() {
               { q: "証拠記録はどうやって管理すればいいですか？", a: "ツールの結果画面から「証拠記録シート（TSV形式）」をダウンロードできます。日時・場所・対象者・状況・対応者・対応内容の列が整備されており、Excelで開いてそのまま記録管理に使えます。法的手続き・労災申請・契約解除の際の証拠として機能します。" },
               { q: "カスハラを受けたスタッフのメンタルケアは？", a: "カスハラを受けたスタッフへの心理的サポートは事業者の義務です。本ツールは対応文書生成のほか、2026年10月義務化に向けた相談窓口設置・研修実施の文書雛形も提供します。深刻なケースでは産業医・EAP（従業員支援プログラム）への連携をおすすめします。" },
               { q: "家族（第三者）からのカスハラにも対応できますか？", a: "はい。要求者として「家族・親族」を選択することで、家族からの不当クレーム・威圧・脅迫に特化した対応文を生成します。同居家族・遠方家族・複数家族間の調整が難しいケースも想定した書面通知文を出力します。" },
+              { q: "東京都の奨励金は本当に使えますか？", a: "「東京都カスハラ防止対策助成金」の対象サービスとして活用いただける可能性があります。従業員300名以下の都内中小企業・社会福祉法人が対象で、最大40万円の補助を受けられます（申請審査あり）。申請にはカスハラ対策マニュアルの作成が必要ですが、本AIが支援いたします。詳細・最新情報は東京都公式サイトをご確認ください。" },
+              { q: "奨励金申請の手続きはどうすればいいですか？", a: "概ね①Gビズ IDの取得、②カスハラ対策マニュアル作成（本AIが支援）、③本サービスの導入証明書の取得、④申請書提出の流れで進みます。詳細な手順・最新情報は必ず東京都公式サイト（東京都カスハラ防止対策奨励金）でご確認ください。" },
             ].map((faq, i) => (
               <div key={i} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-xl rounded-xl p-5">
                 <p className="font-semibold text-teal-800 mb-2 text-sm">Q. {faq.q}</p>
