@@ -5,7 +5,12 @@ import crypto from "crypto";
 
 export const dynamic = "force-dynamic";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+// Resend はモジュールレベルで初期化せず、API_KEY がない環境でのクラッシュを防ぐ
+function getResend(): Resend {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error("RESEND_API_KEY is not set");
+  return new Resend(key);
+}
 
 const BANK_NAME = process.env.BANK_NAME ?? "[BANK_NAME]";
 const BRANCH_NAME = process.env.BRANCH_NAME ?? "[BRANCH_NAME]";
@@ -68,7 +73,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ユーザーへの自動返信メール
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_EMAIL,
       to: email.toLowerCase().trim(),
       subject: "【介護カスハラAI】お申し込みありがとうございます - 振込先のご案内",
@@ -78,7 +83,7 @@ export async function POST(req: NextRequest) {
     // 管理者通知メール
     if (ADMIN_EMAIL) {
       const activateUrl = `${APP_URL}/api/bank-transfer/activate?token=${activationToken}&email=${encodeURIComponent(email.toLowerCase().trim())}`;
-      await resend.emails.send({
+      await getResend().emails.send({
         from: FROM_EMAIL,
         to: ADMIN_EMAIL,
         subject: `【要対応】銀行振込申し込み: ${name.trim()} (${planInfo.label})`,

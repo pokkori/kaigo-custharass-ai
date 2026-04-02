@@ -16,7 +16,12 @@ import { buildDay1Email } from "@/lib/email-sequences";
 
 export const dynamic = "force-dynamic";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+// Resend はモジュールレベルで初期化せず、API_KEY がない環境でのクラッシュを防ぐ
+function getResend(): Resend {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) throw new Error("RESEND_API_KEY is not set");
+  return new Resend(key);
+}
 const FROM_EMAIL =
   process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
 
@@ -93,7 +98,7 @@ export async function POST(req: NextRequest) {
       email: normalizedEmail,
       name: normalizedName,
     });
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_EMAIL,
       to: normalizedEmail,
       subject,
