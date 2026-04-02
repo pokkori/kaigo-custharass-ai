@@ -102,6 +102,61 @@ const jsonLd = {
         "description": "初回3回無料・事業所プラン¥9,800/月"
       }
     },
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "介護カスハラAIの使い方",
+      "description": "介護現場のカスタマーハラスメント対応文・証拠記録テンプレートをAIで即生成する手順",
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "カスハラ事例を入力する",
+          "text": "発生したカスハラの内容（暴言・不当要求・脅迫など）、相手との関係（利用者本人・家族など）、発生状況を入力フォームに入力します。"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "AIが対応策を生成する",
+          "text": "入力内容をもとに、即時対応用の返答文・書面による警告文・証拠記録テンプレートの3点をAIが自動生成します。法的根拠（条文引用）とエスカレーション手順も添付されます。"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "回答文をコピーして活用する",
+          "text": "生成された対応文書をコピーし、メール・書面・口頭対応に活用します。証拠記録テンプレートは行政報告・訴訟対応の証拠書類として保存してください。"
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "介護カスハラAI",
+      "description": "介護事業所向けカスタマーハラスメント対応支援AIサービス。2026年度運営基準改正（カスハラ体制整備義務化）に対応した返信文・警告書・証拠記録テンプレートを即生成。",
+      "provider": {
+        "@type": "Organization",
+        "name": "介護カスハラAI運営事務局",
+        "url": SITE_URL
+      },
+      "serviceType": "AI Software",
+      "areaServed": "JP",
+      "audience": {
+        "@type": "BusinessAudience",
+        "audienceType": "介護事業所・介護施設・訪問介護事業者"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "29800",
+        "priceCurrency": "JPY",
+        "priceSpecification": {
+          "@type": "UnitPriceSpecification",
+          "price": "29800",
+          "priceCurrency": "JPY",
+          "unitText": "月額（法人プラン）"
+        },
+        "description": "初回3回無料・事業所プラン¥9,800/月・法人プラン¥29,800/月"
+      }
+    },
   ],
 };
 
