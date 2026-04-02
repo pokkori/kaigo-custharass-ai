@@ -164,7 +164,13 @@ export default function KaigoTool() {
       if (!res.ok) {
         const data = await res.json();
         if (data.error === "LIMIT_REACHED") { setHitLimit(true); return; }
-        setError(data.error || "エラーが発生しました");
+        const rawMsg: string = data.error || "エラーが発生しました";
+        const friendlyMsg = rawMsg.includes("429") || rawMsg.toLowerCase().includes("rate")
+          ? "アクセスが集中しています。しばらくお待ちください。"
+          : rawMsg.includes("529") || rawMsg.toLowerCase().includes("overload")
+          ? "AIサーバーが混雑しています。少し待ってから再試行してください。"
+          : rawMsg;
+        setError(friendlyMsg);
         return;
       }
       const newCount = parseInt(res.headers.get("X-New-Count") || String(count + 1), 10);
@@ -191,8 +197,15 @@ export default function KaigoTool() {
       setTimeout(() => setCompletionVisible(false), 4000);
       setTimeout(() => resultRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
       setTimeout(() => setShowShareModal(true), 2000);
-    } catch {
-      setError("通信エラーが発生しました。再試行してください。");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      setError(
+        msg.includes("429") || msg.toLowerCase().includes("rate")
+          ? "アクセスが集中しています。しばらくお待ちください。"
+          : msg.includes("529") || msg.toLowerCase().includes("overload")
+          ? "AIサーバーが混雑しています。少し待ってから再試行してください。"
+          : "通信エラーが発生しました。再試行してください。"
+      );
     } finally {
       setLoading(false);
     }
