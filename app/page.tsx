@@ -191,27 +191,50 @@ function UseCountBadge() {
 
 // ========= Care Staff Turnover ROI Calculator =========
 const CARE_STAFF_COST_PER_PERSON = 500000; // 介護職1人採用・育成コスト（厚労省研究: 約50万円）
+const TOKYO_GRANT_AMOUNT = 400000; // 東京都奨励金 最大40万円
 
 function CareRoiCalculator() {
   const [staffCount, setStaffCount] = useState(10);
   const [turnoverRate, setTurnoverRate] = useState(15);
   const [kasuhara, setKasuhara] = useState(30);
+  const [useGrant, setUseGrant] = useState(true);
 
   const leavingFromKasuhara = Math.round((staffCount * (turnoverRate / 100)) * (kasuhara / 100));
   const annualLoss = leavingFromKasuhara * CARE_STAFF_COST_PER_PERSON;
-  const monthlyCost = 9800;
-  const annualCost = monthlyCost * 12;
-  const roi = annualLoss > 0 ? Math.round(((annualLoss - annualCost) / annualCost) * 100) : 0;
+  const monthlyCost = 29800;
+  const annualCost = monthlyCost * 12; // 357,600
+  const firstYearCost = useGrant ? Math.max(0, annualCost - TOKYO_GRANT_AMOUNT) : annualCost;
+  const firstYearSaving = useGrant ? Math.min(TOKYO_GRANT_AMOUNT, annualCost) : 0;
+  const roi = annualLoss > 0 ? Math.round(((annualLoss - (useGrant ? firstYearCost : annualCost)) / (useGrant ? firstYearCost || 1 : annualCost)) * 100) : 0;
 
   return (
     <section className="py-16 bg-teal-500/10 border-t border-teal-100">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-8">
           <span className="text-xs font-bold text-teal-700 uppercase tracking-widest">ROIシミュレーター</span>
-          <h2 className="text-2xl font-bold text-white mt-2 mb-1">カスハラ対策の費用対効果を試算</h2>
+          <h2 className="text-2xl font-bold text-white mt-2 mb-1">導入コストシミュレーション</h2>
           <p className="text-sm text-white/50">厚労省研究：介護職1人の採用・育成コストは約50万円。カスハラによる離職は直接的な損失です。</p>
         </div>
         <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-lg border border-teal-100 p-6 space-y-5">
+
+          {/* 東京都奨励金トグル */}
+          <div className="bg-green-500/10 border border-green-400/40 rounded-xl p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-bold text-green-700">東京都カスハラ防止対策奨励金（最大40万円）を適用する</p>
+                <p className="text-xs text-green-600 mt-0.5">従業員300名以下の都内中小企業・社会福祉法人が対象</p>
+              </div>
+              <button
+                onClick={() => setUseGrant(g => !g)}
+                aria-pressed={useGrant}
+                aria-label={`東京都奨励金を${useGrant ? "適用中（クリックで解除）" : "未適用（クリックで適用）"}`}
+                className={`w-14 h-7 rounded-full transition-colors duration-200 shrink-0 relative ${useGrant ? "bg-green-500" : "bg-white/20"}`}
+              >
+                <span className={`absolute top-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200 ${useGrant ? "translate-x-7" : "translate-x-0.5"}`} />
+              </button>
+            </div>
+          </div>
+
           <div>
             <label htmlFor="roi-staff-count" className="block text-sm font-semibold text-white/80 mb-1">事業所のスタッフ数（人）: <span className="text-teal-600">{staffCount}人</span></label>
             <input id="roi-staff-count" type="range" min={3} max={100} value={staffCount} onChange={e => setStaffCount(Number(e.target.value))} className="w-full accent-teal-600" aria-label={`事業所のスタッフ数: ${staffCount}人`} />
@@ -226,6 +249,33 @@ function CareRoiCalculator() {
             <input id="roi-kasuhara-ratio" type="range" min={5} max={60} value={kasuhara} onChange={e => setKasuhara(Number(e.target.value))} className="w-full accent-teal-600" aria-label={`カスハラ由来の離職割合: ${kasuhara}%`} />
             <p className="text-xs text-white/40 mt-0.5">介護職のハラスメント起因離職は全離職の約30%（厚労省報告書）</p>
           </div>
+
+          {/* コスト内訳 */}
+          <div className="bg-white/10 rounded-xl p-4 border border-white/20 space-y-2 text-sm">
+            <p className="font-bold text-white/80 text-xs mb-2">コスト内訳</p>
+            <div className="flex justify-between text-white/60">
+              <span>月額料金</span><span className="font-semibold text-white">¥{monthlyCost.toLocaleString()}/月</span>
+            </div>
+            <div className="flex justify-between text-white/60">
+              <span>年間合計</span><span className="font-semibold text-white">¥{annualCost.toLocaleString()}</span>
+            </div>
+            {useGrant && (
+              <div className="flex justify-between text-green-400">
+                <span>東京都奨励金（一度限り）</span><span className="font-bold">- ¥{TOKYO_GRANT_AMOUNT.toLocaleString()}</span>
+              </div>
+            )}
+            <div className="flex justify-between border-t border-white/20 pt-2 mt-2">
+              <span className={useGrant ? "text-yellow-300 font-bold" : "text-white/80"}>初年度の実質費用</span>
+              <span className={`font-black text-lg ${useGrant && firstYearCost === 0 ? "text-yellow-300" : "text-white"}`}>
+                {useGrant && firstYearCost === 0 ? "実質¥0（お釣りあり）" : `¥${firstYearCost.toLocaleString()}`}
+              </span>
+            </div>
+            {useGrant && firstYearSaving > 0 && (
+              <p className="text-xs text-green-400 text-right">奨励金で年間¥{firstYearSaving.toLocaleString()}節約</p>
+            )}
+          </div>
+
+          {/* 結果グリッド */}
           <div className="bg-teal-500/10 rounded-xl p-4 border border-teal-200 grid grid-cols-2 gap-4 text-center">
             <div>
               <p className="text-xs text-white/50 mb-1">カスハラ起因の離職人数</p>
@@ -236,23 +286,35 @@ function CareRoiCalculator() {
               <p className="text-2xl font-black text-red-500">¥{(annualLoss / 10000).toLocaleString()}万</p>
             </div>
             <div>
-              <p className="text-xs text-white/50 mb-1">本サービス年間費用</p>
-              <p className="text-xl font-black text-teal-600">¥{(annualCost / 10000).toLocaleString()}万</p>
+              <p className="text-xs text-white/50 mb-1">本サービス実質費用（初年度）</p>
+              <p className="text-xl font-black text-teal-600">
+                {useGrant && firstYearCost === 0 ? "実質¥0" : `¥${(firstYearCost / 10000).toLocaleString()}万`}
+              </p>
             </div>
             <div>
               <p className="text-xs text-white/50 mb-1">投資対効果（ROI）</p>
-              <p className="text-2xl font-black text-teal-700">{roi.toLocaleString()}%</p>
+              <p className="text-2xl font-black text-teal-700">
+                {useGrant && firstYearCost === 0 ? "∞" : `${roi.toLocaleString()}%`}
+              </p>
             </div>
           </div>
-          <p className="text-xs text-white/40 text-center">※試算値です。実際の効果は個別状況により異なります</p>
-          <div className="text-center">
+          <p className="text-xs text-white/40 text-center">※試算値です。実際の効果は個別状況により異なります。奨励金の対象可否は東京都にご確認ください。</p>
+          <div className="text-center flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               aria-label="ページトップに戻り介護カスハラAIを無料で試す"
-              className="inline-block bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+              className="flex-1 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
             >
               今すぐ無料で試す →
             </button>
+            <a
+              href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 bg-green-700 text-white font-bold px-6 py-3 rounded-xl hover:bg-green-800 transition-colors text-sm"
+            >
+              奨励金の詳細を確認 →
+            </a>
           </div>
         </div>
       </div>
@@ -356,6 +418,8 @@ export default function KaigoLP() {
             name: '介護カスハラAI',
             applicationCategory: 'BusinessApplication',
             operatingSystem: 'Web',
+            description: '介護現場のカスタマーハラスメント対応文・警告書・証拠記録テンプレートをAIが即生成。2026年義務化のカスハラ対策体制整備をサポートする介護事業所向けAIツール。',
+            url: 'https://kaigo-custharass-ai.vercel.app',
             offers: {
               '@type': 'Offer',
               price: '0',
@@ -561,29 +625,116 @@ export default function KaigoLP() {
         </div>
       </section>
 
-      {/* 東京都奨励金バナー */}
-      <section className="py-6 px-4 bg-gradient-to-r from-green-700 to-emerald-700 print:hidden">
-        <div className="max-w-3xl mx-auto">
-          <div className="flex items-start gap-3">
-            <svg className="w-8 h-8 text-white shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <div>
-              <p className="font-bold text-lg text-white">東京都カスハラ対策奨励金で実質無料導入</p>
-              <p className="text-green-100 text-sm mt-1">
-                東京都の奨励金（最大40万円）を活用すると、介護カスハラAI（事業所プラン¥9,800/月）が
-                <strong className="text-white">実質1年以上無料</strong>で導入できます。
-              </p>
-              <p className="text-green-200 text-xs mt-2">
-                ※従業員300名以下の都内中小企業・社会福祉法人対象・先着2,000件・第3回申請受付中
-              </p>
-              <a
-                href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-2 bg-white text-green-700 text-xs font-bold px-3 py-1.5 rounded-full hover:bg-green-50 transition"
-              >
-                東京都公式サイトで詳細を確認 →
-              </a>
+      {/* 東京都奨励金バナー（拡充版） */}
+      <section className="py-10 px-4 print:hidden" style={{ background: 'linear-gradient(135deg, #14532d 0%, #166534 50%, #15803d 100%)' }}>
+        <div className="max-w-4xl mx-auto">
+          {/* ヘッダー */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-yellow-400 flex items-center justify-center shrink-0">
+              <svg className="w-6 h-6 text-green-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="bg-yellow-400 text-green-900 text-xs font-black px-2 py-0.5 rounded-full">公的支援制度</span>
+                <span className="text-green-200 text-xs">先着2,000件・第3回申請受付中</span>
+              </div>
+              <h2 className="text-xl md:text-2xl font-black text-white mt-1">
+                東京都の奨励金40万円で
+                <span className="text-yellow-300 ml-2">介護カスハラAIが実質無料で導入できます</span>
+              </h2>
+            </div>
+          </div>
+
+          {/* コスト試算ボックス */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 mb-5">
+            <p className="text-green-100 text-sm font-bold mb-4">導入コストシミュレーション（事業所プラン）</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="bg-white/10 rounded-xl p-4 text-center border border-white/15">
+                <p className="text-green-200 text-xs mb-1">月額料金</p>
+                <p className="text-2xl font-black text-white">¥29,800<span className="text-sm font-normal">/月</span></p>
+                <p className="text-green-300 text-xs mt-1">（税込 ¥32,780）</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-4 text-center border border-white/15">
+                <p className="text-green-200 text-xs mb-1">東京都カスハラ防止対策奨励金</p>
+                <p className="text-2xl font-black text-yellow-300">最大¥400,000</p>
+                <p className="text-green-300 text-xs mt-1">一度限り・一括支給</p>
+              </div>
+              <div className="bg-yellow-400/20 rounded-xl p-4 text-center border border-yellow-300/40">
+                <p className="text-yellow-200 text-xs mb-1">初年度の実質コスト</p>
+                <p className="text-2xl font-black text-yellow-300">実質マイナス</p>
+                <p className="text-green-200 text-xs mt-1">¥357,600 - ¥400,000 = <strong className="text-yellow-300">▲¥42,400</strong></p>
+              </div>
+            </div>
+            <div className="bg-green-900/40 border border-green-400/30 rounded-xl px-4 py-3 text-sm text-green-100">
+              <span className="text-yellow-300 font-bold">計算式: </span>
+              月額¥29,800 × 12ヶ月 = 年間¥357,600 &nbsp;→&nbsp;
+              東京都奨励金（最大¥400,000）を差し引くと
+              <strong className="text-yellow-300 ml-1">初年度の費用をほぼ全額カバー</strong>
+            </div>
+          </div>
+
+          {/* 対象条件 */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-5 mb-5">
+            <p className="text-green-100 text-sm font-bold mb-3">奨励金の対象要件</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { icon: "OK", label: "従業員300人以下の都内中小企業・社会福祉法人" },
+                { icon: "OK", label: "AIを活用したカスハラ対策システムの導入" },
+                { icon: "OK", label: "GビズIDを取得していること（取得サポートあり）" },
+                { icon: "OK", label: "東京都カスタマーハラスメント防止条例に基づく宣言" },
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className="text-yellow-400 font-black text-sm mt-0.5 shrink-0">{item.icon}</span>
+                  <p className="text-green-100 text-sm">{item.label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-green-300 text-xs mt-3">
+              ※本サービスは東京都カスハラ防止対策推進事業の「AIを活用したシステムの導入」対象取組に該当する可能性があります。
+              申請時は事前に東京都へご確認ください。
+            </p>
+          </div>
+
+          {/* 申請サポート訴求 */}
+          <div className="bg-white/10 backdrop-blur-sm border border-yellow-300/30 rounded-2xl p-5 mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-yellow-400 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-5 h-5 text-green-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm mb-2">奨励金申請のサポートも承ります</p>
+                <div className="space-y-1.5">
+                  {[
+                    "申請書テンプレートを無料でご提供",
+                    "GビズID取得のご支援",
+                    "カスハラ対策規程の整備サポート",
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <span className="text-yellow-400 font-black text-xs shrink-0">→</span>
+                      <p className="text-green-100 text-sm">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTAボタン */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/tool"
+              className="flex-1 text-center bg-yellow-400 text-green-900 font-black py-4 px-6 rounded-xl hover:bg-yellow-300 transition-colors text-base shadow-lg"
+            >
+              無料で試す →
+            </Link>
+            <a
+              href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 text-center bg-white/15 text-white font-bold py-4 px-6 rounded-xl hover:bg-white/25 transition-colors text-base border border-white/30"
+            >
+              奨励金の詳細を見る（東京都公式）→
+            </a>
           </div>
         </div>
       </section>
