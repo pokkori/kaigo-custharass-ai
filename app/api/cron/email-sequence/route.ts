@@ -24,7 +24,6 @@ import {
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Vercel Pro: 最大60秒
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
 const FROM_EMAIL =
   process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
 
@@ -39,6 +38,7 @@ function shouldSendDay3(record: Awaited<ReturnType<typeof fetchPendingRecords>>[
 }
 
 export async function GET(req: NextRequest) {
+  const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
   // CRONシークレット認証（Vercel CRONからのみ受け付ける）
   // CRON_SECRET 未設定の場合も 401 を返す（環境変数なしで動かさない）
   const authHeader = req.headers.get("authorization");
