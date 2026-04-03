@@ -154,6 +154,7 @@ select option { background: #1a1a2e; color: #fff; }
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 /* focus-visible: outline:none禁止の代替 */
