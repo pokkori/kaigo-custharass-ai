@@ -1,28 +1,27 @@
 # 介護カスハラAI
+> 介護施設向けカスタマーハラスメント対応文・記録をAIが支援するツール
 
-> 介護事業所向けに利用者・家族からのカスタマーハラスメントへの対応文書を15秒で生成。2026年10月施行の運営基準改正・改正労働施策総合推進法に完全対応。
+## サービス概要
+- **カテゴリ**: 介護・ビジネスAI
+- **URL**: https://kaigo-custharass-ai.vercel.app
+- **提供形態**: Webブラウザで利用可能（登録不要で試せます）
+- **開発**: Claude Code + Next.js 16 + Vercel
 
-## サービス
-- [介護カスハラ対応ツール](https://kaigo-custharass-ai.vercel.app/tool): カスハラの種類・状況を入力すると返信文・警告書・証拠記録テンプレートを即生成
-- [料金プラン](https://kaigo-custharass-ai.vercel.app/#pricing): 初回3回無料・事業所プラン¥9,800/月（無制限生成・マニュアル自動作成・研修資料・複数スタッフ共有）
+## 主要ページ
+- [トップページ](https://kaigo-custharass-ai.vercel.app/): メイン機能・サービス説明
+- [ツール](https://kaigo-custharass-ai.vercel.app/tool): AI機能の利用画面（一部サービス）
+- [プライバシーポリシー](https://kaigo-custharass-ai.vercel.app/privacy): 個人情報の取り扱い
+- [特定商取引法に基づく表記](https://kaigo-custharass-ai.vercel.app/legal): 法的情報
 
-## よくある質問
-- [FAQ](https://kaigo-custharass-ai.vercel.app/#faq): 法的根拠・証拠記録・2026年義務化対応・録音の取り扱い・家族からのカスハラ対応など20問以上
+## 利用シーン
+介護施設向けカスタマーハラスメント対応文・記録をAIが支援するツール
 
-## 対象ユーザー
-介護施設（特養・老健・デイサービス・グループホーム）・訪問介護事業所の管理者およびスタッフ。2026年10月の義務化対応を急ぐ事業所責任者。
+## 技術スタック
+- フロントエンド: Next.js 16, React 19, TypeScript, Tailwind CSS
+- AI: Claude claude-sonnet-4-6 (Anthropic)
+- バックエンド: Vercel Edge Functions, Supabase
+- 決済: KOMOJU（クレジットカード・コンビニ払い対応）
 
-## 料金
-- 無料プラン: 初回3回まで無料（クレジットカード不要）
-- 事業所プラン: ¥9,800/月（無制限生成・マニュアル自動作成・研修資料生成・複数スタッフ共有）
-
-## 主な機能
-- カスハラ返信文・警告書・証拠記録テンプレートの即時生成（15秒）
-- 2026年10月施行義務化対応書類一式の自動生成
-- 厚労省「介護現場におけるハラスメント対策マニュアル」準拠
-- 訪問介護・施設介護それぞれの事業所形態別対応文書
-- 複数対応体制切り替え通知書・法的根拠（条文引用）自動付記
-
-## Optional
-- [利用規約](https://kaigo-custharass-ai.vercel.app/legal)
-- [プライバシーポリシー](https://kaigo-custharass-ai.vercel.app/privacy)
+## robots.txt
+AIクローラーによるインデックスを歓迎します。
+GPTBot, ClaudeBot, PerplexityBot, Googlebot-Extended のアクセスを許可しています。
