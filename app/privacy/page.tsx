@@ -16,7 +16,7 @@ export default function PrivacyPage() {
 
       <article className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">プライバシーポリシー</h1>
-        <p className="text-sm text-gray-500 mb-8">最終更新日：2026年3月</p>
+        <p className="text-sm text-gray-500 mb-8">最終更新日：2026年4月6日</p>
 
         <section className="space-y-8 text-sm text-gray-700 leading-relaxed">
           <div>
@@ -56,27 +56,60 @@ export default function PrivacyPage() {
           </div>
 
           <div>
-            <h2 className="font-bold text-gray-900 mb-2">5. Cookieの使用</h2>
+            <h2 className="font-bold text-gray-900 mb-2">5. 外部送信規律（電気通信事業法第27条の12に基づく情報）</h2>
+            <p className="mb-3">本サービスは、以下の外部サービスへ利用者の情報を送信しています。</p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm border-collapse border border-gray-200">
+                <thead>
+                  <tr className="bg-gray-50">
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-800 whitespace-nowrap">送信先事業者</th>
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-800">送信される情報</th>
+                    <th className="border border-gray-200 px-3 py-2 text-left font-semibold text-gray-800">送信目的</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="border border-gray-200 px-3 py-2 whitespace-nowrap">Anthropic, Inc.</td>
+                    <td className="border border-gray-200 px-3 py-2">入力テキスト（カスハラ対応内容）</td>
+                    <td className="border border-gray-200 px-3 py-2">AIによる対応文章生成</td>
+                  </tr>
+                  <tr className="bg-gray-50">
+                    <td className="border border-gray-200 px-3 py-2 whitespace-nowrap">メタップスペイメント株式会社（PAY.JP）</td>
+                    <td className="border border-gray-200 px-3 py-2">決済情報（カード番号は当社では保持しない）</td>
+                    <td className="border border-gray-200 px-3 py-2">課金処理</td>
+                  </tr>
+                  <tr>
+                    <td className="border border-gray-200 px-3 py-2 whitespace-nowrap">Vercel Inc.</td>
+                    <td className="border border-gray-200 px-3 py-2">アクセスログ、IPアドレス</td>
+                    <td className="border border-gray-200 px-3 py-2">サービス提供・インフラ運用</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="font-bold text-gray-900 mb-2">6. Cookieの使用</h2>
             <p>本サービスでは、無料利用回数・プレミアム認証を管理するためにCookieを使用しています。</p>
           </div>
 
           <div>
-            <h2 className="font-bold text-gray-900 mb-2">6. アクセス解析</h2>
+            <h2 className="font-bold text-gray-900 mb-2">7. アクセス解析</h2>
             <p>本サービスでは、Vercel Analyticsを使用してアクセス状況を分析しています。個人を特定する情報は収集しません。</p>
           </div>
 
           <div>
-            <h2 className="font-bold text-gray-900 mb-2">7. 免責事項</h2>
+            <h2 className="font-bold text-gray-900 mb-2">8. 免責事項</h2>
             <p>本サービスが生成するコンテンツはAIによる自動生成であり、情報提供を目的としています。実際のカスハラ対応については管理者・法的専門家にご相談ください。</p>
           </div>
 
           <div>
-            <h2 className="font-bold text-gray-900 mb-2">8. ポリシーの変更</h2>
+            <h2 className="font-bold text-gray-900 mb-2">9. ポリシーの変更</h2>
             <p>本ポリシーは予告なく変更する場合があります。変更後は本ページに掲載した時点で効力を生じます。</p>
           </div>
 
           <div>
-            <h2 className="font-bold text-gray-900 mb-2">9. 事業者情報</h2>
+            <h2 className="font-bold text-gray-900 mb-2">10. 事業者情報</h2>
             <p>屋号：ポッコリラボ／運営責任者：ポッコリラボ 代表 新美／所在地：〒475-0077 愛知県半田市元山町</p>
           </div>
         </section>
