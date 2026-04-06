@@ -23,7 +23,7 @@ const DESC = "介護事業所向けカスハラ対応支援AI。利用者・家�
 export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
-  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'></text></svg>" },
+  icons: { icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23ef4444'/><path d='M30 35h40M30 50h40M30 65h40' stroke='white' stroke-width='8' stroke-linecap='round'/></svg>" },
   openGraph: {
     title: TITLE,
     description: DESC,
