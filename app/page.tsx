@@ -3,6 +3,7 @@ import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
 import BankTransferModal from "@/components/BankTransferModal";
+import { DeadlineCountdown } from "@/components/DeadlineCountdown";
 import { updateStreak, loadStreak, getStreakMilestoneMessage } from "@/lib/streak";
 import { StreakBanner } from "@/components/StreakBanner";
 import { UsageCounter } from "@/components/UsageCounter";
@@ -588,6 +589,7 @@ export default function KaigoLP() {
           </div>
           <div className="max-w-xs mx-auto mb-4"><UsageCounter /></div>
           <div className="mb-4"><TrustBadge /></div>
+          <div className="max-w-xs mx-auto mb-4"><DeadlineCountdown /></div>
           <Link
             href="/tool"
             className="inline-block text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-2xl mb-4 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto min-h-[52px]"
