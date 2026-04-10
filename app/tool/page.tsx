@@ -542,6 +542,23 @@ export default function KaigoTool() {
                   </button>
                   <p className="text-xs text-amber-600 text-center mt-1">Excelで開く→「データ」タブで管理するだけ</p>
                 </div>
+                {/* 次のステップガイド */}
+                <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+                  <p className="text-xs font-bold text-teal-700 mb-3 uppercase tracking-wide">次のステップ</p>
+                  <div className="space-y-2">
+                    {[
+                      { step: 1, text: "対応文をコピーして即日使用する", href: "#" },
+                      { step: 2, text: "証拠記録シートを記入・上長に共有する", href: "#" },
+                      { step: 3, text: "同様のケースが続く場合は弁護士に相談する", href: "https://www.bengo4.com/c_1011/" },
+                    ].map(({ step, text, href }) => (
+                      <a key={step} href={href} target={href.startsWith("http") ? "_blank" : "_self"} rel={href.startsWith("http") ? "noopener noreferrer" : ""} onClick={href === "#" ? (e) => e.preventDefault() : undefined} className="flex items-center gap-3 p-3 rounded-lg bg-white hover:bg-teal-50 border border-teal-100 transition-colors group">
+                        <div className="w-6 h-6 rounded-full bg-teal-400/20 text-teal-600 text-xs font-black flex items-center justify-center shrink-0">{step}</div>
+                        <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">{text}</span>
+                        <svg className="w-4 h-4 text-gray-300 ml-auto shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+                      </a>
+                    ))}
+                  </div>
+                </div>
                 {/* 専門家相談アフィリエイト（A8.net申請後URLを差し替え） */}
                 <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
                   <p className="text-sm font-black text-teal-900 mb-1"> 深刻なケースは弁護士に相談</p>
