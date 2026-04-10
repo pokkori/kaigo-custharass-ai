@@ -10,7 +10,7 @@ interface KeywordData {
   lastUpdated: string;
 }
 
-export const KEYWORDS: Record<string, KeywordData> = {
+const KEYWORDS: Record<string, KeywordData> = {
   "kaigo-customer-harassment-taisaku": {
     title: "介護 カスタマーハラスメント 対策 方法 | 介護カスハラAI",
     h1: "介護 カスタマーハラスメント 対策 方法",
