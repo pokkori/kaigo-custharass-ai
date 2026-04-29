@@ -2138,6 +2138,19 @@ https://kaigo-custharass-ai.vercel.app/tool
         }}
       />
       <AdBanner slot="" />
+      <div className="text-center py-6">
+        <a
+          href={`https://x.com/intent/tweet?text=${encodeURIComponent('介護施設のカスハラ対応がAIで自動化できる。証拠記録から対応文まで。')}&url=${encodeURIComponent('https://kaigo-custharass-ai.vercel.app')}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 bg-black text-white px-6 py-2.5 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+        >
+          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.258 5.622 5.906-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
+          <span>Xでシェアする</span>
+        </a>
+      </div>
     </main>
     <TrialModal isOpen={showTrialModal} onClose={() => setShowTrialModal(false)} />
     </>
