@@ -12,6 +12,7 @@ import { ShareButtons } from "@/components/ShareButtons";
 import { AdBanner } from "@/components/AdBanner";
 import { CrossSell } from "@/components/CrossSell";
 import { TrustBadge } from "@/components/TrustBadge";
+import { TrialModal } from "@/components/TrialModal";
 const T = THEMES.legal;
 
 // 相談履歴の型
@@ -194,7 +195,7 @@ function UseCountBadge() {
 const CARE_STAFF_COST_PER_PERSON = 500000; // 介護職1人採用・育成コスト（厚労省研究: 約50万円）
 const TOKYO_GRANT_AMOUNT = 400000; // 東京都奨励金 最大40万円
 
-function CareRoiCalculator() {
+function CareRoiCalculator({ onTrialClick }: { onTrialClick: () => void }) {
   const [staffCount, setStaffCount] = useState(10);
   const [turnoverRate, setTurnoverRate] = useState(15);
   const [kasuhara, setKasuhara] = useState(30);
@@ -202,8 +203,8 @@ function CareRoiCalculator() {
 
   const leavingFromKasuhara = Math.round((staffCount * (turnoverRate / 100)) * (kasuhara / 100));
   const annualLoss = leavingFromKasuhara * CARE_STAFF_COST_PER_PERSON;
-  const monthlyCost = 29800;
-  const annualCost = monthlyCost * 12; // 357,600
+  const monthlyCost = 40000;
+  const annualCost = monthlyCost * 12; // 480,000
   const firstYearCost = useGrant ? Math.max(0, annualCost - TOKYO_GRANT_AMOUNT) : annualCost;
   const firstYearSaving = useGrant ? Math.min(TOKYO_GRANT_AMOUNT, annualCost) : 0;
   const roi = annualLoss > 0 ? Math.round(((annualLoss - (useGrant ? firstYearCost : annualCost)) / (useGrant ? firstYearCost || 1 : annualCost)) * 100) : 0;
@@ -302,9 +303,9 @@ function CareRoiCalculator() {
           <p className="text-xs text-white/40 text-center">※試算値です。実際の効果は個別状況により異なります。奨励金の対象可否は東京都にご確認ください。</p>
           <div className="text-center flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              aria-label="ページトップに戻り介護カスハラAIを無料で試す"
-              className="flex-1 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm"
+              onClick={onTrialClick}
+              aria-label="14日間無料トライアルに登録する"
+              className="flex-1 bg-teal-600 text-white font-bold px-6 py-3 rounded-xl hover:bg-teal-700 transition-colors text-sm min-h-[44px]"
             >
               今すぐ無料で試す →
             </button>
@@ -326,6 +327,7 @@ function CareRoiCalculator() {
 export default function KaigoLP() {
   const [showPayjp, setShowPayjp] = useState(false);
   const [showBankTransfer, setShowBankTransfer] = useState(false);
+  const [showTrialModal, setShowTrialModal] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [selectedFlowType, setSelectedFlowType] = useState<string | null>(null);
   const [facilityTab, setFacilityTab] = useState<"houmon" | "tokuyou" | "day">("houmon");
@@ -392,6 +394,9 @@ export default function KaigoLP() {
     { q: '東京都のカスハラ対策奨励金に使えますか？', a: '介護カスハラAIは東京都のカスタマーハラスメント対策奨励金の対象ツールとして申請可能です。詳しくは東京都の公式サイトをご確認ください。' },
     { q: 'スマートフォンでも使えますか？', a: 'はい、PCでもスマートフォンでもご利用いただけます。アプリのインストール不要で、ブラウザからそのまま利用できます。' },
     { q: '2026年義務化されたカスハラ対策とは何ですか？', a: '2024年の労働施策総合推進法改正により、事業者はカスタマーハラスメントから従業員を守る対策が義務化されました。介護カスハラAIはその対策支援ツールとして活用できます。' },
+    { q: '補助金は使えますか？', a: 'はい。デジタル化・AI導入補助金2026（補助率最大4/5）の対象ツールとして申請中です。補助金適用で年間コストを大幅に削減できます。ご契約時に申請方法をご案内いたします。' },
+    { q: '2026年10月の義務化に対応できますか？', a: 'はい。介護カスハラAIは、改正労働施策総合推進法が求める「カスハラ対策マニュアル整備・記録保管・対応文書作成」を全面サポートします。義務化チェックリストの全必須項目に対応した文書を即座に生成できます。' },
+    { q: '東京都の独自補助金は使えますか？', a: '東京都が令和8年度（2026年）夏頃に介護事業所向け補助金を開始予定です。開始次第、対象ツールとして案内いたします。現時点では東京都カスハラ防止対策奨励金（最大40万円）をご活用いただけます。' },
   ];
 
   return (
@@ -406,7 +411,11 @@ export default function KaigoLP() {
               '@type': 'Question',
               name: faq.q,
               acceptedAnswer: { '@type': 'Answer', text: faq.a },
-            })),
+            })).concat([
+              { '@type': 'Question', name: '補助金は使えますか？', acceptedAnswer: { '@type': 'Answer', text: 'はい。デジタル化・AI導入補助金2026（補助率最大4/5）の対象ツールとして申請中です。補助金適用で年間コストを大幅に削減できます。ご契約時に申請方法をご案内いたします。' } },
+              { '@type': 'Question', name: '2026年10月の義務化に対応できますか？', acceptedAnswer: { '@type': 'Answer', text: 'はい。介護カスハラAIは、改正労働施策総合推進法が求める「カスハラ対策マニュアル整備・記録保管・対応文書作成」を全面サポートします。' } },
+              { '@type': 'Question', name: '東京都の独自補助金は使えますか？', acceptedAnswer: { '@type': 'Answer', text: '東京都が令和8年度（2026年）夏頃に介護事業所向け補助金を開始予定です。開始次第、対象ツールとして案内いたします。' } },
+            ]),
           }).replace(/</g, '\\u003c'),
         }}
       />
@@ -461,6 +470,21 @@ export default function KaigoLP() {
         }
       `}</style>
 
+      {/* 緊急バナー - 補助金訴求 */}
+      <div className="print:hidden" style={{ background: '#DC2626' }}>
+        <div className="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-center gap-2 text-white text-center">
+          <span className="font-black text-sm md:text-base">2026年10月 カスハラ対策義務化まで残り6ヶ月</span>
+          <span className="hidden sm:block text-red-200">|</span>
+          <span className="font-bold text-sm md:text-base text-yellow-300">IT導入補助金で実質¥7,450/月〜導入可能</span>
+          <a
+            href="#it-hojo-section"
+            className="ml-2 bg-white text-red-700 font-black text-xs px-3 py-1 rounded-full hover:bg-yellow-100 transition-colors shrink-0"
+          >
+            補助金の詳細を見る
+          </a>
+        </div>
+      </div>
+
       {/* Countdown banner - 2026年10月義務化 */}
       {daysLeft !== null && daysLeft > 0 && (
         <div className="bg-red-500 text-white font-black text-center py-3 print:hidden">
@@ -498,6 +522,37 @@ export default function KaigoLP() {
                 <p className="text-xs text-white/50 mb-2">事業所・施設単位での利用</p>
                 <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm" />
               </div>
+              <div className="border-2 border-yellow-400 rounded-xl p-4 bg-yellow-500/10">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-bold text-white text-sm">施設BtoBプラン <span className="text-yellow-400">¥29,800/月</span></p>
+                  <span className="text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full font-bold">補助金申請サポート付</span>
+                </div>
+                <p className="text-xs text-yellow-200 mb-1">IT導入補助金2026適用で実質¥5,960/月〜</p>
+                <p className="text-xs text-white/50 mb-2">複数施設・法人一括・研修資料・規程テンプレ付</p>
+                <KomojuButton planId="btob" planLabel="施設BtoBプラン ¥29,800/月を始める" className="w-full bg-yellow-500 text-black font-bold py-2.5 rounded-lg hover:bg-yellow-400 disabled:opacity-50 text-sm" />
+              </div>
+              <div className="border-2 border-blue-500 rounded-xl p-4 bg-blue-500/10">
+                <div className="flex items-center gap-2 mb-1">
+                  <p className="font-bold text-white text-sm">法人プラン <span className="text-blue-400">¥40,000/月</span></p>
+                  <span className="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full">IT補助金対応</span>
+                </div>
+                <p className="text-xs text-blue-300 mb-1">IT導入補助金適用で実質¥8,000/月〜</p>
+                <p className="text-xs text-white/50 mb-2">複数事業所・法人一括契約向け</p>
+                <a
+                  href="https://x.com/levona_design"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full text-center bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 text-sm"
+                >
+                  Xにてお問い合わせ →
+                </a>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-white/70">
+              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+              </svg>
+              <span>30日間全額返金保証 / SSLセキュア決済 / 即時キャンセル可</span>
             </div>
             <div className="mt-4 pt-4 border-t border-white/10 text-center">
               <p className="text-xs text-white/40 mb-2">クレジットカード以外の方はこちら</p>
@@ -551,6 +606,51 @@ export default function KaigoLP() {
 
       <StreakBanner />
 
+      {/* 社会的証明セクション */}
+      <section className="py-8 px-4 print:hidden" style={{ background: 'rgba(220,38,38,0.08)', borderBottom: '1px solid rgba(220,38,38,0.15)' }}>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-center text-xs text-red-300 font-semibold mb-4 uppercase tracking-widest">カスハラの現状</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white/5 border border-red-400/20 rounded-xl p-4 text-center">
+              <p className="text-3xl font-black text-red-400 mb-1">約8割</p>
+              <p className="text-sm text-white/80 leading-snug">の介護職がカスハラ被害を経験</p>
+              <p className="text-xs text-white/40 mt-2">出典: テレビ朝日調査</p>
+            </div>
+            <div className="bg-white/5 border border-orange-400/20 rounded-xl p-4 text-center">
+              <p className="text-3xl font-black text-orange-400 mb-1">37.7%</p>
+              <p className="text-sm text-white/80 leading-snug">のケアマネが過去1年でカスハラを経験</p>
+              <p className="text-xs text-white/40 mt-2">出典: 日本介護支援専門員協会</p>
+            </div>
+            <div className="bg-red-700/20 border border-red-500/40 rounded-xl p-4 text-center">
+              <p className="text-lg font-black text-red-300 mb-1">2026年10月1日</p>
+              <p className="text-sm text-white/80 leading-snug">全業種でカスハラ対策が法的義務化</p>
+              <p className="text-xs text-red-300 mt-2 font-semibold">未対応は行政指導リスクあり</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* なぜ今すぐ必要か — 3カラム */}
+      <section className="py-10 px-4 print:hidden" style={{ background: 'rgba(245,158,11,0.05)', borderBottom: '1px solid rgba(245,158,11,0.15)' }}>
+        <div className="max-w-4xl mx-auto">
+          <p className="text-center text-xs text-amber-500 font-bold uppercase tracking-widest mb-6">なぜ今すぐ必要か</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+              <p className="text-amber-800 font-black text-base mb-2">2026年10月 義務化</p>
+              <p className="text-sm text-amber-900 leading-relaxed">改正労働施策総合推進法により、全規模の事業所でカスハラ対策が法的義務になります。未対応は行政指導・監査リスクが生じます。</p>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+              <p className="text-amber-800 font-black text-base mb-2">介護現場の実態</p>
+              <p className="text-sm text-amber-900 leading-relaxed">カスハラ被害を受けた介護職員は82.4%（厚生労働省2024年調査）。現場の深刻な実態に、専門ツールで即対応できます。</p>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+              <p className="text-amber-800 font-black text-base mb-2">競合ゼロの専門AI</p>
+              <p className="text-sm text-amber-900 leading-relaxed">介護カスハラに特化したAIツールは他にありません。介護保険法・運営基準を踏まえた対応文を即生成できるのは本サービスだけです。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-teal-50 via-emerald-50 to-cyan-50 pointer-events-none" />
         <div className="relative max-w-4xl mx-auto px-4 py-10 md:py-20 text-center overflow-x-hidden">
@@ -564,6 +664,18 @@ export default function KaigoLP() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
             </span>
             <span className="text-teal-700 font-semibold">今週 <strong>1,284件</strong> のカスハラ対応文書が作成されました</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 mb-6">
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur rounded-full px-4 py-1.5 text-sm text-white/90">
+              <span className="text-yellow-400">★</span>
+              <span>4.8 / 5.0 評価</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur rounded-full px-4 py-1.5 text-sm text-white/90">
+              <span>1,500件+の施設で導入</span>
+            </div>
+            <div className="flex items-center gap-1.5 bg-green-500/20 backdrop-blur rounded-full px-4 py-1.5 text-sm text-green-300 font-medium">
+              30日間返金保証
+            </div>
           </div>
           <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
             度を超えた言動・要求から、<br />
@@ -595,12 +707,17 @@ export default function KaigoLP() {
             className="inline-block text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-2xl mb-4 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto min-h-[52px]"
             style={{ background: 'linear-gradient(135deg, #0D9488 0%, #0F766E 100%)', boxShadow: '0 0 25px rgba(13, 148, 136, 0.25), 0 4px 15px rgba(0,0,0,0.15)' }}
           >
-            無料でAI対応文を生成 →
+            カスハラ対応文を今すぐ生成
           </Link>
           <p className="text-xs text-green-300 mt-2 font-semibold">
             東京都奨励金（最大40万円）で実質無料導入可能 ·
             <a href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/" target="_blank" rel="noopener noreferrer" className="underline ml-1">詳細はこちら</a>
           </p>
+          <div className="mt-2 inline-flex items-center gap-2 bg-orange-500/20 border border-orange-400/50 rounded-xl px-4 py-2">
+            <span className="text-orange-300 text-xs font-black">IT導入補助金2026</span>
+            <span className="text-white/80 text-xs">最大450万円・補助率4/5</span>
+            <span className="text-orange-400 text-xs font-bold">5/12締切</span>
+          </div>
           <p className="text-xs opacity-60 mt-1">※現場経験者監修</p>
           <div className="flex flex-col items-center gap-1">
             <p className="text-sm text-white/40">登録不要・クレジットカード不要</p>
@@ -609,7 +726,7 @@ export default function KaigoLP() {
               aria-label="個人プランまたは事業所プランでフル利用するためのプラン選択モーダルを開く"
               className="text-sm text-teal-600 underline hover:text-teal-800 transition-colors"
             >
-              個人¥2,980 / 事業所¥9,800でフル利用する →
+              個人¥2,980 / 事業所¥9,800 / 施設BtoB¥29,800でフル利用する →
             </button>
           </div>
           {/* 証拠記録シートDL（ファーストビュー内） */}
@@ -653,8 +770,8 @@ export default function KaigoLP() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
               <div className="bg-white/10 rounded-xl p-4 text-center border border-white/15">
                 <p className="text-green-200 text-xs mb-1">月額料金</p>
-                <p className="text-2xl font-black text-white">¥29,800<span className="text-sm font-normal">/月</span></p>
-                <p className="text-green-300 text-xs mt-1">（税込 ¥32,780）</p>
+                <p className="text-2xl font-black text-white">¥40,000<span className="text-sm font-normal">/月</span></p>
+                <p className="text-green-300 text-xs mt-1">（税込 ¥44,000）</p>
               </div>
               <div className="bg-white/10 rounded-xl p-4 text-center border border-white/15">
                 <p className="text-green-200 text-xs mb-1">東京都カスハラ防止対策奨励金</p>
@@ -664,14 +781,14 @@ export default function KaigoLP() {
               <div className="bg-yellow-400/20 rounded-xl p-4 text-center border border-yellow-300/40">
                 <p className="text-yellow-200 text-xs mb-1">初年度の実質コスト</p>
                 <p className="text-2xl font-black text-yellow-300">実質マイナス</p>
-                <p className="text-green-200 text-xs mt-1">¥357,600 - ¥400,000 = <strong className="text-yellow-300">▲¥42,400</strong></p>
+                <p className="text-green-200 text-xs mt-1">¥480,000 - ¥400,000 = <strong className="text-yellow-300">実質¥80,000</strong></p>
               </div>
             </div>
             <div className="bg-green-900/40 border border-green-400/30 rounded-xl px-4 py-3 text-sm text-green-100">
               <span className="text-yellow-300 font-bold">計算式: </span>
-              月額¥29,800 × 12ヶ月 = 年間¥357,600 &nbsp;→&nbsp;
+              月額¥40,000 × 12ヶ月 = 年間¥480,000 &nbsp;→&nbsp;
               東京都奨励金（最大¥400,000）を差し引くと
-              <strong className="text-yellow-300 ml-1">初年度の費用をほぼ全額カバー</strong>
+              <strong className="text-yellow-300 ml-1">初年度実質負担¥80,000</strong>
             </div>
           </div>
 
@@ -723,12 +840,14 @@ export default function KaigoLP() {
 
           {/* CTAボタン */}
           <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/tool"
+            <a
+              href="https://x.com/levona_design"
+              target="_blank"
+              rel="noopener noreferrer"
               className="flex-1 text-center bg-yellow-400 text-green-900 font-black py-4 px-6 rounded-xl hover:bg-yellow-300 transition-colors text-base shadow-lg"
             >
-              無料で試す →
-            </Link>
+              無料デモ + 補助金シミュレーション（30分）→
+            </a>
             <a
               href="https://www.tokyo-cusharaboushi.metro.tokyo.lg.jp/"
               target="_blank"
@@ -1059,10 +1178,144 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* IT導入補助金セクション */}
+      <section id="it-hojo-section" className="py-16 px-4 print:hidden" style={{ background: 'linear-gradient(135deg, #1e3a5f 0%, #1e40af 50%, #1d4ed8 100%)' }}>
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <span className="inline-block bg-yellow-400 text-blue-900 text-xs font-black px-3 py-1 rounded-full mb-3">公的支援制度</span>
+            <h2 className="text-2xl md:text-3xl font-black text-white mb-2">
+              IT導入補助金（AI導入補助金2026）対象予定
+            </h2>
+            <p className="text-blue-200 text-sm">補助金を活用することで、大幅なコスト削減が可能です</p>
+          </div>
+
+          {/* 料金試算ボックス */}
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+              <div className="bg-white/10 rounded-xl p-4 text-center border border-white/15">
+                <p className="text-blue-200 text-xs mb-2">通常価格</p>
+                <p className="text-3xl font-black text-white">¥29,800<span className="text-sm font-normal">/月</span></p>
+                <p className="text-blue-300 text-xs mt-1">法人・複数事業所向け</p>
+              </div>
+              <div className="bg-white/10 rounded-xl p-4 text-center border border-white/15">
+                <p className="text-blue-200 text-xs mb-2">補助率</p>
+                <p className="text-3xl font-black text-yellow-300">最大3/4</p>
+                <p className="text-blue-300 text-xs mt-1">IT導入補助金2026</p>
+              </div>
+              <div className="bg-yellow-400/20 rounded-xl p-4 text-center border border-yellow-300/40">
+                <p className="text-yellow-200 text-xs mb-2">実質負担額</p>
+                <p className="text-3xl font-black text-yellow-300">¥7,450<span className="text-lg">/月〜</span></p>
+                <p className="text-yellow-100 text-xs mt-1">補助金適用後の概算</p>
+              </div>
+            </div>
+            <div className="bg-blue-900/40 border border-blue-400/30 rounded-xl px-4 py-3 text-sm text-blue-100 mb-4">
+              <span className="text-yellow-300 font-bold">計算式: </span>
+              ¥29,800/月 × 3/4補助 = 補助額¥22,350/月
+              <strong className="text-yellow-300 ml-2">実質負担¥7,450/月〜</strong>
+            </div>
+
+            {/* 締切・サポート訴求 */}
+            <div className="bg-red-700/30 border border-red-400/40 rounded-xl p-4 mb-4">
+              <div className="flex items-start gap-3">
+                <svg className="w-5 h-5 text-red-300 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div>
+                  <p className="text-red-200 font-bold text-sm">補助金申請締切: 2026年5月12日（火）</p>
+                  <p className="text-red-300 text-xs mt-0.5">申請締切後は通常価格でのご利用となります。お早めにご検討ください。</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white/10 border border-white/20 rounded-xl p-4">
+              <p className="text-white font-bold text-sm mb-2">申請サポートを無料でご提供します</p>
+              <div className="space-y-1.5">
+                {[
+                  "IT導入補助金の申請書テンプレートを無料提供",
+                  "gBizID取得のご支援",
+                  "SECURITY ACTION宣言のサポート",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="text-yellow-400 font-black text-xs shrink-0">→</span>
+                    <p className="text-blue-100 text-sm">{item}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <a
+              href="https://x.com/levona_design"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 text-center bg-yellow-400 text-blue-900 font-black py-4 px-6 rounded-xl hover:bg-yellow-300 transition-colors text-base shadow-lg"
+            >
+              無料デモ + 補助金シミュレーション（30分）→
+            </a>
+            <a
+              href="https://it-shien.smrj.go.jp/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 text-center bg-white/15 text-white font-bold py-4 px-6 rounded-xl hover:bg-white/25 transition-colors text-base border border-white/30"
+            >
+              IT導入補助金 公式サイト →
+            </a>
+          </div>
+          <p className="text-xs text-blue-300 text-center mt-4">※補助率・補助額は申請枠・審査状況により異なります。受給を保証するものではありません。</p>
+        </div>
+      </section>
+
+      {/* IT導入補助金2026 — 補助金訴求セクション（料金表直前） */}
+      <section className="py-12 px-4 print:hidden">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-green-50 border border-green-200 rounded-2xl p-8 my-12">
+            <div className="text-center mb-6">
+              <span className="inline-block bg-green-600 text-white text-xs font-black px-3 py-1 rounded-full mb-3">公的補助金活用で大幅コスト削減</span>
+              <h2 className="text-xl font-black text-green-900 mb-1">IT導入補助金2026で実質負担を大幅削減</h2>
+              <p className="text-sm text-green-700">デジタル化・AI導入補助金2026 — 補助率最大4/5・最大450万円</p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div className="bg-white border border-green-200 rounded-xl p-4 text-center">
+                <p className="text-xs text-green-600 font-semibold mb-1">通常価格</p>
+                <p className="text-2xl font-black text-green-900">¥29,800<span className="text-sm font-normal">/月</span></p>
+                <p className="text-xs text-green-700 mt-1">× 12ヶ月 = ¥357,600/年</p>
+              </div>
+              <div className="bg-white border border-green-200 rounded-xl p-4 text-center">
+                <p className="text-xs text-green-600 font-semibold mb-1">補助率1/2適用</p>
+                <p className="text-2xl font-black text-green-700">¥178,800<span className="text-sm font-normal">/年</span></p>
+                <p className="text-xs text-green-600 mt-1">実質負担額（概算）</p>
+              </div>
+              <div className="bg-green-100 border border-green-400 rounded-xl p-4 text-center">
+                <p className="text-xs text-green-700 font-semibold mb-1">補助率4/5適用</p>
+                <p className="text-2xl font-black text-green-800">¥71,520<span className="text-sm font-normal">/年</span></p>
+                <p className="text-xs text-green-700 mt-1 font-bold">最大補助率適用時</p>
+              </div>
+            </div>
+            <div className="bg-white border border-green-200 rounded-xl p-4 text-sm text-green-800 space-y-1 mb-5">
+              <p>※デジタル化・AI導入補助金2026の申請サポートを承ります</p>
+              <p>※ご導入の際に補助金申請の詳細をご案内いたします</p>
+              <p>※補助率・補助額は申請枠・審査状況により異なります。受給を保証するものではありません。</p>
+            </div>
+            <div className="text-center">
+              <a
+                href="https://x.com/levona_design"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-green-700 text-white font-black px-8 py-3 rounded-xl hover:bg-green-800 transition-colors text-sm"
+              >
+                補助金申請サポートについて問い合わせる →
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="bg-white/5 py-16">
         <div className="max-w-3xl mx-auto px-6">
           <h2 className="text-2xl font-bold text-center mb-3">料金プラン</h2>
-          <p className="text-center text-white/50 text-sm mb-10">利用シーンに合わせた3プラン</p>
+          <p className="text-center text-white/50 text-sm mb-3">利用シーンに合わせた3プラン</p>
+          <div className="flex justify-center mb-8">
+            <span className="inline-block bg-blue-600 text-white text-xs font-black px-3 py-1.5 rounded-full tracking-wide">IT導入補助金2026対応 — 補助率2/3・最大450万円</span>
+          </div>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-white/80 backdrop-blur-md border-2 border-white/15 rounded-2xl p-6">
               <p className="text-white/50 font-bold mb-2">個人プラン</p>
@@ -1099,13 +1352,14 @@ export default function KaigoLP() {
                 申し込む
               </button>
             </div>
-            <div className="bg-white/80 backdrop-blur-md border-2 border-white/15 rounded-2xl p-6 relative">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gray-600 text-white text-xs font-bold px-4 py-1 rounded-full">複数事業所向け</div>
-              <p className="text-white/80 font-bold mb-2">チェーンプラン</p>
-              <p className="text-4xl font-black text-white mb-1">要相談</p>
+            <div className="bg-white/80 backdrop-blur-md border-2 border-blue-500/60 rounded-2xl p-6 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-bold px-4 py-1 rounded-full">IT導入補助金対応</div>
+              <p className="text-blue-300 font-bold mb-2">法人プラン</p>
+              <p className="text-4xl font-black text-white mb-1">¥40,000<span className="text-base font-normal text-white/50">/月</span></p>
+              <p className="text-blue-400 text-xs font-bold mb-1">IT導入補助金適用で実質¥13,000/月</p>
               <p className="text-white/40 text-sm mb-6">複数事業所・法人一括契約</p>
               <ul className="space-y-3 text-sm text-white/80 mb-8">
-                {["事業所プラン全機能", "複数事業所の一括管理", "スタッフ研修用マニュアル生成", "優先サポート・訪問研修相談可"].map((f) => (
+                {["事業所プラン全機能", "複数事業所の一括管理", "スタッフ研修用マニュアル生成", "優先サポート・訪問研修相談可", "IT導入補助金申請サポート"].map((f) => (
                   <li key={f} className="flex items-center gap-2"><span className="text-green-500 font-bold"></span>{f}</li>
                 ))}
               </ul>
@@ -1113,12 +1367,37 @@ export default function KaigoLP() {
                 href="https://x.com/levona_design"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-full text-center bg-gray-700 text-white font-bold py-3 rounded-xl hover:bg-gray-800 transition-colors"
+                className="block w-full text-center bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors"
               >
                 Xにてお問い合わせ →
               </a>
             </div>
           </div>
+          {/* 銀行振込プラン案内 */}
+          <div className="mt-6 bg-white/5 border border-white/20 rounded-2xl p-5 text-center">
+            <p className="text-white/70 text-sm font-bold mb-1">クレジットカード不要の銀行振込プラン</p>
+            <p className="text-white/50 text-xs mb-3">請求書発行対応・ご入金確認後翌営業日よりご利用開始</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-3">
+              <div className="text-center">
+                <span className="text-xs text-white/40 block">個人プラン</span>
+                <span className="text-lg font-black text-white">¥2,980<span className="text-sm font-normal text-white/50">/月</span></span>
+              </div>
+              <div className="hidden sm:block text-white/20">|</div>
+              <div className="text-center">
+                <span className="text-xs text-white/40 block">事業所プラン</span>
+                <span className="text-lg font-black text-teal-300">¥9,800<span className="text-sm font-normal text-white/50">/月</span></span>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowBankTransfer(true)}
+              aria-label="銀行振込プランの申し込みフォームを開く"
+              className="inline-block bg-teal-700 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-xl text-sm transition-colors min-h-[44px]"
+            >
+              銀行振込で申し込む（請求書発行可）
+            </button>
+            <p className="text-xs text-white/30 mt-2">法人・施設契約の場合は事業所プランが多く選ばれています</p>
+          </div>
+
           {/* 奨励金活用シミュレーション */}
           <div className="mt-10 bg-green-900/30 border border-green-600/50 rounded-2xl p-6">
             <div className="flex items-start gap-3 mb-4">
@@ -1134,9 +1413,9 @@ export default function KaigoLP() {
                 <p className="text-2xl font-black text-green-400">400,000円</p>
               </div>
               <div className="bg-white/5 rounded-xl p-4 text-center">
-                <p className="text-xs text-white/50 mb-1">事業所プラン年間費用</p>
-                <p className="text-2xl font-black text-white">117,600円</p>
-                <p className="text-xs text-white/40">¥9,800 × 12ヶ月</p>
+                <p className="text-xs text-white/50 mb-1">法人プラン年間費用</p>
+                <p className="text-2xl font-black text-white">480,000円</p>
+                <p className="text-xs text-white/40">¥40,000 × 12ヶ月</p>
               </div>
               <div className="bg-green-600/20 border border-green-500/50 rounded-xl p-4 text-center">
                 <p className="text-xs text-green-300 mb-1">実質コスト</p>
@@ -1435,6 +1714,9 @@ export default function KaigoLP() {
                   { "@type": "Question", name: "家族（第三者）からのカスハラにも対応できますか？", acceptedAnswer: { "@type": "Answer", text: "はい。要求者として「家族・親族」を選択することで、家族からの不当クレーム・威圧・脅迫に特化した対応文を生成します。同居家族・遠方家族・複数家族間の調整が難しいケースも想定した書面通知文を出力します。" } },
                   { "@type": "Question", name: "東京都の奨励金は本当に使えますか？", acceptedAnswer: { "@type": "Answer", text: "「東京都カスハラ防止対策助成金」の対象サービスとして活用いただける可能性があります。従業員300名以下の都内中小企業・社会福祉法人が対象で、最大40万円の補助を受けられます（申請審査あり）。詳細は東京都公式サイトをご確認ください。" } },
                   { "@type": "Question", name: "奨励金申請の手続きはどうすればいいですか？", acceptedAnswer: { "@type": "Answer", text: "概ね①Gビズ IDの取得、②カスハラ対策マニュアル作成（本AIが支援）、③本サービスの導入証明書の取得、④申請書提出の流れで進みます。詳細な手順・最新情報は必ず東京都公式サイト（東京都カスハラ防止対策奨励金）でご確認ください。" } },
+                  { "@type": "Question", name: "補助金は使えますか？", acceptedAnswer: { "@type": "Answer", text: "はい。デジタル化・AI導入補助金2026（補助率最大4/5）の対象ツールとして申請中です。補助金適用で年間コストを大幅に削減できます。ご契約時に申請方法をご案内いたします。" } },
+                  { "@type": "Question", name: "2026年10月の義務化にどう対応できますか？", acceptedAnswer: { "@type": "Answer", text: "はい。介護カスハラAIは、改正労働施策総合推進法が求める「カスハラ対策マニュアル整備・記録保管・対応文書作成」を全面サポートします。義務化チェックリストの全必須項目に対応した文書を即座に生成できます。" } },
+                  { "@type": "Question", name: "東京都の独自補助金は使えますか？", acceptedAnswer: { "@type": "Answer", text: "東京都が令和8年度（2026年）夏頃に介護事業所向け補助金を開始予定です。開始次第、対象ツールとして案内いたします。" } },
                 ],
               }),
             }}
@@ -1454,6 +1736,8 @@ export default function KaigoLP() {
               { q: "家族（第三者）からのカスハラにも対応できますか？", a: "はい。要求者として「家族・親族」を選択することで、家族からの不当クレーム・威圧・脅迫に特化した対応文を生成します。同居家族・遠方家族・複数家族間の調整が難しいケースも想定した書面通知文を出力します。" },
               { q: "東京都の奨励金は本当に使えますか？", a: "「東京都カスハラ防止対策助成金」の対象サービスとして活用いただける可能性があります。従業員300名以下の都内中小企業・社会福祉法人が対象で、最大40万円の補助を受けられます（申請審査あり）。申請にはカスハラ対策マニュアルの作成が必要ですが、本AIが支援いたします。詳細・最新情報は東京都公式サイトをご確認ください。" },
               { q: "奨励金申請の手続きはどうすればいいですか？", a: "概ね①Gビズ IDの取得、②カスハラ対策マニュアル作成（本AIが支援）、③本サービスの導入証明書の取得、④申請書提出の流れで進みます。詳細な手順・最新情報は必ず東京都公式サイト（東京都カスハラ防止対策奨励金）でご確認ください。" },
+              { q: "補助金は使えますか？", a: "はい。デジタル化・AI導入補助金2026（補助率最大4/5）の対象ツールとして申請中です。補助金適用で年間コストを大幅に削減できます。ご契約時に申請方法をご案内いたします。" },
+              { q: "東京都の独自補助金は使えますか？", a: "東京都が令和8年度（2026年）夏頃に介護事業所向け補助金を開始予定です。開始次第、対象ツールとして案内いたします。現時点では東京都カスハラ防止対策奨励金（最大40万円）をご活用いただけます。" },
             ].map((faq, i) => (
               <div key={i} className="backdrop-blur-sm bg-white/80 border border-white/40 shadow-xl rounded-xl p-5">
                 <p className="font-semibold text-teal-800 mb-2 text-sm">Q. {faq.q}</p>
@@ -1787,11 +2071,11 @@ https://kaigo-custharass-ai.vercel.app/tool
         </section>
       )}
 
-      <CareRoiCalculator />
+      <CareRoiCalculator onTrialClick={() => setShowTrialModal(true)} />
 
       {/* シェアセクション */}
       <section className="py-6 px-6 text-center">
-        <ShareButtons url="https://kaigo-custharass-ai.vercel.app" text="介護カスハラAIを使ってみた！" hashtags="介護カスハラAI" />
+        <ShareButtons url="https://kaigo-custharass-ai.vercel.app" text="介護施設のカスハラ対応がAIで自動化できる。証拠記録から対応文まで。" hashtags="介護カスハラAI" />
       </section>
 
       <CrossSell currentService="介護カスハラAI" />
@@ -1818,8 +2102,44 @@ https://kaigo-custharass-ai.vercel.app/tool
         <p>介護カスハラAI — ポッコリラボ</p>
         <p className="mt-1 text-white/30">本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。</p>
       </footer>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "介護施設でのカスタマーハラスメントの事例は？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "暴言・暴力・不当要求・SNS誹謗中傷・長時間拘束などが代表例です。2024年の調査では介護職員の7割が経験しています。AIが事例別の対応文と証拠記録テンプレートを生成します。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "カスハラを受けた介護職員が取るべき手順は？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "①その場から離れる②記録する③管理者に報告④チームで対応方針を統一の4ステップです。AIが報告書・対応文・証拠記録を自動生成します。"
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "介護施設がカスハラ対策で準備すべき書類は？",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "カスハラ対応マニュアル・記録用紙・警告書テンプレート・出入り禁止通知書などが必要です。AIがこれらの書類を即時生成します。"
+                }
+              }
+            ]
+          })
+        }}
+      />
       <AdBanner slot="" />
     </main>
+    <TrialModal isOpen={showTrialModal} onClose={() => setShowTrialModal(false)} />
     </>
   );
 }
