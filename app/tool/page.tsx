@@ -132,6 +132,10 @@ export default function KaigoTool() {
     const saved = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
     setCount(saved);
     if (saved >= FREE_LIMIT) setHitLimit(true);
+    fetch("/api/auth/status")
+      .then((r) => r.json())
+      .then((d: { premium?: boolean }) => { if (d.premium) setHitLimit(false); })
+      .catch(() => {});
   }, []);
 
   const currentSeverity = SEVERITY_LEVELS.find(s => s.value === severity) ?? SEVERITY_LEVELS[1];

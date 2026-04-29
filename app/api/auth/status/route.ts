@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyValue } from "@/lib/secure-cookie";
 
 export const dynamic = "force-dynamic";
 
@@ -9,10 +10,21 @@ function auth() {
 }
 
 export async function GET(req: NextRequest) {
-  const premium = req.cookies.get("premium")?.value;
+  const rawPremium = req.cookies.get("premium")?.value;
+  const premium = rawPremium ? (verifyValue(rawPremium) ?? rawPremium) : undefined;
   const subId = req.cookies.get("payjp_sub_id")?.value;
+  const komojuSessionId = req.cookies.get("komoju_session_id")?.value;
 
-  if (!premium || !subId) {
+  if (!premium) {
+    return NextResponse.json({ isPremium: false });
+  }
+
+  // KOMOJUで課金した場合（komojuSessionIdあり・subIdなし）はcookie署名で判断
+  if (komojuSessionId && !subId) {
+    return NextResponse.json({ isPremium: true, plan: premium });
+  }
+
+  if (!subId) {
     return NextResponse.json({ isPremium: false });
   }
 

@@ -230,7 +230,7 @@ export function buildDay7Email(params: Day7Params): {
         <li><strong>支給額：最大40万円</strong>（カスハラ対策ツール導入費用を補助）</li>
         <li>申請には「今月中の正式契約」が条件となります</li>
         <li>先着2,000件で締め切り（定員に達し次第終了）</li>
-        <li>月額29,800円 × 12ヶ月 ＝ 357,600円の大部分をカバー</li>
+        <li>月額40,000円 × 12ヶ月 ＝ 480,000円の大部分をカバー</li>
       </ul>
     </div>
 
@@ -239,7 +239,7 @@ export function buildDay7Email(params: Day7Params): {
     </p>
 
     <div style="text-align:center;margin:28px 0;">
-      ${ctaButton("今すぐ正式契約する（¥29,800/月）", `${APP_URL}/`)}
+      ${ctaButton("今すぐ正式契約する（¥40,000/月）", `${APP_URL}/`)}
     </div>
 
     ${divider()}
@@ -290,8 +290,9 @@ export function buildDay12Email(params: Day12Params): {
       <!-- 月額プラン -->
       <div style="flex:1;border:2px solid #e5e7eb;border-radius:12px;padding:20px;">
         <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;">月額プラン</p>
-        <p style="margin:0 0 12px;font-size:26px;font-weight:800;color:#1f2937;">¥29,800<span style="font-size:13px;font-weight:400;color:#6b7280;">/月</span></p>
+        <p style="margin:0 0 12px;font-size:26px;font-weight:800;color:#1f2937;">¥40,000<span style="font-size:13px;font-weight:400;color:#6b7280;">/月</span></p>
         <ul style="margin:0;padding-left:16px;font-size:12px;color:#374151;line-height:2.0;">
+          <li>IT導入補助金で実質¥13,000/月も可</li>
           <li>いつでも解約可能</li>
           <li>対応文生成 無制限</li>
           <li>専門家監修テンプレート</li>
@@ -304,8 +305,8 @@ export function buildDay12Email(params: Day12Params): {
       <div style="flex:1;border:2px solid #0f766e;border-radius:12px;padding:20px;position:relative;overflow:hidden;">
         <div style="position:absolute;top:0;right:0;background:#0f766e;color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:0 0 0 8px;">おすすめ</div>
         <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#0f766e;text-transform:uppercase;letter-spacing:0.05em;">年間プラン</p>
-        <p style="margin:0 0 2px;font-size:26px;font-weight:800;color:#1f2937;">¥24,800<span style="font-size:13px;font-weight:400;color:#6b7280;">/月</span></p>
-        <p style="margin:0 0 12px;font-size:12px;color:#0f766e;font-weight:700;">2ヶ月分お得（年間¥60,000節約）</p>
+        <p style="margin:0 0 2px;font-size:26px;font-weight:800;color:#1f2937;">¥33,200<span style="font-size:13px;font-weight:400;color:#6b7280;">/月</span></p>
+        <p style="margin:0 0 12px;font-size:12px;color:#0f766e;font-weight:700;">2ヶ月分お得（年間¥81,600節約）</p>
         <ul style="margin:0;padding-left:16px;font-size:12px;color:#374151;line-height:2.0;">
           <li>月額より17%割引</li>
           <li>対応文生成 無制限</li>
@@ -366,11 +367,11 @@ export function buildDay14Email(params: Day14Params): {
       <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.05em;">本日限り 特別オファー</p>
       <p style="margin:0 0 8px;font-size:28px;font-weight:800;color:#1f2937;">3ヶ月間 20% OFF</p>
       <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px;">
-        <span style="font-size:16px;color:#9ca3af;text-decoration:line-through;">¥29,800/月</span>
+        <span style="font-size:16px;color:#9ca3af;text-decoration:line-through;">¥40,000/月</span>
         <span style="font-size:11px;color:#fff;background:#ef4444;padding:2px 8px;border-radius:20px;font-weight:700;">20%OFF</span>
-        <span style="font-size:24px;font-weight:800;color:#0f766e;">¥23,840/月</span>
+        <span style="font-size:24px;font-weight:800;color:#0f766e;">¥32,000/月</span>
       </div>
-      <p style="margin:0 0 20px;font-size:12px;color:#92400e;">3ヶ月後から通常価格 ¥29,800/月 に自動移行</p>
+      <p style="margin:0 0 20px;font-size:12px;color:#92400e;">3ヶ月後から通常価格 ¥40,000/月 に自動移行</p>
       ${ctaButton("今すぐ特別価格で始める", `${APP_URL}/`)}
     </div>
 

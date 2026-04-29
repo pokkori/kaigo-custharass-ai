@@ -4,7 +4,9 @@ export const dynamic = 'force-dynamic'
 
 const PLANS: Record<string, { amount: number; description: string; cookieValue: string }> = {
   standard: { amount: 980, description: '介護カスハラAI スタンダードプラン（月額）', cookieValue: '1' },
-  business: { amount: 2980, description: '介護カスハラAI ビジネスプラン（月額）', cookieValue: 'biz' },
+  personal: { amount: 2980, description: '介護カスハラAI 個人プラン（月額）', cookieValue: '1' },
+  business: { amount: 9800, description: '介護カスハラAI 事業所プラン（月額）', cookieValue: 'biz' },
+  btob: { amount: 29800, description: '介護カスハラAI 施設BtoBプラン（月額）', cookieValue: 'biz' },
 }
 
 export async function POST(req: Request) {

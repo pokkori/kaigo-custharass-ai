@@ -1,8 +1,41 @@
 import { Resend } from "resend";
+import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
 
+const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || "" });
+
+async function generateAutoReply(name: string, message: string): Promise<string> {
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 800,
+      messages: [
+        {
+          role: "user",
+          content: `あなたは「介護カスハラAI」のサポート担当です。以下の問い合わせに対して、丁寧な自動一次返信メール本文を日本語で作成してください。
+
+【問い合わせ者】${name} 様
+【内容】${message}
+
+以下の条件を守ること:
+- 200〜300文字程度
+- 担当者が内容を確認し2営業日以内に返信する旨を伝える
+- 補助金・デモ・料金の問い合わせであれば、その点に触れる
+- HTMLタグなし・プレーンテキストのみ
+- 書き出しは「${name} 様」から始める
+- 締めは「介護カスハラAI サポートチーム」`,
+        },
+      ],
+    });
+    const content = response.content[0];
+    return content.type === "text" ? content.text : "";
+  } catch {
+    return "";
+  }
+}
+
 export async function POST(req: NextRequest) {
-  const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
   try {
     const { name, email, subject, message } = await req.json();
 
@@ -16,18 +49,25 @@ export async function POST(req: NextRequest) {
     }
 
     if (process.env.RESEND_API_KEY) {
+      // 管理者への通知
       await resend.emails.send({
-        from: "support@resend.dev",
+        from: "noreply@resend.dev",
         to: process.env.SUPPORT_EMAIL || "support@example.com",
         subject: `[お問い合わせ] ${subject || "お問い合わせ"}`,
         html: `<h2>新しいお問い合わせ</h2><p><strong>氏名:</strong> ${name}</p><p><strong>メール:</strong> ${email}</p><p><strong>件名:</strong> ${subject || "（なし）"}</p><p><strong>内容:</strong><br>${message.replace(/\n/g, "<br>")}</p>`,
       });
 
+      // Claude AI による自動一次返信生成
+      const aiReply = await generateAutoReply(name, message);
+      const replyBody = aiReply
+        ? aiReply
+        : `${name} 様\n\nお問い合わせいただきありがとうございます。\n内容を確認の上、2営業日以内にご返信いたします。\n\n介護カスハラAI サポートチーム`;
+
       await resend.emails.send({
-        from: "support@resend.dev",
+        from: "noreply@resend.dev",
         to: email,
-        subject: "お問い合わせを受け付けました",
-        html: `<p>${name} 様</p><p>お問い合わせいただきありがとうございます。</p><p>内容を確認の上、<strong>2営業日以内</strong>にご返信いたします。</p><br><p>【お問い合わせ内容】</p><p>${message.replace(/\n/g, "<br>")}</p>`,
+        subject: "お問い合わせを受け付けました【介護カスハラAI】",
+        html: `<pre style="font-family:sans-serif;white-space:pre-wrap;">${replyBody}</pre>`,
       });
     }
 

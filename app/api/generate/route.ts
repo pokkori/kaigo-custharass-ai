@@ -69,17 +69,28 @@ const VALID_REQUESTER = ["利用者本人", "家族・親族", "その他"];
 const VALID_SEVERITY = ["軽度", "中度", "重度"];
 
 export async function POST(req: NextRequest) {
+  // Zuploゲートウェイ経由のリクエストはpremiumとして扱う（課金はZuplo側で管理）
+  const gatewaySecret = req.headers.get("x-gateway-secret");
+  const gatewayPremium = req.headers.get("x-gateway-premium");
+  const isGatewayRequest =
+    gatewaySecret &&
+    process.env.GATEWAY_SECRET &&
+    gatewaySecret === process.env.GATEWAY_SECRET &&
+    gatewayPremium === "1";
+
   const ip = req.headers.get("x-forwarded-for") || "unknown";
-  if (!checkRateLimit(ip)) {
+  if (!isGatewayRequest && !checkRateLimit(ip)) {
     return NextResponse.json({ error: "リクエストが多すぎます。しばらく待ってから再試行してください。" }, { status: 429 });
   }
   const email = req.cookies.get("user_email")?.value;
-  let isPremium = false;
-  if (email) {
-    isPremium = await isActiveSubscription(email, APP_ID);
-  } else {
-    const pv = req.cookies.get("premium")?.value;
-    isPremium = pv === "1" || pv === "biz";
+  let isPremium = isGatewayRequest ? true : false;
+  if (!isPremium) {
+    if (email) {
+      isPremium = await isActiveSubscription(email, APP_ID);
+    } else {
+      const pv = req.cookies.get("premium")?.value;
+      isPremium = pv === "1" || pv === "biz";
+    }
   }
   const cookieCount = parseInt(req.cookies.get(COOKIE_KEY)?.value || "0");
   if (!isPremium && cookieCount >= FREE_LIMIT) {

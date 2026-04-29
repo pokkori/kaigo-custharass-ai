@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { markConverted } from '@/lib/trial-sequences'
+import { signValue } from '@/lib/secure-cookie'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
       const planId = session.metadata?.planId || 'standard'
       const cookieValue = planId === 'business' ? 'biz' : '1'
 
-      cookieStore.set('premium', cookieValue, {
+      cookieStore.set('premium', signValue(cookieValue), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -86,7 +87,7 @@ export async function GET(req: Request) {
       const planId = session.metadata?.planId || 'standard'
       const cookieValue = planId === 'business' ? 'biz' : '1'
 
-      cookieStore.set('premium', cookieValue, {
+      cookieStore.set('premium', signValue(cookieValue), {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
