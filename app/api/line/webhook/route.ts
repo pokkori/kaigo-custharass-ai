@@ -57,7 +57,9 @@ async function registerLineUser(userId: string): Promise<void> {
 
 async function logLead(userId: string, keyword: string, action: string): Promise<void> {
   const supabase = getSupabaseAdmin();
-  await supabase.from("line_leads").insert({ line_user_id: userId, keyword, action, app_id: APP_ID }).catch(() => {});
+  try {
+    await supabase.from("line_leads").insert({ line_user_id: userId, keyword, action, app_id: APP_ID });
+  } catch { /* best-effort */ }
 }
 
 const DAY0_MESSAGE = `【${SERVICE_NAME}】にご登録ありがとうございます。
