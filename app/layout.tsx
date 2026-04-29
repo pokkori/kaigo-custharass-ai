@@ -8,6 +8,7 @@ import { GoogleAdScript } from "@/components/GoogleAdScript";
 import CookieBanner from "@/components/CookieBanner";
 import "./globals.css";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { PHProvider } from "./providers";
 
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin"],
@@ -18,7 +19,7 @@ const notoSansJP = Noto_Sans_JP({
 
 const SITE_URL = "https://kaigo-custharass-ai.vercel.app";
 const TITLE = "介護カスハラAI｜介護事業所のカスタマーハラスメント対応を15秒で｜運営基準対応";
-const DESC = "介護事業所向けカスハラ対応支援AI。利用者・家族からのカスハラ・不当要求への返信文・断り文・証拠記録テンプレートを即生成。2026年度運営基準改正対応。";
+const DESC = "介護施設向けカスタマーハラスメント対応AIツール。証拠記録から対応文まで一括生成。";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -147,15 +148,15 @@ const jsonLd = {
       },
       "offers": {
         "@type": "Offer",
-        "price": "29800",
+        "price": "40000",
         "priceCurrency": "JPY",
         "priceSpecification": {
           "@type": "UnitPriceSpecification",
-          "price": "29800",
+          "price": "40000",
           "priceCurrency": "JPY",
           "unitText": "月額（法人プラン）"
         },
-        "description": "初回3回無料・事業所プラン¥9,800/月・法人プラン¥29,800/月"
+        "description": "初回3回無料・事業所プラン¥9,800/月・法人プラン¥40,000/月（IT導入補助金対応）"
       }
     },
   ],
@@ -169,6 +170,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body className={`${notoSansJP.className} antialiased`}>
+        <PHProvider>
         {children}
         <InstallPrompt />
         {/* 関連AIサービス */}
@@ -212,6 +214,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </Script>
         )}
         <CookieBanner />
+        </PHProvider>
       </body>
     </html>
   );
