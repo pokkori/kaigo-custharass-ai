@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import KomojuButton from "@/components/KomojuButton";
 import { track } from '@vercel/analytics';
 import { updateStreak } from "@/lib/streak";
+import { PaywallModal } from "@/components/PaywallModal";
 
 function renderMarkdown(text: string): string {
   const lines = text.split("\n");
@@ -123,6 +124,7 @@ export default function KaigoTool() {
   const [error, setError] = useState("");
   const [count, setCount] = useState(0);
   const [hitLimit, setHitLimit] = useState(false);
+  const [showPaywallModal, setShowPaywallModal] = useState(false);
   const [showPayjp, setShowPayjp] = useState(false);
   const [completionVisible, setCompletionVisible] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -131,7 +133,7 @@ export default function KaigoTool() {
   useEffect(() => {
     const saved = parseInt(localStorage.getItem(STORAGE_KEY) || "0", 10);
     setCount(saved);
-    if (saved >= FREE_LIMIT) setHitLimit(true);
+    if (saved >= FREE_LIMIT) { setHitLimit(true); setShowPaywallModal(true); }
     fetch("/api/auth/status")
       .then((r) => r.json())
       .then((d: { premium?: boolean }) => { if (d.premium) setHitLimit(false); })
@@ -191,7 +193,7 @@ export default function KaigoTool() {
       setActiveTab(" 口頭スクリプト");
       setCount(newCount);
       localStorage.setItem(STORAGE_KEY, String(newCount));
-      if (newCount >= FREE_LIMIT) { track('paywall_shown', { service: '介護カスハラAI' }); setHitLimit(true); }
+      if (newCount >= FREE_LIMIT) { track('paywall_shown', { service: '介護カスハラAI' }); setHitLimit(true); setShowPaywallModal(true); }
 
       // ストリーク更新
       updateStreak("kaigo_kasuhara");
@@ -215,7 +217,7 @@ export default function KaigoTool() {
     }
   };
 
-  if (hitLimit) {
+  if (hitLimit && !showPaywallModal) {
     return (
       <main className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
         <div className="max-w-md w-full bg-white rounded-2xl p-8 shadow-sm text-center border border-gray-200">
@@ -227,6 +229,7 @@ export default function KaigoTool() {
           <KomojuButton
             planId="business"
             planLabel="事業所プラン ¥9,800/月"
+            monthlyPrice={9800}
             className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors mb-3"
           />
           {/* 安心保証バッジ */}
@@ -254,7 +257,7 @@ export default function KaigoTool() {
             <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl relative">
               <button onClick={() => setShowPayjp(false)} aria-label="プラン登録モーダルを閉じる" className="absolute top-3 right-3 text-gray-400 text-xl"></button>
               <h2 id="tool-kaigo-plan-title" className="text-lg font-bold mb-4 text-center">プランに登録</h2>
-              <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50" />
+              <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" monthlyPrice={9800} className="w-full bg-teal-600 text-white font-bold py-3 rounded-xl hover:bg-teal-700 disabled:opacity-50" />
             </div>
           </div>
         )}
@@ -578,19 +581,12 @@ export default function KaigoTool() {
                   </a>
                   <p className="text-xs text-slate-400 text-center mt-2">※ 広告・PR掲載</p>
                 </div>
-                {/* ストレスケアアフィリエイト（A8.net SOELU） */}
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                  <p className="text-sm font-black text-green-900 mb-1"> 介護職員のストレス発散・体のケアに</p>
-                  <p className="text-xs text-green-700 mb-3">毎日の緊張をほぐすオンラインヨガ。自宅で好きな時間に受講でき、介護職のメンタルリセットにおすすめです。</p>
-                  <a href="https://px.a8.net/svt/ejp?a8mat=4AZIOF+8OKLDE+4EPM+63OY9" target="_blank" rel="noopener noreferrer sponsored"
-                    className="flex items-center justify-between bg-white border border-green-300 rounded-xl px-3 py-2.5 hover:bg-green-50 transition-colors">
-                    <div>
-                      <div className="text-sm font-bold text-slate-800">SOELU（ソエル）オンラインヨガ</div>
-                      <div className="text-xs text-slate-500">月額¥3,000〜 • 自宅で完結 • 初回30日無料</div>
-                    </div>
-                    <span className="text-green-600 font-bold text-xs bg-green-100 px-2 py-1 rounded-full shrink-0">無料で試す →</span>
-                  </a>
-                  <p className="text-xs text-slate-400 text-center mt-2">※ 広告・PR掲載</p>
+                {/* A8アフィリエイト：Kimochi */}
+                <div style={{ background: "rgba(20,184,166,0.08)", border: "1px solid rgba(20,184,166,0.2)", borderRadius: "12px", padding: "16px" }}>
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>※ 広告・PR掲載</p>
+                  <p style={{ fontSize: 14, fontWeight: 700, color: "#5eead4", marginBottom: 4 }}>カスハラのストレスを専門家に相談したい方へ</p>
+                  <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>Kimochi（キモチ）— 心理カウンセラーによる個別相談</p>
+                  <a href="https://px.a8.net/svt/ejp?a8mat=4B3GYE+152XIQ+5OI8+5YJRM" target="_blank" rel="noopener noreferrer sponsored" style={{ display: "inline-block", padding: "10px 20px", background: "linear-gradient(135deg,#14b8a6,#0d9488)", color: "#fff", fontSize: 13, fontWeight: 700, borderRadius: 8, textDecoration: "none" }}>Kimochiで無料相談 →</a>
                 </div>
                 <p className="text-xs text-center text-gray-400">
                   ※ 本AIの出力は参考情報です。実際の対応は管理者・法的専門家にご相談ください。
@@ -600,6 +596,11 @@ export default function KaigoTool() {
           </div>
         )}
       </div>
+      <PaywallModal
+        open={showPaywallModal}
+        onClose={() => setShowPaywallModal(false)}
+        onUpgrade={() => { setShowPaywallModal(false); setShowPayjp(true); }}
+      />
     </main>
   );
 }
