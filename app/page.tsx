@@ -13,6 +13,7 @@ import { AdBanner } from "@/components/AdBanner";
 import { CrossSell } from "@/components/CrossSell";
 import { TrustBadge } from "@/components/TrustBadge";
 import { TrialModal } from "@/components/TrialModal";
+import { PaywallModal } from "@/components/PaywallModal";
 const T = THEMES.legal;
 
 // 相談履歴の型
@@ -326,6 +327,7 @@ function CareRoiCalculator({ onTrialClick }: { onTrialClick: () => void }) {
 
 export default function KaigoLP() {
   const [showPayjp, setShowPayjp] = useState(false);
+  const [showPaywallModal, setShowPaywallModal] = useState(false);
   const [showBankTransfer, setShowBankTransfer] = useState(false);
   const [showTrialModal, setShowTrialModal] = useState(false);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
@@ -336,11 +338,19 @@ export default function KaigoLP() {
   const [streakCount, setStreakCount] = useState(0);
   const [streakMilestone, setStreakMilestone] = useState<string | null>(null);
   const [consultHistory, setConsultHistory] = useState<ConsultHistory[]>([]);
+  const [showFloatingCta, setShowFloatingCta] = useState(false);
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const [refSource, setRefSource] = useState<string | null>(null);
+  const exitIntentShown = useRef(false);
 
   useEffect(() => {
     const target = new Date("2026-10-01");
     const diff = Math.ceil((target.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
     setDaysLeft(Math.max(0, diff));
+
+    // 流入元判定（?ref=fax等）
+    const params = new URLSearchParams(window.location.search);
+    setRefSource(params.get("ref"));
 
     // ストリーク更新
     const streak = updateStreak("kaigo");
@@ -350,6 +360,27 @@ export default function KaigoLP() {
 
     // 相談履歴読み込み
     setConsultHistory(loadHistory());
+
+    // FloatingCTA: 50%スクロールで表示
+    const handleScroll = () => {
+      const scrolled = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      if (scrolled > 0.5) setShowFloatingCta(true);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    // 出口インテント: マウスがビューポート上端を出たとき
+    const handleMouseOut = (e: MouseEvent) => {
+      if (e.clientY <= 5 && !exitIntentShown.current) {
+        exitIntentShown.current = true;
+        setShowExitIntent(true);
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseOut);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("mouseleave", handleMouseOut);
+    };
   }, []);
 
   function checkKaigoRisk() {
@@ -391,12 +422,13 @@ export default function KaigoLP() {
   const faqs = [
     { q: '介護カスハラAIはどんなサービスですか？', a: 'カスタマーハラスメント（カスハラ）への対応文をAIが即座に生成するWebサービスです。介護現場でのクレームや暴言に対し、適切な対応文章を提示します。登録不要・無料からご利用いただけます。' },
     { q: '無料で使えますか？', a: '月3回まで無料でご利用いただけます。それ以上ご利用の場合は有料プランへのアップグレードが必要です。' },
-    { q: '東京都のカスハラ対策奨励金に使えますか？', a: '介護カスハラAIは東京都のカスタマーハラスメント対策奨励金の対象ツールとして申請可能です。詳しくは東京都の公式サイトをご確認ください。' },
-    { q: 'スマートフォンでも使えますか？', a: 'はい、PCでもスマートフォンでもご利用いただけます。アプリのインストール不要で、ブラウザからそのまま利用できます。' },
-    { q: '2026年義務化されたカスハラ対策とは何ですか？', a: '2024年の労働施策総合推進法改正により、事業者はカスタマーハラスメントから従業員を守る対策が義務化されました。介護カスハラAIはその対策支援ツールとして活用できます。' },
+    { q: '2026年10月のカスハラ義務化に対応できますか？', a: 'はい。介護カスハラAIは、改正労働施策総合推進法が求める「カスハラ対策マニュアル整備・記録保管・対応文書作成」を全面サポートします。義務化チェックリストの全必須項目に対応した文書を即座に生成できます。' },
+    { q: '料金はいくらですか？', a: '月額¥4,980のスタンダードプランから、法人向け月額¥29,800のBtoBプランまでご用意しています。まず月3回まで無料でお試しいただけます。' },
+    { q: '東京都のカスハラ対策奨励金に使えますか？', a: '介護カスハラAIは東京都のカスタマーハラスメント対策奨励金（最大40万円）の対象ツールとして申請可能です。詳しくは東京都の公式サイトをご確認ください。' },
     { q: '補助金は使えますか？', a: 'はい。デジタル化・AI導入補助金2026（補助率最大4/5）の対象ツールとして申請中です。補助金適用で年間コストを大幅に削減できます。ご契約時に申請方法をご案内いたします。' },
-    { q: '2026年10月の義務化に対応できますか？', a: 'はい。介護カスハラAIは、改正労働施策総合推進法が求める「カスハラ対策マニュアル整備・記録保管・対応文書作成」を全面サポートします。義務化チェックリストの全必須項目に対応した文書を即座に生成できます。' },
-    { q: '東京都の独自補助金は使えますか？', a: '東京都が令和8年度（2026年）夏頃に介護事業所向け補助金を開始予定です。開始次第、対象ツールとして案内いたします。現時点では東京都カスハラ防止対策奨励金（最大40万円）をご活用いただけます。' },
+    { q: 'カスハラ対応文書は実際に使えますか？', a: 'AIが生成する対応文書は、厚生労働省ガイドライン準拠の内容です。警告書・記録テンプレート・対応マニュアルは実務に直接活用できます。必要に応じて弁護士・社労士への相談も推奨します。' },
+    { q: '介護施設でない事業所でも使えますか？', a: 'はい。訪問介護・デイサービス・グループホームなど介護保険サービス全般のほか、ヘルパー派遣事業者・ケアマネ事務所など幅広くご利用いただけます。' },
+    { q: 'スマートフォンでも使えますか？', a: 'はい、PCでもスマートフォンでもご利用いただけます。アプリのインストール不要で、ブラウザからそのまま利用できます。' },
   ];
 
   return (
@@ -411,11 +443,7 @@ export default function KaigoLP() {
               '@type': 'Question',
               name: faq.q,
               acceptedAnswer: { '@type': 'Answer', text: faq.a },
-            })).concat([
-              { '@type': 'Question', name: '補助金は使えますか？', acceptedAnswer: { '@type': 'Answer', text: 'はい。デジタル化・AI導入補助金2026（補助率最大4/5）の対象ツールとして申請中です。補助金適用で年間コストを大幅に削減できます。ご契約時に申請方法をご案内いたします。' } },
-              { '@type': 'Question', name: '2026年10月の義務化に対応できますか？', acceptedAnswer: { '@type': 'Answer', text: 'はい。介護カスハラAIは、改正労働施策総合推進法が求める「カスハラ対策マニュアル整備・記録保管・対応文書作成」を全面サポートします。' } },
-              { '@type': 'Question', name: '東京都の独自補助金は使えますか？', acceptedAnswer: { '@type': 'Answer', text: '東京都が令和8年度（2026年）夏頃に介護事業所向け補助金を開始予定です。開始次第、対象ツールとして案内いたします。' } },
-            ]),
+            })),
           }).replace(/</g, '\\u003c'),
         }}
       />
@@ -467,8 +495,25 @@ export default function KaigoLP() {
             font-weight: bold;
           }
           @page { size: A4 portrait; margin: 15mm; }
+        @keyframes slideInUp {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         }
       `}</style>
+
+      {/* FAX流入バナー */}
+      {refSource === "fax" && (
+        <div className="bg-teal-700 text-white text-center py-3 px-4 print:hidden">
+          <p className="font-bold text-sm md:text-base">FAXをご覧いただいた介護事業所の方へ：まず月3回まで無料でお試しいただけます（クレジットカード不要）</p>
+          <button
+            onClick={() => setShowTrialModal(true)}
+            className="mt-2 bg-white text-teal-700 font-black text-xs px-4 py-1.5 rounded-full hover:bg-yellow-100 transition-colors"
+          >
+            今すぐ無料体験を始める →
+          </button>
+        </div>
+      )}
 
       {/* 緊急バナー - 補助金訴求 */}
       <div className="print:hidden" style={{ background: '#DC2626' }}>
@@ -506,21 +551,39 @@ export default function KaigoLP() {
             <div className="flex justify-center mb-3">
               <svg className="w-8 h-8 text-teal-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
-            <h2 id="kaigo-plan-modal-title" className="text-lg font-bold mb-2 text-center">プランを選択</h2>
+            {/* 緊急性バッジ */}
+            <div className="text-center mb-3">
+              <span className="bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-bold px-3 py-1 rounded-full">
+                期間限定 年額プラン 2ヶ月分無料
+              </span>
+            </div>
+            <h2 id="kaigo-plan-modal-title" className="text-lg font-bold mb-1 text-center">プランを選択</h2>
             <p className="text-sm text-white/50 mb-4 text-center">ご利用状況に合わせてお選びください</p>
             <div className="space-y-3">
-              <div className="border rounded-xl p-4">
-                <p className="font-bold text-white text-sm mb-1">個人プラン <span className="text-teal-600">¥2,980/月</span></p>
+              <div className="border border-white/20 rounded-xl p-4">
+                <p className="font-bold text-white text-sm mb-1">個人プラン <span className="text-teal-400">¥2,980/月</span></p>
                 <p className="text-xs text-white/50 mb-2">個人スタッフ・ヘルパー向け</p>
-                <KomojuButton planId="personal" planLabel="個人プラン ¥2,980/月を始める" className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm" />
+                <KomojuButton
+                  planId="personal"
+                  planLabel="個人プラン"
+                  monthlyPrice={2980}
+                  showAnnualToggle={true}
+                  className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm"
+                />
               </div>
               <div className="border-2 border-teal-600 rounded-xl p-4 bg-teal-500/10">
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="font-bold text-white text-sm">事業所プラン <span className="text-teal-600">¥9,800/月</span></p>
+                  <p className="font-bold text-white text-sm">事業所プラン <span className="text-teal-400">¥9,800/月</span></p>
                   <span className="text-xs bg-teal-600 text-white px-2 py-0.5 rounded-full">人気</span>
                 </div>
                 <p className="text-xs text-white/50 mb-2">事業所・施設単位での利用</p>
-                <KomojuButton planId="business" planLabel="事業所プラン ¥9,800/月を始める" className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm" />
+                <KomojuButton
+                  planId="business"
+                  planLabel="事業所プラン"
+                  monthlyPrice={9800}
+                  showAnnualToggle={true}
+                  className="w-full bg-teal-600 text-white font-bold py-2.5 rounded-lg hover:bg-teal-700 disabled:opacity-50 text-sm"
+                />
               </div>
               <div className="border-2 border-yellow-400 rounded-xl p-4 bg-yellow-500/10">
                 <div className="flex items-center gap-2 mb-1">
@@ -529,7 +592,13 @@ export default function KaigoLP() {
                 </div>
                 <p className="text-xs text-yellow-200 mb-1">IT導入補助金2026適用で実質¥5,960/月〜</p>
                 <p className="text-xs text-white/50 mb-2">複数施設・法人一括・研修資料・規程テンプレ付</p>
-                <KomojuButton planId="btob" planLabel="施設BtoBプラン ¥29,800/月を始める" className="w-full bg-yellow-500 text-black font-bold py-2.5 rounded-lg hover:bg-yellow-400 disabled:opacity-50 text-sm" />
+                <KomojuButton
+                  planId="btob"
+                  planLabel="施設BtoBプラン"
+                  monthlyPrice={29800}
+                  showAnnualToggle={true}
+                  className="w-full bg-yellow-500 text-black font-bold py-2.5 rounded-lg hover:bg-yellow-400 disabled:opacity-50 text-sm"
+                />
               </div>
               <div className="border-2 border-blue-500 rounded-xl p-4 bg-blue-500/10">
                 <div className="flex items-center gap-2 mb-1">
@@ -544,15 +613,17 @@ export default function KaigoLP() {
                   rel="noopener noreferrer"
                   className="block w-full text-center bg-blue-600 text-white font-bold py-2.5 rounded-lg hover:bg-blue-700 text-sm"
                 >
-                  Xにてお問い合わせ →
+                  Xにてお問い合わせ
                 </a>
               </div>
             </div>
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-white/70">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-              </svg>
-              <span>30日間全額返金保証 / SSLセキュア決済 / 即時キャンセル可</span>
+            {/* 信頼バッジ */}
+            <div className="mt-4 flex items-center justify-center gap-3 text-xs text-white/60">
+              <span>SSL暗号化</span>
+              <span>|</span>
+              <span>30日間返金保証</span>
+              <span>|</span>
+              <span>いつでも解約可</span>
             </div>
             <div className="mt-4 pt-4 border-t border-white/10 text-center">
               <p className="text-xs text-white/40 mb-2">クレジットカード以外の方はこちら</p>
@@ -571,6 +642,12 @@ export default function KaigoLP() {
       {showBankTransfer && (
         <BankTransferModal onClose={() => setShowBankTransfer(false)} />
       )}
+
+      <PaywallModal
+        open={showPaywallModal}
+        onClose={() => setShowPaywallModal(false)}
+        onUpgrade={() => { setShowPaywallModal(false); setShowPayjp(true); }}
+      />
 
       <nav className="px-6 py-4 sticky top-0 z-10 border-b border-white/5" style={{ background: 'rgba(11,15,30,0.85)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)' }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
@@ -719,6 +796,28 @@ export default function KaigoLP() {
             <span className="text-orange-400 text-xs font-bold">5/12締切</span>
           </div>
           <p className="text-xs opacity-60 mt-1">※現場経験者監修</p>
+          {/* LINE友達追加CTA */}
+          <div className="w-full max-w-2xl mx-auto my-5 rounded-xl overflow-hidden border border-[#06C755]/30 bg-[#06C755]/10">
+            <a
+              href="https://line.me/R/ti/p/%40462mlayk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 p-4 hover:bg-[#06C755]/20 transition-colors"
+            >
+              <div className="w-12 h-12 bg-[#06C755] rounded-xl flex items-center justify-center flex-shrink-0">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+                  <path d="M12 2C6.48 2 2 5.92 2 10.72c0 2.88 1.44 5.44 3.72 7.12L5 21l3.36-1.76C9.44 19.72 10.68 20 12 20c5.52 0 10-3.92 10-8.72S17.52 2 12 2z"/>
+                </svg>
+              </div>
+              <div className="flex-1 text-left">
+                <div className="font-bold text-white text-sm">LINEで無料相談・補助金試算</div>
+                <div className="text-gray-300 text-xs mt-0.5">友達追加で補助金450万円の詳細を即座に案内</div>
+              </div>
+              <div className="bg-[#06C755] text-white text-xs font-bold px-3 py-1.5 rounded-lg flex-shrink-0">
+                友達追加
+              </div>
+            </a>
+          </div>
           <div className="flex flex-col items-center gap-1">
             <p className="text-sm text-white/40">登録不要・クレジットカード不要</p>
             <button
@@ -741,6 +840,69 @@ export default function KaigoLP() {
             </button>
             <p className="text-xs text-white/40 mt-1">TSV形式・Excel/Numbersで開けます・登録不要</p>
           </div>
+
+          {/* 導入効果3点（数値あり） */}
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:16,margin:'32px auto 0',maxWidth:560}}>
+            <div style={{textAlign:'center',padding:'16px 8px',background:'rgba(255,255,255,0.07)',borderRadius:12,border:'1px solid rgba(255,255,255,0.12)'}}>
+              <div style={{fontSize:36,fontWeight:'bold',color:'#dc2626',lineHeight:1}}>90%</div>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.55)',marginTop:6,lineHeight:1.4}}>法的文書作成<br />時間を削減</div>
+            </div>
+            <div style={{textAlign:'center',padding:'16px 8px',background:'rgba(255,255,255,0.07)',borderRadius:12,border:'1px solid rgba(255,255,255,0.12)'}}>
+              <div style={{fontSize:36,fontWeight:'bold',color:'#dc2626',lineHeight:1}}>3分</div>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.55)',marginTop:6,lineHeight:1.4}}>クレーム対応文書<br />を即生成</div>
+            </div>
+            <div style={{textAlign:'center',padding:'16px 8px',background:'rgba(255,255,255,0.07)',borderRadius:12,border:'1px solid rgba(255,255,255,0.12)'}}>
+              <div style={{fontSize:36,fontWeight:'bold',color:'#dc2626',lineHeight:1}}>1/3</div>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.55)',marginTop:6,lineHeight:1.4}}>職員の対応負荷<br />を軽減</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BtoB料金プランセクション */}
+      <section id="pricing" className="py-14 px-4 print:hidden" style={{background:'rgba(255,255,255,0.03)',borderTop:'1px solid rgba(255,255,255,0.08)'}}>
+        <div className="max-w-3xl mx-auto">
+          <div className="text-center mb-8">
+            <span style={{background:'#dc2626',color:'#fff',padding:'6px 18px',borderRadius:4,fontWeight:'bold',fontSize:13,display:'inline-block',marginBottom:10}}>
+              2026年10月1日 カスハラ対策義務化 まで残り約5ヶ月
+            </span>
+            <br />
+            <span style={{background:'#1d4ed8',color:'#fff',padding:'6px 18px',borderRadius:4,fontWeight:'bold',fontSize:13,display:'inline-block',marginBottom:16}}>
+              IT導入補助金2026 最大450万円対象予定
+            </span>
+            <h2 className="text-2xl font-bold text-white mb-2">料金プラン</h2>
+            <p className="text-white/50 text-sm">補助金活用で実質負担を大幅に削減できます</p>
+          </div>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:24,maxWidth:640,margin:'0 auto'}}>
+            <div style={{border:'2px solid rgba(255,255,255,0.15)',borderRadius:12,padding:24,textAlign:'center',background:'rgba(255,255,255,0.04)'}}>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:8}}>個人・小規模施設</div>
+              <div style={{fontSize:38,fontWeight:'bold',color:'#fff'}}>¥9,800<span style={{fontSize:14,fontWeight:'normal',color:'rgba(255,255,255,0.6)'}}>/月</span></div>
+              <div style={{fontSize:12,color:'#94a3b8',marginBottom:20}}>（補助金後 実質¥2,450〜）</div>
+              <button
+                onClick={() => setShowPayjp(true)}
+                aria-label="個人・小規模施設プランの詳細を確認する"
+                style={{display:'block',width:'100%',background:'#3b82f6',color:'#fff',padding:'12px',borderRadius:8,fontWeight:'bold',border:'none',cursor:'pointer',fontSize:14}}
+              >
+                無料デモを試す
+              </button>
+            </div>
+            <div style={{border:'2px solid #f59e0b',borderRadius:12,padding:24,textAlign:'center',position:'relative',background:'rgba(245,158,11,0.05)'}}>
+              <div style={{position:'absolute',top:-14,left:'50%',transform:'translateX(-50%)',background:'#f59e0b',color:'#fff',padding:'4px 16px',borderRadius:20,fontSize:11,fontWeight:'bold',whiteSpace:'nowrap'}}>法人・施設チームに最適</div>
+              <div style={{fontSize:12,color:'rgba(255,255,255,0.5)',marginBottom:8}}>施設・法人プラン</div>
+              <div style={{fontSize:38,fontWeight:'bold',color:'#fff'}}>¥29,800<span style={{fontSize:14,fontWeight:'normal',color:'rgba(255,255,255,0.6)'}}>/月</span></div>
+              <div style={{fontSize:12,color:'#94a3b8',marginBottom:20}}>（補助金後 実質¥7,450〜）</div>
+              <a
+                href="https://lin.ee/462mlayk"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="施設・法人プランの30分無料商談を申し込む"
+                style={{display:'block',background:'#f59e0b',color:'#fff',padding:'12px',borderRadius:8,textDecoration:'none',fontWeight:'bold',fontSize:14}}
+              >
+                30分無料商談を申し込む
+              </a>
+            </div>
+          </div>
+          <p className="text-xs text-white/30 text-center mt-4">※IT導入補助金の補助率・上限は公募回によって変わります。申請前に必ずご確認ください。</p>
         </div>
       </section>
 
@@ -2078,6 +2240,16 @@ https://kaigo-custharass-ai.vercel.app/tool
         <ShareButtons url="https://kaigo-custharass-ai.vercel.app" text="介護施設のカスハラ対応がAIで自動化できる。証拠記録から対応文まで。" hashtags="介護カスハラAI" />
       </section>
 
+      {/* A8アフィリエイト */}
+      <div className="max-w-2xl mx-auto px-4 pb-6">
+        <div style={{ background: "rgba(20,184,166,0.08)", border: "1px solid rgba(20,184,166,0.2)", borderRadius: "12px", padding: "16px", textAlign: "center" }}>
+          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", marginBottom: 8 }}>※ 広告・PR掲載</p>
+          <p style={{ fontSize: 14, fontWeight: 700, color: "#5eead4", marginBottom: 4 }}>ストレスや職場の悩みを専門家に相談したい方へ</p>
+          <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>Kimochi（キモチ）— 心理カウンセラーによる個別相談</p>
+          <a href="https://px.a8.net/svt/ejp?a8mat=4B3GYE+152XIQ+5OI8+5YJRM" target="_blank" rel="noopener noreferrer sponsored" style={{ display: "inline-block", padding: "10px 24px", background: "linear-gradient(135deg,#14b8a6,#0d9488)", color: "#fff", fontSize: 13, fontWeight: 700, borderRadius: 8, textDecoration: "none" }}>Kimochiで無料相談 →</a>
+        </div>
+      </div>
+
       <CrossSell currentService="介護カスハラAI" />
 
       {/* FAQセクション */}
@@ -2090,6 +2262,48 @@ https://kaigo-custharass-ai.vercel.app/tool
               <p className="mt-3 text-white/60">{faq.a}</p>
             </details>
           ))}
+        </div>
+      </section>
+
+      {/* フッター前デモ申し込みCTA (BtoB最優先) */}
+      <section style={{ background: "linear-gradient(135deg, rgba(13,148,136,0.15), rgba(15,118,110,0.1))", borderTop: "1px solid rgba(13,148,136,0.2)", padding: "40px 16px", textAlign: "center" }}>
+        <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+          <p style={{ color: "#5EEAD4", fontSize: "12px", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "8px" }}>BtoB導入相談</p>
+          <h2 style={{ color: "#fff", fontSize: "22px", fontWeight: "900", marginBottom: "12px", lineHeight: 1.4 }}>
+            無料デモを申し込む（30分）
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.55)", fontSize: "14px", marginBottom: "8px" }}>
+            施設ご担当者様・管理者様向けにオンラインデモを実施しています。
+          </p>
+          <p style={{ color: "#FDE68A", fontSize: "13px", fontWeight: "bold", marginBottom: "24px" }}>
+            IT補助金で実質0円から導入可能 ・ 2026年義務化に完全対応
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px", alignItems: "center" }}>
+            <a
+              href="https://lin.ee/462mlayk"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ background: "linear-gradient(135deg, #0D9488, #0F766E)", color: "#fff", fontWeight: "bold", fontSize: "16px", padding: "16px 32px", borderRadius: "14px", textDecoration: "none", minHeight: "52px", display: "flex", alignItems: "center", gap: "8px", boxShadow: "0 0 24px rgba(13,148,136,0.35)" }}
+              aria-label="LINEで無料デモを申し込む"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.365 9.89c.50 0 .903.402.903.9s-.403.9-.903.9h-2.25v1.35h2.25c.50 0 .903.403.903.9 0 .498-.403.9-.903.9h-3.15a.9.9 0 01-.9-.9v-5.4c0-.498.403-.9.9-.9h3.15zm-10.578 0a.9.9 0 01.9.9v5.4a.9.9 0 01-.9.9.9.9 0 01-.9-.9v-5.4c0-.498.403-.9.9-.9zm-2.588 0c.50 0 .9.402.9.9v3.37l2.48-3.817a.9.9 0 011.526.96l-.02.03v5.357a.9.9 0 01-1.8 0v-3.37l-2.48 3.817a.9.9 0 01-1.526-.96l.02-.03V10.79a.9.9 0 01.9-.9zM12 2C6.477 2 2 5.942 2 10.786c0 3.354 2.122 6.29 5.318 7.966L6.4 21.6a.5.5 0 00.667.653l4.2-2.1c.236.02.476.033.733.033 5.523 0 10-3.942 10-8.4C22 5.942 17.523 2 12 2z"/></svg>
+              LINEで無料デモを申し込む
+            </a>
+            <button
+              onClick={() => setShowPayjp(true)}
+              style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.7)", fontSize: "14px", padding: "12px 24px", borderRadius: "10px", cursor: "pointer", minHeight: "44px" }}
+              aria-label="プラン・価格を確認する"
+            >
+              プラン・価格を確認する
+            </button>
+          </div>
+          <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap" }}>
+            {["SSL/TLS暗号化", "個人情報保護方針あり", "特定商取引法に基づく表記あり", "30日間返金保証", "IT導入補助金対象予定"].map(badge => (
+              <span key={badge} style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.5)", fontSize: "11px", padding: "4px 10px", borderRadius: "100px" }}>
+                {badge}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -2153,6 +2367,172 @@ https://kaigo-custharass-ai.vercel.app/tool
       </div>
     </main>
     <TrialModal isOpen={showTrialModal} onClose={() => setShowTrialModal(false)} />
+
+    {/* FloatingCTA: 50%スクロール後に右下表示 */}
+    {showFloatingCta && (
+      <div
+        style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "16px",
+          zIndex: 50,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          gap: "8px",
+          animation: "slideInUp 0.4s ease-out",
+        }}
+        aria-label="フローティングCTA"
+      >
+        <button
+          onClick={() => setShowFloatingCta(false)}
+          aria-label="フローティングCTAを閉じる"
+          style={{ background: "rgba(255,255,255,0.1)", border: "none", color: "rgba(255,255,255,0.5)", borderRadius: "50%", width: "24px", height: "24px", cursor: "pointer", fontSize: "12px", alignSelf: "flex-end" }}
+        >
+          x
+        </button>
+        <a
+          href="https://lin.ee/462mlayk"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            background: "#06c755",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: "14px",
+            padding: "12px 20px",
+            borderRadius: 50,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            textDecoration: "none",
+            minHeight: "44px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            whiteSpace: "nowrap",
+          }}
+          aria-label="LINEで無料相談する"
+        >
+          LINE相談（無料）
+        </a>
+        <a
+          href="#pricing"
+          style={{
+            background: "#dc2626",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: "14px",
+            padding: "12px 20px",
+            borderRadius: 50,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            textDecoration: "none",
+            minHeight: "44px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            whiteSpace: "nowrap",
+          }}
+          aria-label="料金プランを確認する"
+        >
+          料金を確認
+        </a>
+      </div>
+    )}
+
+    {/* 出口インテントポップアップ */}
+    {showExitIntent && (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: "rgba(0,0,0,0.65)",
+          zIndex: 60,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "16px",
+        }}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="exit-intent-title"
+      >
+        <div
+          style={{
+            background: "linear-gradient(135deg, #0B1E30, #0D2A3F)",
+            border: "1px solid rgba(13,148,136,0.4)",
+            borderRadius: "20px",
+            padding: "32px 24px",
+            maxWidth: "380px",
+            width: "100%",
+            boxShadow: "0 0 60px rgba(13,148,136,0.2), 0 20px 40px rgba(0,0,0,0.4)",
+            position: "relative",
+            textAlign: "center",
+          }}
+        >
+          <button
+            onClick={() => setShowExitIntent(false)}
+            aria-label="ポップアップを閉じる"
+            style={{ position: "absolute", top: "12px", right: "12px", background: "rgba(255,255,255,0.08)", border: "none", color: "rgba(255,255,255,0.5)", borderRadius: "50%", width: "32px", height: "32px", cursor: "pointer", fontSize: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}
+          >
+            x
+          </button>
+          <div style={{ background: "rgba(220,38,38,0.15)", border: "1px solid rgba(220,38,38,0.3)", borderRadius: "12px", padding: "8px 16px", display: "inline-block", marginBottom: "16px" }}>
+            <span style={{ color: "#FCA5A5", fontSize: "12px", fontWeight: "bold" }}>2026年10月 義務化まであと少し</span>
+          </div>
+          <h2 id="exit-intent-title" style={{ color: "#fff", fontSize: "20px", fontWeight: "900", marginBottom: "12px", lineHeight: 1.4 }}>
+            まだ迷ってますか？<br />まず無料で試してみてください
+          </h2>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: "14px", marginBottom: "24px", lineHeight: 1.6 }}>
+            カスハラ対応文の生成は登録不要・月3回まで完全無料。<br />
+            義務化対応の最初の一歩を今日踏み出してください。
+          </p>
+          <a
+            href="/tool"
+            style={{
+              display: "block",
+              background: "linear-gradient(135deg, #0D9488, #0F766E)",
+              color: "#fff",
+              fontWeight: "bold",
+              fontSize: "16px",
+              padding: "16px 24px",
+              borderRadius: "12px",
+              textDecoration: "none",
+              marginBottom: "12px",
+              boxShadow: "0 0 24px rgba(13,148,136,0.4)",
+            }}
+            aria-label="無料でカスハラ対応文を生成する"
+          >
+            無料で対応文を生成する
+          </a>
+          <a
+            href="https://lin.ee/462mlayk"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "block",
+              background: "rgba(34,197,94,0.15)",
+              border: "1px solid rgba(34,197,94,0.3)",
+              color: "#86EFAC",
+              fontWeight: "bold",
+              fontSize: "14px",
+              padding: "12px 24px",
+              borderRadius: "12px",
+              textDecoration: "none",
+              marginBottom: "12px",
+            }}
+            aria-label="LINE公式アカウントで相談する"
+          >
+            LINE公式で無料相談する (@462mlayk)
+          </a>
+          <button
+            onClick={() => setShowExitIntent(false)}
+            style={{ background: "none", border: "none", color: "rgba(255,255,255,0.35)", fontSize: "12px", cursor: "pointer" }}
+            aria-label="閉じてページに戻る"
+          >
+            今は見ない
+          </button>
+        </div>
+      </div>
+    )}
     </>
   );
 }
