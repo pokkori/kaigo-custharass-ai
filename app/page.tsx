@@ -784,7 +784,7 @@ export default function KaigoLP() {
             className="inline-block text-white font-bold text-lg md:text-xl px-8 md:px-10 py-4 md:py-5 rounded-2xl mb-4 transition-all duration-200 hover:-translate-y-0.5 active:scale-[0.97] w-full sm:w-auto min-h-[52px]"
             style={{ background: 'linear-gradient(135deg, #0D9488 0%, #0F766E 100%)', boxShadow: '0 0 25px rgba(13, 148, 136, 0.25), 0 4px 15px rgba(0,0,0,0.15)' }}
           >
-            カスハラ対応文を今すぐ生成
+            {daysLeft ? `今すぐ無料体験（義務化まであと${daysLeft}日）` : '今すぐ無料体験'}
           </Link>
           <p className="text-xs text-green-300 mt-2 font-semibold">
             東京都奨励金（最大40万円）で実質無料導入可能 ·
@@ -2391,6 +2391,27 @@ https://kaigo-custharass-ai.vercel.app/tool
         >
           x
         </button>
+        <a
+          href="/tool"
+          style={{
+            background: "linear-gradient(135deg, #0D9488 0%, #0F766E 100%)",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: "13px",
+            padding: "12px 20px",
+            borderRadius: 50,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
+            textDecoration: "none",
+            minHeight: "44px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            whiteSpace: "nowrap",
+          }}
+          aria-label="無料体験を始める"
+        >
+          {daysLeft ? `今すぐ無料体験（義務化まであと${daysLeft}日）` : '今すぐ無料体験'}
+        </a>
         <a
           href="https://lin.ee/462mlayk"
           target="_blank"
