@@ -1,9 +1,26 @@
 import { Resend } from "resend";
 import Anthropic from "@anthropic-ai/sdk";
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "re_placeholder");
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY || "" });
+
+async function saveToSupabase(name: string, email: string, subject: string, message: string) {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    await supabase.from("contact_submissions").insert({
+      name, email, subject: subject || null, message,
+      service: "kaigo-custharass-ai",
+      created_at: new Date().toISOString(),
+    });
+  } catch {
+    // テーブル未作成などのエラーは無視
+  }
+}
 
 async function generateAutoReply(name: string, message: string): Promise<string> {
   try {
@@ -47,6 +64,9 @@ export async function POST(req: NextRequest) {
     if (!emailRegex.test(email)) {
       return NextResponse.json({ error: "メールアドレスの形式が正しくありません" }, { status: 400 });
     }
+
+    // 常にSupabaseに保存（メール設定に依存しない）
+    await saveToSupabase(name, email, subject || "", message);
 
     if (process.env.RESEND_API_KEY) {
       // 管理者への通知

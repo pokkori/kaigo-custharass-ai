@@ -86,9 +86,12 @@ function SuccessContent() {
 
   useEffect(() => {
     const timer = setTimeout(() => setShowConfetti(false), 4500);
-    // Komoju session verify
+    // Stripe または Komoju のセッション検証
     const sessionId = searchParams.get("session_id");
     if (sessionId) {
+      // Stripe verify (GET)
+      fetch(`/api/stripe/verify?session_id=${sessionId}`).catch(() => {});
+      // Komoju verify (後方互換)
       fetch(`/api/komoju/verify?session_id=${sessionId}`).catch(() => {});
     }
     return () => clearTimeout(timer);

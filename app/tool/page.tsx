@@ -601,6 +601,39 @@ export default function KaigoTool() {
         onClose={() => setShowPaywallModal(false)}
         onUpgrade={() => { setShowPaywallModal(false); setShowPayjp(true); }}
       />
+      {showShareModal && (
+        <div
+          style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}
+          onClick={() => setShowShareModal(false)}
+        >
+          <div
+            style={{ background: "linear-gradient(135deg, #0f3d3d 0%, #0a2e2e 100%)", border: "1px solid rgba(20,184,166,0.4)", borderRadius: 20, padding: 28, maxWidth: 360, width: "100%", textAlign: "center", position: "relative" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowShareModal(false)}
+              style={{ position: "absolute", top: 12, right: 14, background: "none", border: "none", color: "#94a3b8", fontSize: 22, cursor: "pointer", lineHeight: 1 }}
+              aria-label="閉じる"
+            >
+              ×
+            </button>
+            <p style={{ color: "#5eead4", fontWeight: 900, fontSize: 17, marginBottom: 6 }}>カスハラのストレス、一人で抱えないでください</p>
+            <p style={{ color: "#94a3af", fontSize: 13, lineHeight: 1.6, marginBottom: 20 }}>
+              AIの対応策に加えて、<strong style={{ color: "#5eead4" }}>心理カウンセラーへの個別相談で精神的な負担を軽減</strong>できます。
+            </p>
+            <a
+              href="https://px.a8.net/svt/ejp?a8mat=4B3GYE+152XIQ+5OI8+5YJRM"
+              target="_blank"
+              rel="noopener noreferrer sponsored"
+              onClick={() => setShowShareModal(false)}
+              style={{ display: "block", background: "linear-gradient(135deg, #14b8a6, #0d9488)", color: "#fff", fontWeight: 700, fontSize: 15, padding: "14px 20px", borderRadius: 14, textDecoration: "none", marginBottom: 10 }}
+            >
+              Kimochiで無料相談する →
+            </a>
+            <p style={{ fontSize: 10, color: "#64748b", margin: 0 }}>※心理カウンセリングKimochi（PR・広告）</p>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

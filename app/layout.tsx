@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "介護カスハラAI",
     locale: "ja_JP",
     type: "website",
-    images: [{ url: `${SITE_URL}/og.png`, width: 1200, height: 630, alt: "介護カスハラAI" }],
+    images: [{ url: `${SITE_URL}/opengraph-image`, width: 1200, height: 630, alt: "介護カスハラAI" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -88,6 +88,7 @@ const jsonLd = {
         { "@type": "Question", "name": "デイサービスで送迎中に起きたカスハラはどう対応しますか？", "acceptedAnswer": { "@type": "Answer", "text": "送迎中のカスハラ（暴言・暴力・わいせつ行為等）は、まず安全確保のため車両を停車し複数対応に切り替えます。本AIが送迎ルール変更通知・家族への状況説明文・サービス継続の条件通知書を生成します。ドライブレコーダー映像の保存も証拠として有効です。" } },
         { "@type": "Question", "name": "カスハラ対応でスタッフが体調を崩した場合はどうすればいいですか？", "acceptedAnswer": { "@type": "Answer", "text": "カスハラによる精神的・身体的被害は労働災害（労災）として認定される場合があります。管理者は即時の業務軽減措置・産業医面談の手配・労基署への相談を行い、スタッフを守る義務があります。本AIが上司向けの対応フロー文書・管轄機関への連絡文テンプレートを生成します。" } },
         { "@type": "Question", "name": "行政や国保連に報告が必要なカスハラはどのような場合ですか？", "acceptedAnswer": { "@type": "Answer", "text": "刑事事件に発展しうる暴行・脅迫・性的被害のほか、事業所運営の継続に影響する重大なカスハラは国保連（国民健康保険団体連合会）への報告が推奨されます。本AIが報告書のテンプレートと報告基準の判断チェックリストを生成します。" } },
+        { "@type": "Question", "name": "IT導入補助金2026で無料導入できますか？", "acceptedAnswer": { "@type": "Answer", "text": "IT導入補助金2026（補助率最大4/5・上限450万円）を活用することで、月額¥29,800が実質¥5,960/月で導入可能です。2026年1次公募締切は5月12日です。介護カスハラAIはITツールとして補助金対象となる場合があります。導入をご検討の場合はお早めにお問い合わせください。" } },
       ],
     },
     {
@@ -168,6 +169,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}`}
+            crossOrigin="anonymous"
+          />
+        )}
       </head>
       <body className={`${notoSansJP.className} antialiased`}>
         <PHProvider>

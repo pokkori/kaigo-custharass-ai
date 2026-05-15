@@ -10,6 +10,12 @@ function auth() {
 }
 
 export async function GET(req: NextRequest) {
+  // Stripe経由の課金チェック（最優先）
+  const stripePremium = req.cookies.get("stripe_premium")?.value;
+  if (stripePremium === "1") {
+    return NextResponse.json({ isPremium: true, plan: "stripe" });
+  }
+
   const rawPremium = req.cookies.get("premium")?.value;
   const premium = rawPremium ? (verifyValue(rawPremium) ?? rawPremium) : undefined;
   const subId = req.cookies.get("payjp_sub_id")?.value;

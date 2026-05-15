@@ -1,5 +1,6 @@
 import { ImageResponse } from "next/og";
 
+export const runtime = "nodejs";
 export const alt = "介護カスハラAI | カスタマーハラスメント対応文書を30秒で生成";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -19,7 +20,11 @@ export default function Image() {
           fontFamily: "sans-serif",
         }}
       >
-        <div style={{ fontSize: 80, marginBottom: 16 }}>️</div>
+        <div style={{ width: 80, height: 80, marginBottom: 16, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(153,246,228,0.2)", borderRadius: 20 }}>
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="#99f6e4">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+          </svg>
+        </div>
         <div style={{ fontSize: 52, fontWeight: 700, color: "#99f6e4", marginBottom: 16, textAlign: "center" }}>
           介護カスハラAI
         </div>

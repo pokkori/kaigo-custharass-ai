@@ -14,7 +14,7 @@ export const dynamic = "force-dynamic";
 
 const SERVICE_URL = "https://kaigo-custharass-ai.vercel.app";
 const SERVICE_NAME = "介護カスハラAI";
-const APP_ID = "kaigo-btob";
+const APP_ID = "kaigo-custharass-ai";
 
 function verifySignature(rawBody: string, signature: string): boolean {
   const secret = process.env.LINE_CHANNEL_SECRET;
