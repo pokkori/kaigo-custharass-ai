@@ -859,6 +859,16 @@ export default function KaigoLP() {
         </div>
       </section>
 
+      {/* IT導入補助金バナー（Heroセクション直下） */}
+      <div className="px-4 py-6 print:hidden">
+        <div className="mx-auto max-w-2xl rounded-2xl border-2 border-green-400 bg-gradient-to-r from-green-900/40 to-teal-900/40 p-5 text-center">
+          <p className="text-xs text-green-300 font-bold mb-1">IT導入補助金2026対象</p>
+          <p className="text-lg font-black text-white">最大<span className="text-green-400 text-2xl">450万円</span>補助・補助率<span className="text-green-400 text-2xl">4/5</span></p>
+          <p className="text-sm text-white/80 mt-1">月額¥29,800が実質<span className="text-green-300 font-bold">¥5,960/月</span>（補助適用後）</p>
+          <p className="text-xs text-white/50 mt-2">※IT導入補助金の申請・審査は各事業所様で行っていただきます。補助額は申請内容により異なります。</p>
+        </div>
+      </div>
+
       {/* BtoB料金プランセクション */}
       <section id="pricing" className="py-14 px-4 print:hidden" style={{background:'rgba(255,255,255,0.03)',borderTop:'1px solid rgba(255,255,255,0.08)'}}>
         <div className="max-w-3xl mx-auto">
