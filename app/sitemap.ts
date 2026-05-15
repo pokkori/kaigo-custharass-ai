@@ -1,4 +1,5 @@
 import { MetadataRoute } from "next";
+import { getSupabaseAdmin } from "@/lib/supabase";
 
 const BASE_URL = "https://kaigo-custharass-ai.vercel.app";
 
@@ -15,7 +16,7 @@ const keywordSlugs = [
   "kaigo-custharass-horitsu",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = BASE_URL;
   const staticPages: MetadataRoute.Sitemap = [
     { url: base, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
@@ -33,5 +34,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...keywordPages];
+  const supabase = getSupabaseAdmin();
+  const { data: articles } = await supabase
+    .from("seo_articles")
+    .select("slug, published_at")
+    .eq("published", true);
+
+  const blogPages: MetadataRoute.Sitemap = (articles ?? []).map((a) => ({
+    url: `${base}/blog/${a.slug}`,
+    lastModified: new Date(a.published_at),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...keywordPages, ...blogPages];
 }
